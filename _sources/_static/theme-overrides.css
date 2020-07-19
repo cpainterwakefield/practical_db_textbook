@@ -4,7 +4,7 @@
 
 body {
     font-family: 'Noto Serif', serif;
-    font-size: 1.75rem;
+    font-size: 1.6rem;
     font-weight: 400;
     line-height: 1.5;
 }
@@ -21,19 +21,21 @@ h1 {
     border-top: solid 1px #92A2BD;
     border-bottom: solid 1px #92A2BD;
     padding: 0.1rem;
+    margin-top: 72pt;
+    margin-bottom: 36pt;
     line-height: 2;
 }
 
 h2 {
     font-family: 'Noto Sans', sans-serif;
-    font-size: 3.25rem;
+    font-size: 3rem;
     font-weight:  700;
     color: #21314D;
 }
 
 h3 {
     font-family: 'Noto Sans', sans-serif;
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight:  700;
     color: #21314D;
 }
@@ -46,4 +48,15 @@ h4 {
 pre {
     font-family: monospace;
     font-size: 1.75rem;
+}
+
+.container .section>*:not(.section):not(.ac_section) {
+    max-width: 600pt;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#scprogresscontainer {
+    margin-top: 40px;
+    margin-bottom: 80px;
 }
