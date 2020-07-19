@@ -1,0 +1,11 @@
+__pycache__
+
+build
+_build
+
+build_info
+
+sphinx_settings.json
+sphinx-enki-info.txt
+
+.vscode
