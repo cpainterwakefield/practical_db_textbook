@@ -4,7 +4,7 @@
 
 body {
     font-family: 'Noto Serif', serif;
-    font-size: 1.6rem;
+    font-size: 1.66rem;
     font-weight: 400;
     line-height: 1.5;
 }
@@ -59,4 +59,8 @@ pre {
 #scprogresscontainer {
     margin-top: 40px;
     margin-bottom: 80px;
+}
+
+.CodeMirror {
+   height: auto !important;
 }

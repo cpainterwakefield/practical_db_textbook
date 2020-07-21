@@ -2,6 +2,12 @@
 Basic SELECT queries
 ====================
 
+.. activecode:: ch2_example1_select
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    SELECT * FROM books;
+    
 - example dataset?
 - displaying table information --> select name, sql from sqlite_master
 - conventions

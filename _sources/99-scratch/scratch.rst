@@ -41,3 +41,8 @@ Here some block quoting:
     Four score and seven years ago, our forefathers set forth upon something or other.
 
 The end.
+
+Some notes
+::::::::::
+
+- when discussing design, be sure to discuss difficulty of capturing information accurately: e.g., personal names
