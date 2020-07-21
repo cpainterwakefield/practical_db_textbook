@@ -31,6 +31,7 @@ h2 {
     font-size: 3rem;
     font-weight:  700;
     color: #21314D;
+    margin-top: 24pt;
 }
 
 h3 {
@@ -49,6 +50,17 @@ pre {
     font-family: monospace;
     font-size: 1.75rem;
 }
+
+dd {
+    margin-left: 3rem;
+}
+
+a.footnote-reference {
+    font-size: 80%;
+    vertical-align: text-top;
+}
+
+/* Runestone elements and page layout */
 
 .container .section>*:not(.section):not(.ac_section) {
     max-width: 600pt;
