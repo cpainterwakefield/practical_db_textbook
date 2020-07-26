@@ -55,6 +55,13 @@ Properties of modern databases
 ::::::::::::::::::::::::::::::
 
 
+Example database
+::::::::::::::::
+
+As you work through this textbook, there will be frequent interactive examples based on books and book publishing.  There are several databases available, which are described in more detail in `Appendix A`_.
+
+.. _`Appendix A`: ../appendix-a-datasets/datasets.html
+
 Relational databases
 ::::::::::::::::::::
 

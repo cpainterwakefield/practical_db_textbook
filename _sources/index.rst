@@ -8,14 +8,26 @@ A Practical Introduction to Databases
 
 Christopher Painter-Wakefield, Colorado School of Mines
 
-TODO: break this into sections: Introduction, SQL, Design, Theory, Miscellaneous?
+Table of Contents
+:::::::::::::::::
+
+.. toctree::
+   :maxdepth: 1
+
+   00-preface/preface
 
 .. toctree::
    :numbered:
-   :maxdepth: 3
-   :glob:
+   :maxdepth: 2
 
-   **
+   01-introduction/introduction
+   02-basic-select/basic-select
+   03-joins/joins
+
+.. toctree::
+   :maxdepth: 3
+
+   Appendix A: Example datasets used in this book <appendix-a-datasets/datasets>
 
 * :ref:`genindex`
 * :ref:`search`

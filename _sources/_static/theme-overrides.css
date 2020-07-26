@@ -1,6 +1,6 @@
-@import url('http://fonts.googleapis.com/css?family=Noto+Serif');
-@import url('http://fonts.googleapis.com/css?family=Noto+Sans');
-@import url('http://fonts.googleapis.com/css?family=Sora');
+@import url('http://fonts.googleapis.com/css?family=Noto+Serif:ital,wght@0,400;0,700;1,400');
+@import url('http://fonts.googleapis.com/css?family=Noto+Sans:wght@700');
+@import url('http://fonts.googleapis.com/css?family=Sora:wght@600');
 
 body {
     font-family: 'Noto Serif', serif;
@@ -48,7 +48,8 @@ h4 {
 
 pre {
     font-family: monospace;
-    font-size: 1.75rem;
+    font-size: 1.66rem;
+    line-height: 1.5;
 }
 
 dd {
@@ -74,5 +75,39 @@ a.footnote-reference {
 }
 
 .CodeMirror {
-   height: auto !important;
+    height: auto !important;
+    border-width: 0px !important;
 }
+
+.ac_output pre {
+    min-height: 0px;
+    background-color: #B2B4B3 !important;
+    display: contents;
+    color: crimson;
+}
+
+.ac_section.alert-warning {
+    background-color: #CED5DD;
+    border-color: #FFF;
+}
+
+.ac_section p.runestone_caption {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+::-webkit-scrollbar {
+    background-color: #B2B4B3;
+    border-radius: 4px;
+}
+
+/* 
+    some overrides to change Pygments highlighting follow CodeMirror theming,
+    at least for SQL.  Nasty kludge.
+*/
+.highlight .c1 { color: #a50; font-style: normal } /* Comment.Single */
+.highlight .cm { color: #a50; font-style: normal } /* Comment.Multiline */
+.highlight .k { color: #708; font-weight: normal } /* Keyword */
+.highlight .o { color: #000 } /* Operator */
+.highlight .m { color: #164 } /* Literal.Number */
+.highlight .s1 { color: #a11 } /* Literal.String.Single */
