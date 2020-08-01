@@ -18,11 +18,16 @@ Table of Contents
 
 .. toctree::
    :numbered:
-   :maxdepth: 2
+   :maxdepth: 3
 
    01-introduction/introduction
-   02-basic-select/basic-select
+   02-data-retrieval/data-retrieval
    03-joins/joins
+
+.. toctree::
+   :maxdepth: 1
+
+   references/references
 
 .. toctree::
    :maxdepth: 3

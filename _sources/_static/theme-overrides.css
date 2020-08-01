@@ -9,10 +9,6 @@ body {
     line-height: 1.5;
 }
 
-table {
-    font-family: monospace;
-}
-
 h1 {
     font-family: 'Sora', sans-serif;
     font-size: 5rem;
@@ -52,8 +48,24 @@ pre {
     line-height: 1.5;
 }
 
+code {
+    font-family: monospace;
+    color: #a11;
+    background-color: white;
+    font-size: 100%;
+    padding: 0px;
+}
+
 dd {
     margin-left: 3rem;
+}
+
+table.htCore {
+    font-family: monospace;
+}
+
+table:not(.htCore) td {
+    text-align: left;
 }
 
 a.footnote-reference {
@@ -67,6 +79,16 @@ a.footnote-reference {
     max-width: 600pt;
     margin-left: auto;
     margin-right: auto;
+}
+
+#main-content>* {
+    max-width: 600pt;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#main-content {
+    padding-bottom: 24pt;
 }
 
 #scprogresscontainer {

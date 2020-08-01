@@ -11,6 +11,9 @@ The main goal of this chapter is to get you thinking about what it is we are stu
 What is data? What is a database?
 :::::::::::::::::::::::::::::::::
 
+
+.. index:: data; defined
+
 Data
 ----
 
@@ -33,6 +36,11 @@ Completeness is a quality that is dependent on the task at hand.  Perhaps it is 
 
 Ultimately, data can be useful to us only if we have access to it, and that is where the database comes in. 
 
+.. index:: 
+    single: database; defined
+    single: database management system
+    see: DBMS; database management system
+
 Database
 --------
 
@@ -50,10 +58,59 @@ database management system (DBMS)
 
 However, the word database is frequently used as shorthand to mean both a database and the DBMS managing it.
 
+.. index:: database; properties of, RDBMS
 
 Properties of modern databases
 ::::::::::::::::::::::::::::::
 
+abstraction - including query languages
+multiuser, network
+define RDBMS == SQL database
+
+need to check sources on this!!!
+
+
+.. index::
+    single: SQL
+    see: Structured Query Language; SQL
+    single: query language
+
+Structured Query Language (SQL)
+:::::::::::::::::::::::::::::::
+
+An important characteristic of modern databases is that they abstract low-level operations on files, tables, indexes and so forth into high-level requests to the database management system (DBMS).  Requests to the database are typically expressed in a *query language*.  Query languages are a type of programming language, but typically differ in that query languages tend to be declarative rather than imperative.  Whereas imperative languages require the programmer to specify exactly what steps to take to perform a task, declarative languages simply describe a desired outcome.
+
+Structured query language (SQL) is the most popular query language for relational databases, and is an example of a declarative language.  SQL was developed by engineers at IBM in the 1970s <<citation needed>> and was standardized by standards organizations ANSI and ISO starting in 1986, with regular updates.  New features continue to be added to SQL as relational database technology and applications evolve.
+
+Even though a standard exists for SQL, relational databases have slightly different implementations of the relational model, and similarly different "dialects" of SQL.  Despite these differences, most SQL dialects share enough in common that, with care, highly portable SQL code can be written.  Examples in this textbook use the SQLite database engine, and thus the dialect of SQL used by SQLite.  To the extent possible, however, examples will be portable to other dialects; where there are significant differences between implementations, these will be noted.  Due to the large number of relational DBMSes available, only a few highly popular DBMSes are included:  SQLite, PostgreSQL, MySQL, Oracle, and Microsoft SQL Server.
+
+Note that `Appendix A`_ provides SQL scripts to create each of the databases used in this book for each of the database engines listed above.
+
+.. _`Appendix A`: ../appendix-a-datasets/datasets.html
+
+.. index::
+    see: DQL; data query language
+    single: data query language
+    see: DML; data manipulation language
+    single: data manipulation language 
+    see: DDL; data definition language
+    single: data definition language
+    see: DCL; data control language
+    single: data control language
+
+SQL is sometimes subdivided into smaller languages focused on particular tasks: a data query language (DQL) for retrieving data, a data manipulation language (DML) for modifying data, a data definition language (DDL) for defining and modifying database objects, and a data control language (DCL) for managing authorization and access to data.  These distinctions are largely unimportant, and will not be used in this textbook.
+
+The basic element of SQL is the *statement* or *query*.  While a distinction can be made between these two (statements acting to change the state of the database, queries acting to retrieve data), it is common to use the terms interchangeably.  Statements in SQL read much like English sentences, except they are terminated by semicolons instead of periods.  Here are a couple of examples of SQL statements; you might already have some intuition as to what these do (they will be thoroughly explained in later chapters):
+
+.. 
+
+    SELECT title, author FROM books;
+
+    UPDATE books
+    SET publication_year = 2021
+    WHERE title = 'A Practical Introduction to Databases';
+
+SQL is often pronounced as "sequel", although it is equally valid to simply say each letter.
 
 Example database
 ::::::::::::::::
@@ -62,16 +119,9 @@ As you work through this textbook, there will be frequent interactive examples b
 
 .. _`Appendix A`: ../appendix-a-datasets/datasets.html
 
-Relational databases
-::::::::::::::::::::
+- displaying table information --> select name, sql from sqlite_master
 
-.. activecode:: ch1_example_simple
-    :language: sql
-    :dburl: /_static/fruitstand.sqlite3
 
-    A simple example of a SQL query, perhaps listing products at a fruit seller's:
-    ~~~~
-    SELECT * FROM fruitstand;
 
 
 .. [#] `"database, n" <http://www.oed.com/view/Entry/47411>`_. OED Online. Oxford University Press. June 2013. Retrieved July 12, 2013.
