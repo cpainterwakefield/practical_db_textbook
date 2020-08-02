@@ -11,8 +11,8 @@ From this chapter, you will learn the basic structure of a relational database a
     seealso: column; attribute
     seealso: table; relation
 
-Relational database foundations
-:::::::::::::::::::::::::::::::
+Tables
+::::::
 
 While relational databases can contain many types of *objects*, the object type that stores data is the *table*.  Each table in the database has a name, which usually provides some indication of what kind of data can be found in the table.  The table structure is defined by the table's *columns*, each of which has a name and an associated data type.  The actual data is contained in the *rows* of the table; each row is one data point and has a value for each column of the table.
 
@@ -175,28 +175,33 @@ So far we've also seen column expressions used in the **ORDER BY** clause.  As w
 Literals
 --------
 
-Literals are simple values expressed in a form that the database understands as a value.  There are only a few types of literals in SQL, although these can be converted to many different types in the database.  We will discuss many different types that SQL uses in `Chapter 4`_.  The main types of literals you will encounter are:
+Literals are simple values expressed in a form that the database understands as a value.  There are only a few types of literals in SQL, although these can be converted to many different types in the database.  We will discuss SQL data types further in `Chapter 4`_.  The main types of literals you will encounter are:
 
 .. _`Chapter 4`: ../04-table-creation/table-creation
 
-- Numbers: these are expressed in the usual fashion, for example, ``-1``, ``3.14159``, ``0.0008``; depending on the database, you may also be able to use literals in scientific notation or other formats, e.g., ``6.02e23``.
-- Character strings: these are strings of characters enclosed in single quotes, for example, ``'apple'``.  If you need to express a literal character string which contains a single quote, you simply write the single quote twice; this is tricky to read, but produces the desired result.  E.g.,
+- Numbers: these are expressed in the usual fashion, for example, ``-1``, ``3.14159``, ``0.0008``; depending on the database, you may also be able to use numeric literals in scientific notation or other formats, for instance, ``6.02e23``.
+- Character strings: these are strings of characters enclosed in single quotes, for example, ``'apple'``.  If you need to express a literal character string which contains a single quote, you simply write the single quote twice; this is tricky to read, but produces the desired result.  For example,
 
 ::
 
     SELECT author FROM books WHERE title = 'The Handmaid''s Tale';
 
-- Boolean values: **True** or **False**.  Note, however, that not all SQL implementations support Boolean literals.
-- The special value **NULL**; we'll talk more about **NULL** below.
+- Boolean values: ``True`` or ``False``.  Note, however, that not all SQL implementations support Boolean literals.
+- The special value ``NULL``; we'll talk more about ``NULL`` below.
 
 Some other types, such as dates, are expressed as strings or integers and converted by SQL to the appropriate type when doing comparison, data modification, etc.
 
 Note that you can ask for literal expressions in the **SELECT** clause - this is sometimes useful.  In this case, the literal is evaluated as itself for each row in the table you are querying.  For example,
 
-::
+.. activecode:: ch2_example1_select2
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
 
-    SELECT 42, 'hello' FROM books;
+    SELECT 42, 'hello', author FROM books;
 
+Notice that the output provides column names based on the literal expressions selected.  Later we will see how to change the names of columns in the output, if we want to make them more meaningful.
+
+(This interactive SQL window connects to the same database as the earlier interactive window; it is repeated here for your convenience to avoid scrolling.)
 
 Operators and functions
 -----------------------
@@ -205,32 +210,30 @@ SQL defines a number of useful operations on its various types.  Some of these u
 
 .. _`Appendix B`: ../appendix-b-reference/reference.html
 
-To 
+Mathematics
++++++++++++
 
-======== ===================== ================================ ===========================================
-operator meaning               usage
-======== ===================== ================================ ===========================================
-\+       addition              *x* + *y*
-\-       subtraction           123.45 - 0.10
-\*       multiplication        10 * 3
-/        division              1024 / 128
-ABS      absolute value        ABS(-15.5)
-MOD      modulus (remainder)   MOD(72, 5)                       integers only
-LOG      logarithm             LOG(*base*, *x*)                 in SQL Server, use LOG(*x*, *base*)
-LN       natural logarithm     LN(2.71828)                      in SQL Server, use LOG(*x*)
-LOG10    base-10 logarithm     LOG10(1000)                      in Oracle, use LOG(10, *x*)
-EXP      exponential function  EXP(1.0)
-POWER    raise to the power    POWER(*base*, *x*)
-SQRT     square root           SQRT(123.45)
-FLOOR    floor function        FLOOR(123.45)
-CEIL     ceiling function      CEIL(123.45)                     same as CEILING
-SIN      sine function         SIN(3.14159)                     argument in radians
-COS      cosine function       COS(3.14159)
-TAN      tangent function      TAN(3.14159)
-ASIN     inverse sine          ASIN(1)
-ACOS     inverse cosine        ACOS(1)
-ATAN     inverse tangent       ATAN(1e10)
-======== ===================== ================================ ===========================================
+To start with, you can expect the basic arithmetic operators to work with any numeric values: addition (*+*), subtraction (*-*), multiplication (*\**), and division (*/*)are standard.  Your database may implement others, but make sure you read the documentation for your database to ensure other operators do what you think they do.  You can actually use your database as a simple calculator!  Try these in the interactive window:
+
+::
+
+    SELECT 4 + 7;
+    SELECT 302.78 * 14;
+
+(Note for Oracle users: Oracle requires all **SELECT** queries to have a **FROM** clause; the special table **dual** is provided for queries that use no columns and should return one row.  Thus, use ``SELECT 4 + 7 FROM dual;`` in Oracle.)
+
+The SQL standard additionally provides functions for many useful mathematical functions, such as logarithms (**log**, **ln**, **log10**), exponentials (**exp**), square root (**sqrt**), modulus (**mod**), trigonometric functions (**sin**, etc.), and more.  Some examples:
+
+::
+
+    SELECT sqrt(3);
+    SELECT log10(1e5);
+    SELECT cos(0);
+
+Numbers are also comparable; we will discuss the comparison operators in the section on Boolean operators and functions below.
+
+Character string operators and functions
+++++++++++++++++++++++++++++++++++++++++
 
 
 

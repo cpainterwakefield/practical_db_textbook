@@ -33,6 +33,7 @@ Table of Contents
    :maxdepth: 3
 
    Appendix A: Example datasets used in this book <appendix-a-datasets/datasets>
+   Appendix B: SQL reference <appendix-b-reference/reference>
 
 * :ref:`genindex`
 * :ref:`search`
