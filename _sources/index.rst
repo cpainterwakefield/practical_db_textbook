@@ -22,7 +22,7 @@ Table of Contents
 
    01-introduction/introduction
    02-data-retrieval/data-retrieval
-   03-joins/joins
+   03-expressions/expressions
 
 .. toctree::
    :maxdepth: 1

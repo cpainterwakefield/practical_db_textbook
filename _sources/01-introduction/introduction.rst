@@ -102,7 +102,7 @@ SQL is sometimes subdivided into smaller languages focused on particular tasks: 
 
 The basic element of SQL is the *statement* or *query*.  While a distinction can be made between these two (statements acting to change the state of the database, queries acting to retrieve data), it is common to use the terms interchangeably.  Statements in SQL read much like English sentences, except they are terminated by semicolons instead of periods.  Here are a couple of examples of SQL statements; you might already have some intuition as to what these do (they will be thoroughly explained in later chapters):
 
-.. 
+::
 
     SELECT title, author FROM books;
 
