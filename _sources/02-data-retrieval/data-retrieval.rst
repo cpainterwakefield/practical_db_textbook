@@ -96,7 +96,9 @@ So far, we've only retrieved all columns of a table, which may not be the desire
 Filtering rows: the WHERE clause
 --------------------------------
 
-Retrieving all of the data from a table is useful, but often not what we want, especially if the table is very large (and tables can get very, very large!)  To see just a subset of rows, we include a **WHERE** clause in our query.  The **WHERE** clause consists of the keyword **WHERE**, followed by an *expression* that evaluates to true or false (a Boolean expression).  The **WHERE** clause goes after the **FROM** clause.  Expressions are discussed more a few sections below, but for now, let's see some simple examples (again, you can try these in the interactive tool):
+Retrieving all of the data from a table is useful, but often not what we want, especially if the table is very large (and tables can get very, very large!)  To see just a subset of rows, we include a **WHERE** clause in our query.  The **WHERE** clause consists of the keyword **WHERE**, followed by an *expression* that evaluates to true or false (a Boolean expression).  The **WHERE** clause goes after the **FROM** clause.  Expressions are discussed more in `the next chapter`_, but for now, let's see some simple examples (again, you can try these in the interactive tool):
+
+.. _`the next chapter`: ../03-expressions/expressions.html
 
 ::
 
@@ -110,6 +112,12 @@ Retrieving all of the data from a table is useful, but often not what we want, e
 
 Note that character string literals in SQL are enclosed with single quotes - not double quotes.  Double quotes are used in SQL for a different purpose.
 
+Queries can return zero, one, or many rows.  If no rows match the **WHERE** condition, no rows are returned:
+
+::
+
+    SELECT * FROM books WHERE genre = 'romance';
+
 
 .. index:: ORDER BY, DESC, ASC
 
@@ -122,7 +130,7 @@ One surprising fact about relational databases is that the rows in a table are n
 .. _`Chapter 6`: ../06-data-modification/data-modification.html
 
 
-Not surprisingly, SQL provides a mechanism by which we can put rows in order by whatever criteria we wish.  This is accomplished via the **ORDER BY** clause, which almost always comes last in any query.  The key phrase **ORDER BY** is followed by a comma-separated list of expressions (again, we'll talk more about these soon), which must resolve to some type that can be put in order: numbers, strings (text), dates, etc.  By default numbers are sorted from smallest to largest, dates from earliest to latest.  Strings are a bit trickier in SQL, because different databases order them differently by default [#]_.  SQLite, by default, uses lexicographic ordering based on ASCII_ values.
+Not surprisingly, SQL provides a mechanism by which we can put rows in order by whatever criteria we wish.  This is accomplished via the **ORDER BY** clause, which almost always comes last in any query.  The key phrase **ORDER BY** is followed by a comma-separated list of expressions (again, we'll talk more about these soon), which must resolve to some type that can be put in order: numbers, strings (text), dates, etc.  By default numbers are sorted from smallest to largest, dates from earliest to latest.  Strings are a bit trickier, because different databases order them differently by default [#]_.  SQLite, by default, uses lexicographic ordering based on ASCII_ values.
 
 .. _ASCII: https://en.wikipedia.org/wiki/ASCII
 
@@ -173,9 +181,141 @@ SQL provides a keyword, **DISTINCT**, that goes after the **SELECT** keyword and
     SELECT DISTINCT genre FROM books;
 
 
+Self-check exercises
+::::::::::::::::::::
+
+This section contains some simple exercises using the same books and authors database used in the text above.  If you get stuck, click on the "Show answer" button below the exercise to see a correct answer.
+
+.. activecode:: ch2_self_test_select
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    Modify the SQL statement below to retrieve author names only:
+    ~~~~
+    SELECT * FROM authors;
+
+.. reveal:: ch2_self_test_select_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT name FROM authors;
 
 
+.. activecode:: ch2_self_test_where1
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
 
+    Write a query to find all books in the science fiction genre:
+    ~~~~
+    
+
+.. reveal:: ch2_self_test_where1_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT * FROM books WHERE genre = 'science fiction';
+
+
+.. activecode:: ch2_self_test_where2
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    Write a query to find the publication year and author for the book *Bodega Dreams*:
+    ~~~~
+    
+
+.. reveal:: ch2_self_test_where2_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT publication_year, author 
+        FROM books 
+        WHERE title = 'Bodega Dreams';
+
+
+.. activecode:: ch2_self_test_where3
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    Write a query to find all books published prior to 1700;
+    ~~~~
+    
+
+.. reveal:: ch2_self_test_where3_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT * FROM books WHERE publication_year < 1700;
+
+
+.. activecode:: ch2_self_test_order
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    Write a query to get books in order by title:
+    ~~~~
+    
+
+.. reveal:: ch2_self_test_order_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT * FROM books ORDER BY title;
+
+
+.. activecode:: ch2_self_test_challenge1
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    Write a query to get the authors publishing since 1980, in order by author name:
+    ~~~~
+    
+
+.. reveal:: ch2_self_test_challenge1_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT author
+        FROM books
+        WHERE publication_year > 1979
+        ORDER BY author;
+
+
+.. activecode:: ch2_self_test_challenge2
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    Write a query to get the unique publication years for the books in our database published since 1980, ordered latest to earliest:
+    ~~~~
+    
+
+.. reveal:: ch2_self_test_challenge2_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT DISTINCT publication_year 
+        FROM books
+        WHERE publication_year > 1979
+        ORDER BY publication_year;
+
+
+----
+
+**Notes**
 
 .. [#] You can change the sort order for strings by applying the **COLLATE** operator. **COLLATE** is a bit out of scope for this textbook, and varies with the dialect of SQL.  Please see the documentation for your particular DBMS.
 
