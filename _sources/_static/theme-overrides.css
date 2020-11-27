@@ -101,11 +101,14 @@ a.footnote-reference {
     border-width: 0px !important;
 }
 
+.ac_sql_result {
+    background-color: white !important;
+}
+
 .ac_output pre {
     min-height: 0px;
     background-color: #B2B4B3 !important;
     display: contents;
-    color: crimson;
 }
 
 .ac_section.alert-warning {
@@ -121,6 +124,7 @@ a.footnote-reference {
 ::-webkit-scrollbar {
     background-color: #B2B4B3;
     border-radius: 4px;
+    width: 14px;
 }
 
 /* 
