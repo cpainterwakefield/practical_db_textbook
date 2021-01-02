@@ -2,15 +2,19 @@
 SQL Expressions
 ===============
 
-An *expression* in SQL is anything that can be evaluated to give some value - literal values, operator expressions, function call expressions and so forth.  
+An *expression* in SQL is anything that can be *evaluated* - anything that results in a value.  Some examples include literal values, operator expressions, and function call expressions.  Expressions are used in most clauses of a SQL query; for example, in the **SELECT** clause, expressions result in the values we see returned from the query, while in the **WHERE** clause, expressions determine whether or not a row is returned from the query.
 
-Most importantly, the use of a column name in a SQL statement is a special expression that evaluates to the value stored in that column for the current row being processed.  So, when we do
+
+Column expressions
+::::::::::::::::::
+
+The use of a column name in a SQL statement is a special expression that evaluates to the value stored in that column for the current row being processed.  So, when we do
 
 ::
 
     SELECT title FROM books;
 
-the expression **title** is evaluated on a row-by-row basis for each row in the table **books**.
+the expression ``title`` is evaluated on a row-by-row basis for each row in the table **books** to yield the values we see in the result.
 
 We can build more complex expressions from simple expressions using operators or functions.  When we do
 
@@ -18,9 +22,8 @@ We can build more complex expressions from simple expressions using operators or
 
     SELECT * FROM books WHERE author = 'Voltaire';
 
-the query execution examines each row of the the table **books** in turn to evaluate the expression ``author = 'Voltaire'``.  This expression compares the value of the **author** columns to the literal value ``'Voltaire'`` using the **=** operator.  If the two are the same, the overall expression evaluates to true, and the row is included in the output; otherwise, the row is excluded.
+the query execution examines each row of the the table **books** in turn to evaluate the expression ``author = 'Voltaire'``.  This expression compares the value of the **author** column to the literal value ``'Voltaire'`` using the **=** operator.  If the two are the same, the overall expression evaluates to ``True``, and the row is included in the output; otherwise, the row is excluded.
 
-So far we've also seen column expressions used in the **ORDER BY** clause.  As we introduce additional clauses in future chapters, more opportunities to use expressions will arise.  Below we examine some more types of expressions in SQL.
 
 Literals
 ::::::::
@@ -41,7 +44,7 @@ Literals are simple values expressed in a form that the database understands as 
 
 Some other types, such as dates, are expressed as strings or integers and converted by SQL to the appropriate type when doing comparison, data modification, etc.
 
-Note that you can ask for literal expressions in the **SELECT** clause - this is sometimes useful.  In this case, the literal is evaluated as itself for each row in the table you are querying.  For example,
+You can ask for literal expressions in the **SELECT** clause - this is sometimes useful.  In this case, the literal is evaluated as itself for each row in the table you are querying.  For example,
 
 .. activecode:: ch2_example1_select2
     :language: sql
@@ -51,19 +54,33 @@ Note that you can ask for literal expressions in the **SELECT** clause - this is
 
 Notice that the output provides column names based on the literal expressions selected.  Later we will see how to change the names of columns in the output, if we want to make them more meaningful.
 
-(This interactive SQL window connects to the same database as the earlier interactive window; it is repeated here for your convenience to avoid scrolling.)
 
 Operators and functions
 :::::::::::::::::::::::
 
-SQL defines a number of useful operations on its various types.  Some of these use simple operators, as in mathematical expressions, while others take the form of functions.  `Appendix B`_ provides complete lists of the operators and functions defined by the SQL standard, but we'll discuss some of the most commonly used ones here, along with examples of their use.
+SQL defines a number of useful operations on its various types.  Some of these use simple operators, as in mathematical expressions, while others take the form of functions.  `Appendix B`_ provides more extensive lists of operators and functions defined by the SQL standard, but we'll discuss some of the most commonly used ones here, along with examples of their use.
 
 .. _`Appendix B`: ../appendix-b-reference/reference.html
+
+
+Comparison operators
+--------------------
+
+We've already seen the equality operator (**=**) used to test if some column is equal to a literal value in the **WHERE** clause of queries.  We can instead test for inequality using the (**<>**) operator:
+
+::
+
+    SELECT * FROM books WHERE genre <> 'fantasy';
+
+Though non-standard, most databases also recognize **!=** as an inequality operator.
+
+We can also test to see if a value is less than (**\<**), greater than (**\>**), less than or equal to (**\<=**), or greater than or equal to (**\>=**) some other value.
+
 
 Mathematics
 -----------
 
-To start with, you can expect the basic arithmetic operators to work with any numeric values: addition (**+**), subtraction (**-**), multiplication (**\***), and division (**/**) are standard.  Your database may implement others, but make sure you read the documentation for your database to ensure other operators do what you think they do.  You can actually use your database as a simple calculator!  Try these in the interactive window:
+You can expect the basic arithmetic operators to work with any numeric values: addition (**+**), subtraction (**-**), multiplication (**\***), and division (**/**) are standard.  Your database may implement others, but make sure you read the documentation for your database to ensure other operators do what you think they do.  You can actually use your database as a simple calculator!  Try these in the interactive window:
 
 ::
 
@@ -88,7 +105,9 @@ With a little math, we can extract the century in which each book in our databas
 
 ::
 
-    SELECT floor((publication_year + 99) / 100) FROM books;
+    SELECT title, floor((publication_year + 99) / 100) FROM books;
+
+Note the use of parentheses to enforce an order of operations; the addition operation occurs before the division; the result of the division is provided to the **floor()** function.
 
 
 Character string operators and functions
@@ -141,8 +160,11 @@ The **LIKE** operator can also be combined with two very useful functions, **upp
 
 In addition to the functions discussed so far, SQL provides functions for various string manipulations tasks, such as substring extraction or replacement, finding the location of a substring, trimming whitespace (or other characters) from the front and/or back of a string, and many more.  There is also a set of functions supporting various operations using regular expressions.  See `Appendix B`_ for more details.
 
+
 Boolean operators
 -----------------
+
+AND, OR, NOT, parenthetical grouping
 
 
 Date and time operators and functions

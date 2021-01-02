@@ -27,7 +27,7 @@ This database is the simplest form of the books database, containing a **books**
 Fruit stand database
 --------------------
 
-Though an interactive block for this one was not included in chapter 2, this database contains the fruit_stand table shown.
+Though an interactive block for this one was not included in chapter 2, this database contains the **fruit_stand** table shown.
 
 .. activecode:: appendix_a_ch2_fruit_stand
     :language: sql
