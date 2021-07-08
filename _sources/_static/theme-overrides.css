@@ -128,7 +128,7 @@ a.footnote-reference {
 }
 
 /* 
-    some overrides to change Pygments highlighting follow CodeMirror theming,
+    some overrides to change Pygments highlighting to follow CodeMirror theming,
     at least for SQL.  Nasty kludge.
 */
 .highlight .c1 { color: #a50; font-style: normal } /* Comment.Single */

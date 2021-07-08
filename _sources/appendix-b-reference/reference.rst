@@ -11,11 +11,11 @@ Operators and functions
 Comparison operators
 --------------------
 
-Generally speaking, two non-NULL values of the same type can be compared, resulting in a Boolean value.  In certain cases, comparisons can made between different types, e.g., when both are numbers.  Numeric values are compared according to their algebraic values.  Date, time, and timestamp values are compared chronologically.  The Boolean value True is greater than False.
+Generally speaking, two non-NULL values of the same type can be compared, resulting in a Boolean value.  In certain cases, comparisons can made between different types, e.g., when both are numbers.  Numeric values are compared according to their algebraic values.  Date, time, and timestamp values are compared chronologically.  The Boolean value ``True`` is greater than ``False``.
 
 Character string comparison is somewhat complex, as the comparison done depends on the *collation* rules in effect for the values; collation may depend on many factors including: the DBMS implementation, DBMS configuration parameters (such as the *locale*), operating system parameters, and any explicit collation settings for a given database table.  Collations may be used to implement proper sorting, for example, in a particular language context.  In general, if string *s* would appear in sorted (ascending) order prior to string *t*, then *s* \< *t*.
 
-A comparison of any value with NULL results in NULL.
+A comparison of any value with ``NULL`` results in ``NULL`` (but see `NULL comparison operators`_ below).
 
 ======== ======================== ======================= =============================================================
 operator meaning                  usage                   notes                  
@@ -67,7 +67,7 @@ TANH               hyperbolic tangent    TANH(*x*)
 
 Most distributions provide additional non-standard functions and operators; for example, most include some mechanism for generating random numbers.  Note that SQLite provides very few of the functions listed above "out of the box", but there is an extension library available that implements them; most are available in the SQLite implementation used by this book.
 
-
+Mathematical expressions where one or more operands or inputs are ``NULL`` evaluate to ``NULL``.
 
 Character string operators and functions
 ----------------------------------------
@@ -94,10 +94,59 @@ There is also **NOT LIKE**, which results in the Boolean inverse of **LIKE**.
 
 Most distributions provide additional non-standard functions and operators.
 
+String operator or function expressions where the operands or inputs are ``NULL`` result in ``NULL``.
+
 
 Boolean operators
 -----------------
 
+The principal Boolean operators in SQL are **AND**, **OR**, and **NOT**.  Given operands that are strictly truth valued, i.e., not ``NULL``, these operators result in the logic operations they are named for.  That is, ``a AND b`` evaluates to ``True`` if and only if ``a`` and ``b`` are both ``True``, ``c OR d`` evaluates to ``True`` if either ``c`` or ``d`` are ``True``, and ``NOT e`` inverts the value ``e``.
+
+However, since expressions resulting in Boolean values may also result in NULL (e.g., ``4 > NULL``), ``NULL`` is also a valid operand for the Boolean operators, and we can think of SQL as therefore having a 3-valued (rather than truly Boolean) logic.  The truth tables for **AND**, **OR**, and **NOT** are given below.  Treating ``NULL`` as meaning "unknown" in Boolean expressions, we can generally infer the result of a Boolean expression involving ``NULL``.  For example, ``True AND NULL`` must evaluate to ``NULL`` (meaning unknown), because the truth of the second operand is unknown.  On the other hand, ``True OR NULL`` must evaluate to ``True``, as it doesn't matter whether the second operand represents a true or a false value.
+
+===== ===== ===========
+*a*   *b*   *a* AND *b*
+===== ===== ===========
+True  True  True
+True  False False
+True  NULL  NULL
+False True  False
+False False False
+False NULL  False
+NULL  True  NULL
+NULL  False False
+NULL  NULL  NULL
+===== ===== ===========
+
+===== ===== ===========
+*a*   *b*   *a* OR *b*
+===== ===== ===========
+True  True  True
+True  False True
+True  NULL  True
+False True  True
+False False False
+False NULL  NULL
+NULL  True  True
+NULL  False NULL
+NULL  NULL  NULL
+===== ===== ===========
+
+===== =======
+*a*   NOT *a*
+===== =======
+True  False
+False True
+NULL  NULL
+===== =======
+
+In addition, SQL defines some less frequently used unary operators on Boolean values:  **IS TRUE**, **IS FALSE**, and **IS UNKNOWN**, the latter being equivalent to **IS NULL** except that it only applies to the result of a Boolean expression.  So for example, SQL allows us to write ``NULL < 7 IS FALSE``, which would evaluate to ``False``.
+
+SQL Server and Oracle do not implement **IS TRUE**, **IS FALSE**, and **IS UNKNOWN**.  SQLite does not implement **IS UNKNOWN**.
+
+
+NULL comparison operators
+-------------------------
 
 
 

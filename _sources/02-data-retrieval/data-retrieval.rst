@@ -2,6 +2,11 @@
 Data retrieval using SQL 
 ========================
 
+.. _`Chapter 3`: ../03-expressions/expressions.html
+.. _`Chapter 4`: ../04-joins/joins.html
+.. _`Chapter 6`: ../06-data-modification/data-modification.html
+
+
 From this chapter, you will learn the basic structure of a relational database and the basics of retrieving data using SQL.
 
 .. index:: 
@@ -25,7 +30,7 @@ The illustration above shows a table named "fruit_stand" with three columns name
 Some notes on terms:
 
 - *Tables* are some times called *relations*, which is their name in the *relational theory* (see chapter XXX) that relational databases are based on.
-- The definition of a table's structure is some times called it's *schema* (although that is a word that is heavily overloaded to mean different things in different contexts, so beware).
+- The definition of a table's structure is some times called it's *schema*.
 - *Columns* are also known as *attributes*, particularly in the context of the table's specification and in relational theory.
 
 .. index:: SELECT, FROM, clause
@@ -39,7 +44,7 @@ In its simplest form, the **SELECT** statement can be used to retrieve all data 
 
     SELECT * FROM books;
 
-Here, **books** is the name of the table.  The **\*** is a special symbol used with **SELECT** statements to mean "all columns in the table".  The table **books** is one table in the example database for this chapter.  The other tables is named **authors**.  The interactive example below will let you query this database; the query above is already set up for you - click on "Run" to see what it results in.  Then, modify the query to retrieve all rows from **authors**.  The column names for the table are shown across the top of the result table.
+Here, **books** is the name of the table.  The **\*** is a special symbol used with **SELECT** statements to mean "all columns in the table".  The table **books** is one table in the example database for this chapter.  The other tables is named **authors**.  The interactive example below will let you query this database; the query above is already set up for you - click on "Run" to see what it results in.  Then, modify the query to retrieve all rows from **authors** and click "Run" again.  The column names for the table are shown across the top of the result table.
 
 .. activecode:: ch2_example1_select
     :language: sql
@@ -69,11 +74,9 @@ Next, SQL keywords are case-insensitive.  That is, we can write:
     Select * From books;
     select * FROM books;
 
-and get the same result for each query.  In the examples in this book, the convention is that keywords will be capitalized.
+and get the same result for each query.  In the examples in this book, the convention is that SQL keywords will be capitalized.
 
-To some extent, the names of things (tables, columns, functions, etc.) act as if they are case-insensitive.  However, the behavior here varies among databases.  We'll explore more on this topic in the `Chapter 4`_.  A fairly common convention is to simply always put the names of things in lowercase all of the time.  The examples in this book will follow that convention, which will help distinguish keywords from things that exist in the database.
-
-.. _`Chapter 4`: ../04-joins/joins.html
+To some extent, the names of things (tables, columns, functions, etc.) act as if they are case-insensitive.  However, the behavior here varies among databases.  We'll explore more on this topic in `Chapter 4`_.  A fairly common convention is to simply always put the names of things in lowercase all of the time.  The examples in this book will follow that convention, which will help distinguish keywords from things that exist in the database.
 
 Note the conventions used in this textbook may be different from those used by your teacher, at your place of work, or in code found on the internet!
 
@@ -96,9 +99,7 @@ So far, we've only retrieved all columns of a table, which may not be the desire
 Filtering rows: the WHERE clause
 --------------------------------
 
-Retrieving all of the data from a table is useful, but often not what we want, especially if the table is very large (and tables can get very, very large!)  To see just a subset of rows, we include a **WHERE** clause in our query.  The **WHERE** clause consists of the keyword **WHERE**, followed by an *expression* that evaluates to true or false (a Boolean expression).  The **WHERE** clause goes after the **FROM** clause.  Expressions are discussed more in `the next chapter`_, but for now, let's see some simple examples (again, you can try these in the interactive tool):
-
-.. _`the next chapter`: ../03-expressions/expressions.html
+Retrieving all of the data from a table is useful, but often not what we want, especially if the table is very large (and tables can get very, very large!)  To see just a subset of rows, we include a **WHERE** clause in our query.  The **WHERE** clause consists of the keyword **WHERE**, followed by an *expression* that evaluates to true or false (a Boolean expression) [#]_.  The **WHERE** clause goes after the **FROM** clause.  Expressions are discussed more in `Chapter 3`_, but for now, let's see some simple examples (again, you can try these in the interactive tool above):
 
 ::
 
@@ -110,7 +111,7 @@ Retrieving all of the data from a table is useful, but often not what we want, e
 
     SELECT birth, death FROM authors WHERE name = 'Ralph Ellison';
 
-Note that character string literals in SQL are enclosed with single quotes - not double quotes.  Double quotes are used in SQL for a different purpose.
+Note that character string literals in SQL are enclosed with single quotes - not double quotes.  Double quotes are used in SQL for a different purpose, which we'll see in `Chapter 4`_.
 
 Queries can return zero, one, or many rows.  If no rows match the **WHERE** condition, no rows are returned:
 
@@ -126,13 +127,7 @@ Ordering data: the ORDER BY clause
 
 One surprising fact about relational databases is that the rows in a table are not necessarily ordered in any particular fashion.  In fact, relational DBMSes (RDBMSes) are permitted to store data in whatever fashion is most convenient or efficient, as well as to retrieve data however is most convenient.  For example, in many RDBMSes, data may be initially in the order in which it was added to the table, but a subsequent data modification statement (`Chapter 6`_) results in the data being re-ordered.
 
-
-.. _`Chapter 6`: ../06-data-modification/data-modification.html
-
-
-Not surprisingly, SQL provides a mechanism by which we can put rows in order by whatever criteria we wish.  This is accomplished via the **ORDER BY** clause, which almost always comes last in any query.  The key phrase **ORDER BY** is followed by a comma-separated list of expressions (again, we'll talk more about these soon), which must resolve to some type that can be put in order: numbers, strings (text), dates, etc.  By default numbers are sorted from smallest to largest, dates from earliest to latest.  Strings are a bit trickier, because different databases order them differently by default [#]_.  SQLite, by default, uses lexicographic ordering based on ASCII_ values.
-
-.. _ASCII: https://en.wikipedia.org/wiki/ASCII
+SQL provides a mechanism by which we can put rows in order by whatever criteria we wish.  This is accomplished via the **ORDER BY** clause, which always comes last in any query.  The key phrase **ORDER BY** is followed by a comma-separated list of expressions (again, we'll talk more about these soon), which must resolve to some type that can be put in order: numbers, character strings, dates, etc.  By default numbers are sorted from smallest to largest, dates from earliest to latest.  Character strings are a bit trickier, because different databases order them differently by default [#]_.  SQLite, by default, uses `lexicographic ordering <https://en.wikipedia.org/wiki/Lexicographic_order>`_ based on `ASCII <https://en.wikipedia.org/wiki/ASCII>`_ values.
 
 Here are some simple queries to try:
 
@@ -151,7 +146,7 @@ Ordering is first applied using the first expression after the **ORDER BY**.  If
     FROM books
     ORDER BY genre, title;
 
-It is also possible to reverse the ordering for any or all of the criteria using the **DESC** ("descending") keyword.  (You can also use **ASC**, but as that is the default, it is usually omitted.)  If we want to see all books from most recent to least recent, we can do:
+It is also possible to reverse the ordering for any or all of the criteria using the **DESC** ("descending") keyword.  (You can also use **ASC** for "ascending", but as that is the default, it is usually omitted.)  If we want to see all books from most recent to least recent, we can do:
 
 ::
     
@@ -243,7 +238,7 @@ This section contains some simple exercises using the same books and authors dat
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
-    Write a query to find all books published prior to 1700;
+    Write a query to find all books published prior to 1900;
     ~~~~
     
 
@@ -253,7 +248,7 @@ This section contains some simple exercises using the same books and authors dat
 
     ::
 
-        SELECT * FROM books WHERE publication_year < 1700;
+        SELECT * FROM books WHERE publication_year < 1900;
 
 
 .. activecode:: ch2_self_test_order
@@ -317,5 +312,7 @@ This section contains some simple exercises using the same books and authors dat
 
 **Notes**
 
-.. [#] You can change the sort order for strings by applying the **COLLATE** operator. **COLLATE** is a bit out of scope for this textbook, and varies with the dialect of SQL.  Please see the documentation for your particular DBMS.
+.. [#] There is actually a third possible value, ``NULL``, which may occur in expressions used in the **WHERE** clause of a query.  ``NULL`` is a complex topic which will be covered in `Chapter 3`_.  For now, assume a normal Boolean result of true or false.
+
+.. [#] You can change the sort order for strings by applying the **COLLATE** operator. **COLLATE** is out of scope for this textbook, and varies with the dialect of SQL.  Please see the documentation for your particular DBMS.
 
