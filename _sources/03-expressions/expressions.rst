@@ -22,15 +22,7 @@ The use of a column name in a SQL statement is a special expression that evaluat
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
-    SELECT title FROM books;
-
-the expression ``title`` is evaluated on a row-by-row basis for each row in the table **books** to yield the values we see in the result.
-
-We can build more complex expressions from simple expressions using operators or functions.  When we do
-
-::
-
-    SELECT * FROM books WHERE author = 'Voltaire';
+    SELECT title FROM books;  
 
 the query execution examines each row of the the table **books** in turn to evaluate the expression ``author = 'Voltaire'``.  This expression compares the value of the **author** column to the literal value ``'Voltaire'`` using the **=** operator.  If the two are the same, the overall expression evaluates to ``True``, and the row is included in the output; otherwise, the row is excluded.
 
@@ -52,9 +44,8 @@ Literals are simple values expressed in a form that the database understands as 
     WHERE title = 'The Handmaid''s Tale';
 
 - Boolean values: ``True`` or ``False``.  Note, however, that not all SQL implementations support Boolean literals.
+- Date and time values; how to notate these varies widely among different SQL implementations.
 - The special value ``NULL``; we'll talk more about ``NULL`` below.
-
-Some other types, such as dates, are expressed as strings or integers and converted by SQL to the appropriate type when doing comparison, data modification, etc.
 
 You can ask for literal expressions in the **SELECT** clause - this is sometimes useful.  In this case, the literal is evaluated as itself for each row in the table you are querying.  For example,
 
@@ -85,7 +76,7 @@ We've already seen the equality operator (**=**) used to test if some column is 
 
 Though non-standard, most databases also recognize **!=** as an inequality operator.
 
-We can also test to see if a value is less than (**\<**), greater than (**\>**), less than or equal to (**\<=**), or greater than or equal to (**\>=**) some other value.
+We can also test to see if a value is less than (**\<**), greater than (**\>**), less than or equal to (**\<=**), or greater than or equal to (**\>=**) some other value.  There is also a ternary operator, **BETWEEN**, that tests if a value is between two other values (see Appendix B, `Comparison operators <../appendix-b-reference/reference.html#comparison-operators>`_ for details).
 
 .. index:: operators; mathematics, functions; mathematics
 
@@ -111,6 +102,8 @@ The SQL standard additionally provides functions for many useful mathematical fu
     SELECT log10(1e5);
     SELECT cos(0);
 
+You will most likely find yourself using mathematical operators in SQL if you are working with numerical data such as financial data or scientific data.  In `Chapter 4`_ we will discuss the many different data types available for storing numbers - integers, decimal numbers, and floating point values.  Each has applications to various problems.
+
 As a somewhat contrived example applying mathematical operators to an actual table, consider finding out which century a book was published in.  In the English language, the 1st century is traditionally considered to be the years numbered 1 - 100.  Each subsequent 100 years adds 1 to the century, so the 20th century included the years 1901 - 2000.
 
 With a little math, we can extract the century in which each book in our database was published:
@@ -120,6 +113,8 @@ With a little math, we can extract the century in which each book in our databas
     SELECT title, floor((publication_year + 99) / 100) AS century FROM books;
 
 Note the use of parentheses to enforce an order of operations; the addition operation occurs before the division; the result of the division is provided to the **floor()** function.  We have also introduced something new - a renaming operation to give our result column a more informative name. The **AS** keyword lets us rename a column in the output of our query.  We will learn more about using **AS** in `Chapter 4`_.
+
+See Appendix B, `Mathematical operators and functions <../appendix-b-reference/reference.html#mathematical-operators-and-functions>`_ for a complete list of standard operators and functions.
 
 .. index:: operators; string, functions; string, string concatenation, LIKE
 
@@ -135,7 +130,7 @@ SQL provides two very useful string operators, **||** (two vertical bars) and **
 
     SELECT title || ', by ' || author FROM books;
 
-(If you are working in SQL Server, you will need to use **+** instead of **||**; if you are working in MySQL, you will need to use the **concat** function: ``SELECT concat(title, ', by ', author) FROM books;``.)
+(In SQL Server, you will need to use **+** instead of **||**; in MySQL, you will need to use the MySQL **concat** function, e.g.: ``SELECT concat(title, ', by ', author) FROM books;``.)
 
 The **LIKE** operator is a Boolean operator that is used almost exclusively in the **WHERE** clause.  **LIKE** provides very simple pattern matching capabilities in SQL.  A *pattern* is just a string that can contain regular text and special *wildcard* characters, which can match one or many unspecified characters.  The two wildcards are **%**, which can match any string of zero or more characters, and **_**, which can match exactly one of any character.  (If you are familiar with standard regular expression syntax, the **%** wildcard corresponds to the regular expression ".*", and the **_** wildcard corresponds to the regular expression ".".)  Normal text matches itself exactly.
 
@@ -174,7 +169,7 @@ The **LIKE** operator can also be combined with two very useful functions, **upp
 
     SELECT * FROM books WHERE lower(title) LIKE '%love%';
 
-In addition to the functions discussed so far, SQL provides functions for various string manipulations tasks, such as substring extraction or replacement, finding the location of a substring, trimming whitespace (or other characters) from the front and/or back of a string, and many more.  There is also a set of functions supporting various operations using regular expressions.  See `Appendix B`_ for more details.
+In addition to the functions discussed so far, SQL provides functions for various string manipulations tasks, such as substring extraction or replacement, finding the location of a substring, trimming whitespace (or other characters) from the front and/or back of a string, and many more.  See Appendix B, `Character string operators and functions <../appendix-b-reference/reference.html#character-string-operators-and-functions>`_ for these.
 
 .. index:: operators; Boolean, AND, OR, NOT
 
@@ -183,7 +178,7 @@ Boolean operators
 
 As discussed in `Chapter 2`_, the **WHERE** clause of a **SELECT** query expects a Boolean expression after the **WHERE** keyword.  Some expressions that are Boolean in SQL include expressions using comparison operators, or an expression using the **LIKE** operator.  Many functions also result in a Boolean value.
 
-SQL provides logical operators that operate on Boolean values.  These operators are **AND**, **OR**, and **NOT**, which perform the logical operations that their names imply.  For example, if we have an expression of the form ``expr1 AND expr2``, the result is ``True`` if and only if both ``expr1`` and ``expr2`` evaluate to ``True``.  Similarly, ``expr1 OR expr2`` evaluates to ``True`` if either ``expr1`` or ``expr2`` are ``True``.  Finally, ``NOT expr`` inverts the truth value:  ``NOT True`` results in ``False``, and ``NOT False`` results in ``True``.
+SQL provides logical operators that operate on Boolean values.  These operators are **AND**, **OR**, and **NOT**, which perform the logical operations that their names imply.  For example, if we have an expression of the form ``expr1 AND expr2``, the result is ``True`` if and only if both ``expr1`` and ``expr2`` evaluate to ``True``.  Similarly, ``expr1 OR expr2`` evaluates to ``True`` if either ``expr1`` or ``expr2`` are ``True``.  Finally, ``NOT`` inverts the truth value:  ``NOT True`` results in ``False``, and ``NOT False`` results in ``True``.
 
 These logical operators allow us to build up complex Boolean expressions from simpler Boolean expressions to express the particular logical conditions we want for our **WHERE** clause.  So, for example, we might be interested in fantasy books published since the year 2000:
 
@@ -253,24 +248,26 @@ Similarly, we might be interested in either science fiction or fantasy books, bu
 
 The first query above returns any science fiction books, and fantasy books published after 2000.  The second returns the desired result: books published after 2000 in either the fantasy or science fiction genres.
 
+For a fuller discussion of Boolean operators, we need to know more about ``NULL`` values, which will be discussed below.  See Appendix B, `Boolean operators <../appendix-b-reference/reference.html#boolean-operators>`_ for a full reference on SQL Boolean operators.
 
 .. index:: operators; date and time, functions; date and time
-
 
 Date and time operators and functions
 -------------------------------------
 
+Date and time data are extremely important in many database applications, such as those supporting governmental or financial institutions.  SQL provides extensive functionality for managing dates and times.  Unfortunately, this is an area where different SQL implementations vary widely in their conformance to the SQL standard. See Appendix B, `Date and time operators and functions <../appendix-b-reference/reference.html#date-and-time-operators-and-functions>`_ for a fuller discussion, and consult your database implementation's documentation to see what capabilities it offers with respect to date and time handling.
+
+One useful SQL function that most databases implement is the **CURRENT_DATE** function (also try **CURRENT_TIME** and **CURRENT_TIMESTAMP**):
+
+.. activecode:: ch3_section3_5
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    SELECT CURRENT_DATE;
+
+We will see in `Chapter 4`_ how this function can be used to automatically record the date in a newly created row.
 
 
-- useful functions and operators
-    - Boolean operators
-    - Math functions and operators
-    - String functions and operators 
-    - Date functions and operators
-    - Miscellaneous
-
-Other operators and functions
------------------------------
     
 NULL
 ::::
@@ -285,10 +282,6 @@ NULL
 Miscellanous topics
 :::::::::::::::::::
 
-- DISTINCT
-
-
-
 - basic expressions
     - use a few basic operators for example
     - using expressions in SELECT
@@ -297,9 +290,6 @@ Miscellanous topics
     - literal expressions (strings, numbers, etc.) - reference data types in chapter 4
     - allude to more complex - e.g., table value, tuple values, etc.
 
-A look ahead 
-::::::::::::
-
-Topics still to cover relating to SELECT: joins, subqueries, grouping & aggregation, set operations, and more
-
-For some of these, need a table showing database implementation?  Or just SQL standard... maybe move table to appendix...
+    
+Self-check exercises
+::::::::::::::::::::

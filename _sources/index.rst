@@ -15,7 +15,7 @@ Table of Contents
    :maxdepth: 1
 
    00-preface/preface
-
+   
 .. toctree::
    :numbered:
    :maxdepth: 3
@@ -23,7 +23,14 @@ Table of Contents
    01-introduction/introduction
    02-data-retrieval/data-retrieval
    03-expressions/expressions
-
+   04-joins/joins
+   05-table-creation/table-creation
+   06-data-modification/data-modification
+   07-subqueries/subqueries
+   08-grouping-and-aggregation/grouping-and-aggregation
+   09-set-operations/set-operations
+   10-miscellaneous-sql/miscellaneous-sql
+   
 .. toctree::
    :maxdepth: 1
 

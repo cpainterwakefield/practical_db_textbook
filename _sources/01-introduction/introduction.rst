@@ -63,9 +63,9 @@ However, the word database is frequently used as shorthand to mean both a databa
 Properties of modern databases
 ::::::::::::::::::::::::::::::
 
-abstraction - including query languages
-multiuser, network
-define RDBMS == SQL database
+- abstraction - including query languages
+- multiuser, network
+- define RDBMS == SQL database
 
 need to check sources on this!!!
 

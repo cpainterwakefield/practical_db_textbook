@@ -7,7 +7,7 @@ Commission. (2016). *Information technology — Database languages — SQL — P
 
 SQLite Documentation. Retrieved from https://www.sqlite.org/docs.html.
 
-PostgreSQL 12.3 Documentation. Retrieved from https://www.postgresql.org/docs/12/index.html.
+PostgreSQL 12 Documentation. Retrieved from https://www.postgresql.org/docs/12/index.html.
 
 MySQL 8.0 Reference Manual. Retrieved from https://dev.mysql.com/doc/refman/8.0/en/.
 
