@@ -5,7 +5,8 @@ SQL Expressions
 .. _`Chapter 2`: ../02-data-retrieval/data-retrieval.html
 .. _`Chapter 4`: ../04-joins/joins.html
 .. _`Chapter 5`: ../05-table-creation/table-creation.html
-.. _`Appendix B`: ../appendix-b-reference/reference.html
+.. _`Chapter 8`: ../08-grouping-and-aggregation/grouping-and-aggregation.html
+.. _`Appendix B`: ../../appendix-b-reference/reference.html
 
 .. index:: expression
 
@@ -76,7 +77,7 @@ We've already seen the equality operator (**=**) used to test if some column is 
 
 Though non-standard, most databases also recognize **!=** as an inequality operator.
 
-We can also test to see if a value is less than (**\<**), greater than (**\>**), less than or equal to (**\<=**), or greater than or equal to (**\>=**) some other value.  There is also a ternary operator, **BETWEEN**, that tests if a value is between two other values (see Appendix B, `Comparison operators <../appendix-b-reference/reference.html#comparison-operators>`_ for details).
+We can also test to see if a value is less than (**\<**), greater than (**\>**), less than or equal to (**\<=**), or greater than or equal to (**\>=**) some other value.  There is also a ternary operator, **BETWEEN**, that tests if a value is between two other values (see Appendix B, `Comparison operators <../../appendix-b-reference/reference.html#comparison-operators>`_ for details).
 
 .. index:: operators; mathematics, functions; mathematics
 
@@ -114,7 +115,7 @@ With a little math, we can extract the century in which each book in our databas
 
 Note the use of parentheses to enforce an order of operations; the addition operation occurs before the division; the result of the division is provided to the **floor()** function.  We have also introduced something new - a renaming operation to give our result column a more informative name. The **AS** keyword lets us rename a column in the output of our query.  We will learn more about using **AS** in `Chapter 4`_.
 
-See Appendix B, `Mathematical operators and functions <../appendix-b-reference/reference.html#mathematical-operators-and-functions>`_ for a complete list of standard operators and functions.
+See Appendix B, `Mathematical operators and functions <../../appendix-b-reference/reference.html#mathematical-operators-and-functions>`_ for a complete list of standard operators and functions.
 
 .. index:: operators; string, functions; string, string concatenation, LIKE
 
@@ -169,7 +170,7 @@ The **LIKE** operator can also be combined with two very useful functions, **upp
 
     SELECT * FROM books WHERE lower(title) LIKE '%love%';
 
-In addition to the functions discussed so far, SQL provides functions for various string manipulations tasks, such as substring extraction or replacement, finding the location of a substring, trimming whitespace (or other characters) from the front and/or back of a string, and many more.  See Appendix B, `Character string operators and functions <../appendix-b-reference/reference.html#character-string-operators-and-functions>`_ for these.
+In addition to the functions discussed so far, SQL provides functions for various string manipulations tasks, such as substring extraction or replacement, finding the location of a substring, trimming whitespace (or other characters) from the front and/or back of a string, and many more.  See Appendix B, `Character string operators and functions <../../appendix-b-reference/reference.html#character-string-operators-and-functions>`_ for these.
 
 .. index:: operators; Boolean, AND, OR, NOT
 
@@ -235,27 +236,20 @@ Similarly, we might be interested in either science fiction or fantasy books, bu
 
     SELECT *
     FROM books
-    WHERE
-        genre = 'science fiction'
-        OR genre = 'fantasy'
-        AND publication_year > 2000;
-
-    SELECT *
-    FROM books
     WHERE 
         (genre = 'science fiction' OR genre = 'fantasy')
         AND publication_year > 2000;
 
 The first query above returns any science fiction books, and fantasy books published after 2000.  The second returns the desired result: books published after 2000 in either the fantasy or science fiction genres.
 
-For a fuller discussion of Boolean operators, we need to know more about ``NULL`` values, which will be discussed below.  See Appendix B, `Boolean operators <../appendix-b-reference/reference.html#boolean-operators>`_ for a full reference on SQL Boolean operators.
+For a fuller discussion of Boolean operators, we need to know more about ``NULL`` values, which will be discussed below.  See Appendix B, `Boolean operators <../../appendix-b-reference/reference.html#boolean-operators>`_ for complete documentation on the SQL Boolean operators.
 
 .. index:: operators; date and time, functions; date and time
 
 Date and time operators and functions
 -------------------------------------
 
-Date and time data are extremely important in many database applications, such as those supporting governmental or financial institutions.  SQL provides extensive functionality for managing dates and times.  Unfortunately, this is an area where different SQL implementations vary widely in their conformance to the SQL standard. See Appendix B, `Date and time operators and functions <../appendix-b-reference/reference.html#date-and-time-operators-and-functions>`_ for a fuller discussion, and consult your database implementation's documentation to see what capabilities it offers with respect to date and time handling.
+Date and time data are extremely important in many database applications, such as those supporting governmental or financial institutions.  SQL provides extensive functionality for managing dates and times.  Unfortunately, this is an area where different SQL implementations vary widely in their conformance to the SQL standard. See Appendix B, `Date and time operators and functions <../../appendix-b-reference/reference.html#date-and-time-operators-and-functions>`_ for a fuller discussion, and consult your database implementation's documentation to see what capabilities it offers with respect to date and time handling.
 
 One useful SQL function that most databases implement is the **CURRENT_DATE** function (also try **CURRENT_TIME** and **CURRENT_TIMESTAMP**):
 
@@ -265,17 +259,67 @@ One useful SQL function that most databases implement is the **CURRENT_DATE** fu
 
     SELECT CURRENT_DATE;
 
-We will see in `Chapter 4`_ how this function can be used to automatically record the date in a newly created row.
+We will see in `Chapter 5`_ how this function can be used to automatically record the date in a newly created row.
 
 
     
 NULL
 ::::
 
+In many database applications, it is sometimes necessary to provide no information on some aspect of piece of data.  For example, in querying our **authors** table, we can see that some entries in the **death** column are blank.  This probably means that the author for that row had not died at the time the data was entered, and thus the column was simply not applicable for that author; there is no death date for the author.  In contrast, some **birth** dates are blank; in this case, the column certainly applies to the author - they were clearly born at some point!  However, that information was unknown to the person entering the data into the table, so nothing was entered.
 
-- NULL
-    - meaning of
-    - behavior in expressions
+These notions, of data that are *not applicable* or *unknown* are captured with a special value in SQL:  ``NULL`` [#]_.  ``NULL`` values represent the *absence of information*.  In the **authors** table, the blanks in our result do not indicate that empty strings are in the database.  Instead, ``NULL`` values stand in for the missing information.  Unfortunately, ``NULL`` does not tell us the *reason* the data is missing - whether it is not applicable or simply unknown.  If this distinction is important for your database, you will need to use extra columns to indicate the meaning of the ``NULL``, or use some value other than ``NULL``.
+
+Because ``NULL`` is truly an absence of information, ``NULL`` values used in expressions usually result in ``NULL`` when the expression is evaluated.  For example, what is the result of ``2 + NULL``?  We simply cannot know - the ``NULL`` isn't telling us anything, so the result is unknown, or ``NULL``.
+
+A very important consequence of this behavior is that ``NULL`` values cannot be usefully compared with anything, even other ``NULL`` values!  That is, an expression like ``x = NULL`` is never ``True`` even if *x* itself contains ``NULL``.  This might seem counterintuitive, but if you think of the expression ``NULL = NULL`` as asking the question, "Is this unknown thing the same as this other unknown thing?", you can see that the answer should be "unknown", or ``NULL``.
+
+To find out if a value is ``NULL`` or not ``NULL`` requires special operators: **IS NULL** and **IS NOT NULL**.  For example, if we want to discover authors for whom we have no death date, we would do the query:
+
+.. activecode:: ch3_section4
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    SELECT * FROM authors WHERE death IS NULL;
+
+You can discover authors for whom we do have death dates by replacing **IS NULL** with **IS NOT NULL** in the above query.
+
+What happens if we instead do
+
+::
+
+    SELECT * FROM authors WHERE death = NULL;
+
+?
+
+In this case, the expression ``death = NULL`` will evaluate to ``NULL`` for every row in the table.  The **WHERE** clause will filter these out, because it only accepts expressions that evaluate to ``True``, and ``NULL`` is not the same as ``True``.
+
+``NULL`` values can sometimes lead us astray.  Consider the question of finding all authors who were alive in the year 2000 or later.  It might be tempting to write a query such as
+
+::
+
+    SELECT * FROM authors WHERE death >= '2000-01-01';
+
+This is a perfectly valid query - dates in this standard format can be compared in this fashion in our database.  However, if you do the query, you'll see that all of our living authors are not in the result.  This happened, again, because the **death** column in those rows contained ``NULL`` values; comparing these to ``'2000-01-01'`` also yielded ``NULL``, and the **WHERE** clause therefore filtered them out.
+
+In this case, we need to use more logic, and query the database thus:
+
+::
+
+    SELECT * FROM authors
+    WHERE death >= '2000-01-01'
+    OR death IS NULL;
+
+This works correctly, but you might be wondering why.  We said that ``NULL`` used in expressions usually results in ``NULL``; here, we have a compound Boolean expression using the operator **OR**.  So shouldn't we again lose all living authors?  Well, no: Boolean operators are an exception.  This is because, used in Boolean expressions, ``NULL`` means that we simply cannot know if the value is ``True`` or ``False``; the value is unknown.  However, we can still evaluate an expression like ``True OR NULL`` to be ``True``, because ``True OR True`` is ``True``, and so is ``True OR False`` in Boolean logic.  Either way, we get ``True``, so not knowing which it might be doesn't matter.
+
+On the other hand, ``False OR NULL`` will gives us ``NULL``.  In this case, whether the ``NULL`` is standing in for ``True`` or ``False`` actually matters, because each gives a different outcome. Since we do not know the outcome, the result is ``NULL``.
+
+Because Boolean expressions can result in ``True``, ``False``, **or** ``NULL``, we say that SQL has a *three-valued logic* (not truly Boolean logic).  Appendix B, `Boolean operators <../../appendix-b-reference/reference.html#boolean-operators>`_ provides truth tables for this three-valued logic, but as shown above, you can usually work out the answer by simply thinking of ``NULL`` as meaning "unknown".
+
+
+Conditional expressions
+:::::::::::::::::::::::
+
 
 
 
@@ -293,3 +337,6 @@ Miscellanous topics
     
 Self-check exercises
 ::::::::::::::::::::
+
+
+.. [#] Database theorists often refer to ``NULL`` as a *state* rather than a *value*.  If ``NULL`` were truly a value, then it should be comparable to itself and other values.  So the preferred language is that a column is in a ``NULL`` state, rather than that it contains a ``NULL`` value.  However, this distinction breaks down in other SQL settings, such as grouping and aggregation (`Chapter 8`_).  Because of this and other concerns, the inclusion of ``NULL`` in SQL is somewhat controversial, but so far it seems preferable to proposed alternatives for dealing with missing information.

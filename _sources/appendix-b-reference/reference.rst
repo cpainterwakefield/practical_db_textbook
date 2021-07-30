@@ -1,8 +1,8 @@
-====================
-SQL Reference Tables
-====================
+=============
+SQL Reference
+=============
 
-This appendix contains tables providing documentation on various aspects of the SQL standard (2016).  This is not an exhaustive guide to the standard.  Where possible, variations from the standard by various database implementations (SQLite, PostgreSQL, MySQL, Oracle, Microsoft SQL Server) are shown.  Note that documentation of this sort is a moving target, so the information below may be out-of-date when you read it.  Consult your database vendor's documentation for current information.
+This appendix contains documentation on various aspects of the SQL standard (2016).  This is not an exhaustive guide to the standard.  Where possible, variations from the standard by various database implementations (SQLite, PostgreSQL, MySQL, Oracle, Microsoft SQL Server) are shown.  Note that documentation of this sort is a moving target, so the information below may be out-of-date when you read it.  Consult your database vendor's documentation for current information.
 
 In the documentation below, options may be indicated using square brackets.  For example, usage of the **SUBSTRING** function is documented as
 
@@ -164,7 +164,7 @@ The SQL standard defines some less frequently used unary operators on Boolean va
 
 SQL Server and Oracle do not implement **IS [NOT] TRUE**, **IS [NOT] FALSE**, and **IS [NOT] UNKNOWN**.  SQLite does not implement **IS [NOT] UNKNOWN**.
 
-Some database implementations provide additional non-standard operators, such as **XOR**, or **&** as an alternative to **AND**, etc.
+Some database implementations provide additional non-standard operators, such as **XOR**, **&** as an alternative to **AND**, etc.
 
 
 Date and time operators and functions
@@ -172,7 +172,7 @@ Date and time operators and functions
 
 The SQL standard defines several basic operations relating **DATE**, **TIME** (with and without timezone), **TIMESTAMP** (with and without timezone), and **INTERVAL** data types.  (For a description of these data types, consult the section on `Data types`_ above.)
 
-Comparison of like types is accomplished using the `Comparison operators`_ previously documented.  For example, **DATE** values can be compared with other **DATE** values, but not with **TIME**, **TIMESTAMP**, or **INTERVAL** values. (Actual behavior varies widely among the different database implementations - some do allow comparisons between types not allowed in the SQL standard.  However, it is generally inadvisable to compare different types, unless you know exactly how the comparison is being made!)
+Comparison of like types is accomplished using the `Comparison operators`_ previously documented.  For example, **DATE** values can be compared with other **DATE** values, but not with **TIME**, **TIMESTAMP**, or **INTERVAL** values. (Behavior varies widely among the different database implementations - some do allow comparisons between types not allowed in the SQL standard.  However, it is generally inadvisable to compare different types, unless you know exactly how the comparison is being made!)
 
 In addition, the mathematical operators *+*, *-*, *\**, and */* may be used as follows:
 
@@ -192,27 +192,35 @@ So, for example, a subtraction of one **TIMESTAMP** from another yields an **INT
 Other operators and functions involving dates and times:
 
 ===================== ============================================ ======================================  
-operator or function  meaning                                      usage
+operator or function  meaning                                      usage                                  
 ===================== ============================================ ======================================  
 CURRENT_DATE          evaluates to the current date                CURRENT_DATE
 CURRENT_TIME          evaluates to the current time                CURRENT_TIME
 CURRENT_TIMESTAMP     evaluates to the current date and time       CURRENT_TIMESTAMP
-OVERLAPS              test if one span of time overlaps another    *period1* OVERLAPS *period2*, where each *period* can be (*start date/time*, *end date/time*) or (*start date/time*, *interval*)
 EXTRACT               get a date or time field from a date or time EXTRACT(*field* FROM *date/time/interval*), where *field* is e.g., 'YEAR', 'HOUR', etc.
+OVERLAPS              test if one span of time overlaps another    *period1* OVERLAPS *period2*, where each *period* can be (*start date/time*, *end date/time*) or (*start date/time*, *interval*)
 ===================== ============================================ ======================================  
 
 Examples:
 
-``(DATE '2002-07-19', DATE '2003-01-31') OVERLAPS (DATE '2002-12-31', DATE '2005-05-05')`` results in a ``True``.
-
 ``EXTRACT('HOUR' FROM TIME '10:03:21')`` results in the integer ``10``.
 
-In actual practice, the databases considered for this book vary widely in their implementation of the SQL standard in regards to date and time types and operations on those types.  In most implementations, similar types can be compared, date and time types can be subtracted to yield intervals, and intervals can be added or subtracted to date and time types to yield a modified date or time.  Most databases implement **CURRENT_DATE**, **CURRENT_TIME**, and **CURRENT_TIMESTAMP**, or something similar.  Most implementations provide some function or functions replicating some of the functionality of **EXTRACT**.
+``(DATE '2002-07-19', DATE '2003-01-31') OVERLAPS (DATE '2002-12-31', DATE '2005-05-05')`` results in a ``True``.
+
+In actual practice, the databases considered for this book vary widely in their implementation of the SQL standard in regards to date and time types and operations on those types.  The variations are so great, we have not attempted to list departures from the standard in the above tables.  In most implementations, similar types can be compared, date and time types can be subtracted to yield intervals, and intervals can be added or subtracted to date and time types to yield a modified date or time.  Most databases implement **CURRENT_DATE**, **CURRENT_TIME**, and **CURRENT_TIMESTAMP**, or something similar.  Most implementations provide some function or functions replicating some of the functionality of **EXTRACT**.
 
 
-Miscellaneous functions
------------------------
+Miscellaneous operators and functions
+-------------------------------------
+
+NULLIF
+
+COALESCE
+
+CASE
+
+CAST
 
 WIDTH_BUCKET
 
-CAST
+

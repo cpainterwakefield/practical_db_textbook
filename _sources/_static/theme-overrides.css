@@ -3,97 +3,97 @@
 @import url('https://fonts.googleapis.com/css?family=Sora:wght@600');
 
 body {
-    font-family: 'Noto Serif', serif;
-    font-size: 1.66rem;
-    font-weight: 400;
-    line-height: 1.5;
+    font-family: 'Noto Serif', serif !important;
+    font-size: 1.66rem !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
 }
 
 h1 {
-    font-family: 'Sora', sans-serif;
-    font-size: 5rem;
-    font-weight:  600;
-    color: #21314D;
-    border-top: solid 1px #92A2BD;
-    border-bottom: solid 1px #92A2BD;
-    padding: 0.1rem;
-    margin-top: 72pt;
-    margin-bottom: 36pt;
-    line-height: 2;
+    font-family: 'Sora', sans-serif !important;
+    font-size: 5rem !important;
+    font-weight:  600 !important;
+    color: #21314D !important;
+    border-top: solid 1px #92A2BD !important;
+    border-bottom: solid 1px #92A2BD !important;
+    padding: 0.1rem !important;
+    margin-top: 72pt !important;
+    margin-bottom: 36pt !important;
+    line-height: 2 !important;
 }
 
 h2 {
-    font-family: 'Noto Sans', sans-serif;
-    font-size: 3rem;
-    font-weight:  700;
-    color: #21314D;
-    margin-top: 24pt;
+    font-family: 'Noto Sans', sans-serif !important;
+    font-size: 3rem !important;
+    font-weight:  700 !important;
+    color: #21314D !important;
+    margin-top: 24pt !important;
 }
 
 h3 {
-    font-family: 'Noto Sans', sans-serif;
-    font-size: 2rem;
-    font-weight:  700;
-    color: #21314D;
+    font-family: 'Noto Sans', sans-serif !important;
+    font-size: 2rem !important;
+    font-weight:  700 !important;
+    color: #21314D !important;
 }
 
 h4 {
-    font-size: 2rem;
-    font-style: italic;
+    font-size: 2rem !important;
+    font-style: italic !important;
 }
 
 pre {
-    font-family: monospace;
-    font-size: 1.66rem;
-    line-height: 1.5;
+    font-family: monospace !important;
+    font-size: 1.66rem !important;
+    line-height: 1.5 !important;
 }
 
 code {
-    font-family: monospace;
-    color: #a11;
-    background-color: white;
-    font-size: 100%;
-    padding: 0px;
+    font-family: monospace !important;
+    color: #a11 !important;
+    background-color: white !important;
+    font-size: 100% !important;
+    padding: 0px !important;
 }
 
 dd {
-    margin-left: 3rem;
+    margin-left: 3rem !important;
 }
 
 table.htCore {
-    font-family: monospace;
+    font-family: monospace !important;
 }
 
 table:not(.htCore) td {
-    text-align: left;
+    text-align: left !important;
 }
 
 a.footnote-reference {
-    font-size: 80%;
-    vertical-align: text-top;
+    font-size: 80% !important;
+    vertical-align: text-top !important;
 }
 
 /* Runestone elements and page layout */
 
 .container .section>*:not(.section):not(.ac_section) {
-    max-width: 600pt;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 600pt !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
 #main-content>* {
-    max-width: 600pt;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 600pt !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
 #main-content {
-    padding-bottom: 24pt;
+    padding-bottom: 24pt !important;
 }
 
 #scprogresscontainer {
-    margin-top: 40px;
-    margin-bottom: 80px;
+    margin-top: 40px !important;
+    margin-bottom: 80px !important;
 }
 
 .CodeMirror {
@@ -112,28 +112,28 @@ a.footnote-reference {
 }
 
 .ac_section.alert-warning {
-    background-color: #CED5DD;
-    border-color: #FFF;
+    background-color: #CED5DD !important;
+    border-color: #FFF !important;
 }
 
 .ac_section p.runestone_caption {
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
+    margin-top: 1.5rem !important;
+    margin-bottom: 1rem !important;
 }
 
 ::-webkit-scrollbar {
-    background-color: #B2B4B3;
-    border-radius: 4px;
-    width: 14px;
+    background-color: #B2B4B3 !important;
+    border-radius: 4px !important;
+    width: 14px !important;
 }
 
 /* 
     some overrides to change Pygments highlighting to follow CodeMirror theming,
     at least for SQL.  Nasty kludge.
 */
-.highlight .c1 { color: #a50; font-style: normal } /* Comment.Single */
-.highlight .cm { color: #a50; font-style: normal } /* Comment.Multiline */
-.highlight .k { color: #708; font-weight: normal } /* Keyword */
-.highlight .o { color: #000 } /* Operator */
-.highlight .m { color: #164 } /* Literal.Number */
-.highlight .s1 { color: #a11 } /* Literal.String.Single */
+.highlight .c1 { color: #a50 !important; font-style: normal !important } /* Comment.Single */
+.highlight .cm { color: #a50 !important; font-style: normal !important } /* Comment.Multiline */
+.highlight .k { color: #708 !important; font-weight: normal !important } /* Keyword */
+.highlight .o { color: #000 !important } /* Operator */
+.highlight .m { color: #164 !important } /* Literal.Number */
+.highlight .s1 { color: #a11 !important } /* Literal.String.Single */

@@ -18,19 +18,11 @@ Table of Contents
    
 .. toctree::
    :numbered:
-   :maxdepth: 3
+   :maxdepth: 2
 
-   01-introduction/introduction
-   02-data-retrieval/data-retrieval
-   03-expressions/expressions
-   04-joins/joins
-   05-table-creation/table-creation
-   06-data-modification/data-modification
-   07-subqueries/subqueries
-   08-grouping-and-aggregation/grouping-and-aggregation
-   09-set-operations/set-operations
-   10-miscellaneous-sql/miscellaneous-sql
-   
+   PART1_SQL/index
+   PART2_DATA_MODELING/index
+
 .. toctree::
    :maxdepth: 1
 
