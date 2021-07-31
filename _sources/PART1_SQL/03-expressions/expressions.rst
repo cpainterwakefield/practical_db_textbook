@@ -10,7 +10,7 @@ SQL Expressions
 
 .. index:: expression
 
-An *expression* in SQL is anything that can be *evaluated* - anything that results in a value.  Some examples include literal values, operator expressions, and function call expressions.  Expressions are used in most clauses of a SQL query; for example, in the **SELECT** clause, expressions result in the values we see returned from the query, while in the **WHERE** clause, expressions determine whether or not a row is returned from the query.
+An *expression* in SQL is anything that can be *evaluated* - anything that results in a value.  Some examples include literal values, operator expressions, and function call expressions.  Expressions are used in most clauses of a SQL query; for example, in the **SELECT** clause, expressions result in the values we see returned from the query, while in the **WHERE** clause, expressions determine whether or not a row is returned from the query.  You can also **ORDER BY** expressions, and later we'll see other uses for expressions.  This chapter will explore some of the most common expression types; additional expressions will be introduced at the appropriate time.
 
 .. index:: column expression
 
@@ -23,7 +23,7 @@ The use of a column name in a SQL statement is a special expression that evaluat
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
-    SELECT title FROM books;  
+    SELECT * FROM books WHERE author = 'Voltaire';  
 
 the query execution examines each row of the the table **books** in turn to evaluate the expression ``author = 'Voltaire'``.  This expression compares the value of the **author** column to the literal value ``'Voltaire'`` using the **=** operator.  If the two are the same, the overall expression evaluates to ``True``, and the row is included in the output; otherwise, the row is excluded.
 
@@ -103,9 +103,9 @@ The SQL standard additionally provides functions for many useful mathematical fu
     SELECT log10(1e5);
     SELECT cos(0);
 
-You will most likely find yourself using mathematical operators in SQL if you are working with numerical data such as financial data or scientific data.  In `Chapter 4`_ we will discuss the many different data types available for storing numbers - integers, decimal numbers, and floating point values.  Each has applications to various problems.
+You will most likely find yourself using mathematical operators in SQL if you are working with numerical data such as financial or scientific data.  In `Chapter 4`_ we will discuss the many different data types available for storing numbers - integers, decimal numbers, and floating point values.  Each has applications to various problems.
 
-As a somewhat contrived example applying mathematical operators to an actual table, consider finding out which century a book was published in.  In the English language, the 1st century is traditionally considered to be the years numbered 1 - 100.  Each subsequent 100 years adds 1 to the century, so the 20th century included the years 1901 - 2000.
+As a somewhat contrived example applying mathematical operators to an actual table, consider the problem of finding out which century a book was published in.  In the English language, the 1st century is traditionally considered to be the years numbered 1 - 100.  Each subsequent 100 years adds 1 to the century, so the 20th century included the years 1901 - 2000.
 
 With a little math, we can extract the century in which each book in our database was published:
 
@@ -123,7 +123,7 @@ See Appendix B, `Mathematical operators and functions <../../appendix-b-referenc
 Character string operators and functions
 ----------------------------------------
 
-SQL provides two very useful string operators, **||** (two vertical bars) and **LIKE**. The operator **||** is used for string concatenation, which has many applications.  For example, if we don't like the columnar output from our **books** table, we could simply concatenate the columns together (with appropriate spacing or other separators):
+SQL provides two very useful string operators, **||** (two vertical bars) and **LIKE**. The operator **||** is used for string concatenation, which has many applications.  For example, if we don't like the columnar output from our **books** table, we could concatenate the columns together (with appropriate spacing or other separators):
 
 .. activecode:: ch3_section3_3
     :language: sql
@@ -262,6 +262,7 @@ One useful SQL function that most databases implement is the **CURRENT_DATE** fu
 We will see in `Chapter 5`_ how this function can be used to automatically record the date in a newly created row.
 
 
+.. index:: NULL, three value logic
     
 NULL
 ::::
@@ -298,7 +299,9 @@ In this case, the expression ``death = NULL`` will evaluate to ``NULL`` for ever
 
 ::
 
-    SELECT * FROM authors WHERE death >= '2000-01-01';
+    SELECT * FROM authors 
+    WHERE birth <= '2000-12-31' 
+    AND death >= '2000-01-01';
 
 This is a perfectly valid query - dates in this standard format can be compared in this fashion in our database.  However, if you do the query, you'll see that all of our living authors are not in the result.  This happened, again, because the **death** column in those rows contained ``NULL`` values; comparing these to ``'2000-01-01'`` also yielded ``NULL``, and the **WHERE** clause therefore filtered them out.
 
@@ -307,36 +310,238 @@ In this case, we need to use more logic, and query the database thus:
 ::
 
     SELECT * FROM authors
-    WHERE death >= '2000-01-01'
-    OR death IS NULL;
+    WHERE birth <= '2000-12-31' AND 
+        (death >= '2000-01-01' OR death IS NULL);
 
-This works correctly, but you might be wondering why.  We said that ``NULL`` used in expressions usually results in ``NULL``; here, we have a compound Boolean expression using the operator **OR**.  So shouldn't we again lose all living authors?  Well, no: Boolean operators are an exception.  This is because, used in Boolean expressions, ``NULL`` means that we simply cannot know if the value is ``True`` or ``False``; the value is unknown.  However, we can still evaluate an expression like ``True OR NULL`` to be ``True``, because ``True OR True`` is ``True``, and so is ``True OR False`` in Boolean logic.  Either way, we get ``True``, so not knowing which it might be doesn't matter.
+This works correctly, but you might be wondering why.  We said that ``NULL`` used in expressions usually results in ``NULL``; here, we have a compound Boolean expression using the operators **AND** and **OR**.  So shouldn't we again lose all living authors?  Well, no: Boolean operators are an exception.  This is because, used in Boolean expressions, ``NULL`` means that we simply cannot know if the value is ``True`` or ``False``; the value is unknown.  However, we can still evaluate an expression like ``True OR NULL`` to be ``True``, because ``True OR True`` is ``True``, and so is ``True OR False`` in Boolean logic.  Either way, we get ``True``, so not knowing which it might be doesn't matter.  So the expression in the parentheses is ``True`` if either one of the two conditions within it is true.
 
 On the other hand, ``False OR NULL`` will gives us ``NULL``.  In this case, whether the ``NULL`` is standing in for ``True`` or ``False`` actually matters, because each gives a different outcome. Since we do not know the outcome, the result is ``NULL``.
 
-Because Boolean expressions can result in ``True``, ``False``, **or** ``NULL``, we say that SQL has a *three-valued logic* (not truly Boolean logic).  Appendix B, `Boolean operators <../../appendix-b-reference/reference.html#boolean-operators>`_ provides truth tables for this three-valued logic, but as shown above, you can usually work out the answer by simply thinking of ``NULL`` as meaning "unknown".
+Because Boolean expressions can result in ``True``, ``False``, or ``NULL``, we say that SQL has a *three-valued logic* (not truly Boolean logic).  Appendix B, `Boolean operators <../../appendix-b-reference/reference.html#boolean-operators>`_ provides truth tables for this three-valued logic, but as shown above, you can usually work out the answer by simply thinking of ``NULL`` as meaning "unknown".
 
+
+.. index:: conditional expressions
 
 Conditional expressions
 :::::::::::::::::::::::
 
+SQL provides expressions for doing simple conditional logic.  The basic conditional expression in SQL is the **CASE** expression, which comes in two forms.  In the most general form, **CASE** lets you specify what the expression should evaluate to depending on a list of conditions.  The effect is similar to using if/else or case statements in some programming languages.
+
+The basic form of the **CASE** expression is
+
+::
+
+    CASE WHEN condition1 THEN result1
+         [WHEN condition2 THEN result2]
+         ...
+         [ELSE result]
+    END
+
+The **CASE** keyword comes first, followed by one or more **WHEN** clauses giving a condition and the result if the condition is true.  The first true condition determines the result.  If none of the conditions evaluate to ``True``, then the **ELSE** result is used, if provided, or ``NULL`` if there is no **ELSE** clause.  The expression is finished with the **END** keyword.
+
+For example, we could categorize our books as either fiction or non-fiction using **CASE**:
+
+.. activecode:: ch3_section5
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    SELECT 
+        author, title,
+        CASE WHEN genre = 'autobiography' THEN 'non-fiction'
+             WHEN genre = 'history' THEN 'non-fiction'
+             WHEN genre = 'philosophy' THEN 'non-fiction'
+             ELSE 'fiction'
+        END
+        AS category
+    FROM books;
+
+Here we have included tests for some genres not present in our current dataset.  A bookstore application might have several categories, each encompassing multiple genres.  Using a **CASE** expression would be one way to output books with their categories, although it depends on knowledge of all the possible genres in our database.  A more data-driven way would be to look up categories in another database table using a *join*, a technique we will discuss in `Chapter 4`_.
+
+Another form of **CASE** matches an expression to possible values.  The above query can be re-written using this form:
+
+::
+
+    SELECT
+        author, title,
+        CASE genre 
+            WHEN 'autobiography' THEN 'non-fiction'
+            WHEN 'history' THEN 'non-fiction'
+            WHEN 'philosophy' THEN 'non-fiction'
+            ELSE 'fiction'
+        END
+        AS category
+    FROM books;
+
+There are two functions that perform specialized conditional logic.  The **COALESCE** function takes a variable number of arguments.  The result of the function is the first non-``NULL`` expression in the argument list, or ``NULL`` if all arguments are ``NULL``.  This can be useful for replacing ``NULL`` values with more descriptive values:
+
+::
+
+    SELECT name, COALESCE('died: ' || death, 'living')
+    FROM authors;
+
+Finally, the **NULLIF** function takes two arguments; if the arguments are equal, the function results in ``NULL``, otherwise it results in the first argument.  This can be used to replace specific values with ``NULL``.  For example,
+
+::
+
+    SELECT title, author, NULLIF(genre, 'science fiction')
+    FROM books;
 
 
-
-Miscellanous topics
-:::::::::::::::::::
-
-- basic expressions
-    - use a few basic operators for example
-    - using expressions in SELECT
-    - using expressions in WHERE
-    - using expressions elsewhere (e.g., ORDER BY)
-    - literal expressions (strings, numbers, etc.) - reference data types in chapter 4
-    - allude to more complex - e.g., table value, tuple values, etc.
-
-    
+   
 Self-check exercises
 ::::::::::::::::::::
 
+This section contains some exercises using the same books and authors database used in the text above.  If you get stuck, click on the "Show answer" button below the exercise to see a correct answer.
 
-.. [#] Database theorists often refer to ``NULL`` as a *state* rather than a *value*.  If ``NULL`` were truly a value, then it should be comparable to itself and other values.  So the preferred language is that a column is in a ``NULL`` state, rather than that it contains a ``NULL`` value.  However, this distinction breaks down in other SQL settings, such as grouping and aggregation (`Chapter 8`_).  Because of this and other concerns, the inclusion of ``NULL`` in SQL is somewhat controversial, but so far it seems preferable to proposed alternatives for dealing with missing information.
+.. activecode:: ch3_self_test_comparison
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    Write a query to find all books published from the year 1980 through the year 2000, in order by publication year:
+    ~~~~
+
+.. reveal:: ch3_self_test_comparison_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    There are usually many ways to achieve the same goal in SQL.  Here are a couple of solutions:
+
+    ::
+
+        SELECT * FROM books
+        WHERE publication_year >= 1980 AND publication_year <= 2000
+        ORDER BY publication_year;
+
+        SELECT * FROM books
+        WHERE publication_year BETWEEN 1980 AND 2000
+        ORDER BY publication_year;
+
+        
+.. activecode:: ch3_self_test_pattern
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    Write a query to find the authors whose name starts with the letter "M":
+    ~~~~
+
+.. reveal:: ch3_self_test_pattern_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT name FROM authors WHERE name LIKE 'M%';
+
+        
+.. activecode:: ch3_self_test_boolean1
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    Write a query to find books written between 1900 and 1999, excluding poetry:
+    ~~~~
+
+.. reveal:: ch3_self_test_boolean1_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT * FROM books
+        WHERE publication_year >= 1900 AND publication_year <= 1999
+        AND genre <> 'poetry';
+    
+
+.. activecode:: ch3_self_test_boolean2
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    Write a query to find books written before 1900 or after 1999, excluding science fiction:
+    ~~~~
+
+.. reveal:: ch3_self_test_boolean2_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT * FROM books
+        WHERE (publication_year < 1900 OR publication_year > 1999)
+        AND genre <> 'science fiction';
+
+
+.. activecode:: ch3_self_test_boolean3
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    Write a query to find books with a title beginning with the letters "T" or "I", in the fiction, fantasy, or poetry genres.
+    ~~~~
+
+.. reveal:: ch3_self_test_boolean3_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT * FROM books
+        WHERE (title LIKE 'T%' OR title LIKE 'I%')
+        AND (genre = 'fiction' OR genre = 'fantasy' OR genre = 'poetry');
+
+
+.. activecode:: ch3_self_test_null1
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    Write a query to find authors for whom we have no birth date:
+    ~~~~
+
+.. reveal:: ch3_self_test_null1_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT name FROM authors WHERE birth IS NULL;
+
+
+.. activecode:: ch3_self_test_null2
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    Write a query to find deceased authors born after 1915:
+    ~~~~
+
+.. reveal:: ch3_self_test_null2_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT name FROM authors
+        WHERE death IS NOT NULL
+        AND birth > '1915-12-31';
+
+
+.. activecode:: ch3_self_test_conditional
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
+
+    Write a query giving book titles and authors together with the century in which they were written, spelled out like 'Twentieth Century' (you only need to worry about the 18th - 20th centuries):
+    ~~~~
+
+.. reveal:: ch3_self_test_conditional_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT title, author,
+            CASE WHEN publication_year >= 1700 AND publication_year < 1800 THEN 'Eighteenth Century'
+                 WHEN publication_year >= 1800 AND publication_year < 1900 THEN 'Nineteenth Century'
+                 WHEN publication_year >= 1900 AND publication_year < 2000 THEN 'Twentieth Century'
+                 WHEN publication_year >= 2000 AND publication_year < 2100 THEN 'Twenty-first Century'
+            END
+            AS century
+        FROM books;
+
+
+.. [#] Database scholars frequently reject calling ``NULL`` a *value*.  If ``NULL`` were truly a value, then it should be comparable to itself and other values.  One alternative is to say that a column is in a ``NULL`` *state*, rather than that it contains a ``NULL`` value.  However, this distinction breaks down in other SQL settings, such as grouping and aggregation (`Chapter 8`_).  Because of this and other concerns, the inclusion of ``NULL`` in SQL is controversial.
