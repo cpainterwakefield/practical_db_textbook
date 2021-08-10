@@ -1,5 +1,5 @@
 ========================
-Data retrieval using SQL 
+Data retrieval using SQL
 ========================
 
 .. _`Chapter 3`: ../03-expressions/expressions.html
@@ -9,7 +9,7 @@ Data retrieval using SQL
 
 From this chapter, you will learn the basic structure of a relational database and the basics of retrieving data using SQL.
 
-.. index:: 
+.. index::
     single: table; defined
     single: table; schema
     single: column; defined
@@ -46,12 +46,12 @@ In its simplest form, the **SELECT** statement can be used to retrieve all data 
 
 Here, **books** is the name of the table.  The **\*** is a special symbol used with **SELECT** statements to mean "all columns in the table".  The table **books** is one table in the example database for this chapter.  The other tables is named **authors**.  The interactive example below will let you query this database; the query above is already set up for you - click on "Run" to see what it results in.  Then, modify the query to retrieve all rows from **authors** and click "Run" again.  The column names for the table are shown across the top of the result table.
 
-.. activecode:: ch2_example1_select
+.. activecode:: ch2_example_select
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
     SELECT * FROM books;
-    
+
 The statement (or query) above is said to have two *clauses*; a clause is a part of a SQL statement, usually starting with a SQL keyword.  The two clauses in the statement above are the **SELECT** clause, "SELECT \*" and the **FROM** clause, "FROM books".  Most clauses are optional, in the sense that they are not required in every query, although they will be necessary to produce certain desired results.
 
 SQL statement rules and conventions
@@ -68,7 +68,7 @@ One implication of this is that it is entirely permissible and (in many cases pr
 
 Next, SQL keywords are case-insensitive.  That is, we can write:
 
-:: 
+::
 
     select * from books;
     Select * From books;
@@ -86,12 +86,12 @@ Retrieving specific columns
 
 So far, we've only retrieved all columns of a table, which may not be the desired result.  Also, the columns are retrieved in the order in which they are defined in the table specification.  We can specify the columns we wish to retrieve by replacing the **\*** in our **SELECT** clause with a comma-separated list of columns:
 
-::
+.. activecode:: ch2_example_projection
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
 
     SELECT author, title
     FROM books;
-
-(Try this and other example queries using the interactive tool above!)
 
 
 .. index:: WHERE
@@ -99,11 +99,13 @@ So far, we've only retrieved all columns of a table, which may not be the desire
 Filtering rows: the WHERE clause
 --------------------------------
 
-Retrieving all of the data from a table is useful, but often not what we want, especially if the table is very large (and tables can get very, very large!)  To see just a subset of rows, we include a **WHERE** clause in our query.  The **WHERE** clause consists of the keyword **WHERE**, followed by an *expression* that evaluates to true or false (a Boolean expression) [#]_.  The **WHERE** clause goes after the **FROM** clause.  Expressions are discussed more in `Chapter 3`_, but for now, let's see some simple examples (again, you can try these in the interactive tool above):
+Retrieving all of the data from a table is useful, but often not what we want, especially if the table is very large (and tables can get very, very large!)  To see just a subset of rows, we include a **WHERE** clause in our query.  The **WHERE** clause consists of the keyword **WHERE**, followed by an *expression* that evaluates to true or false (a Boolean expression) [#]_.  The **WHERE** clause goes after the **FROM** clause.  Expressions are discussed more in `Chapter 3`_, but for now, let's see some simple examples:
 
-::
+.. activecode:: ch2_example_where
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
 
-    SELECT * FROM books WHERE author = 'Voltaire';
+    SELECT * FROM books WHERE author = 'Isabel Allende';
 
     SELECT author, title, genre
     FROM books
@@ -113,7 +115,7 @@ Retrieving all of the data from a table is useful, but often not what we want, e
 
 Note that character string literals in SQL are enclosed with single quotes - not double quotes.  Double quotes are used in SQL for a different purpose, which we'll see in `Chapter 4`_.
 
-Queries can return zero, one, or many rows.  If no rows match the **WHERE** condition, no rows are returned:
+Queries can return zero, one, or many rows.  If no rows match the **WHERE** condition, no rows are returned (try pasting this in one of the interactive tools above):
 
 ::
 
@@ -131,7 +133,9 @@ SQL provides a mechanism by which we can put rows in order by whatever criteria 
 
 Here are some simple queries to try:
 
-::
+.. activecode:: ch2_example_order_by
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
 
     SELECT * FROM books ORDER BY publication_year;
 
@@ -149,7 +153,7 @@ Ordering is first applied using the first expression after the **ORDER BY**.  If
 It is also possible to reverse the ordering for any or all of the criteria using the **DESC** ("descending") keyword.  (You can also use **ASC** for "ascending", but as that is the default, it is usually omitted.)  If we want to see all books from most recent to least recent, we can do:
 
 ::
-    
+
     SELECT * FROM books ORDER BY publication_year DESC;
 
 .. index:: DISTINCT, uniqueness
@@ -163,7 +167,9 @@ However, queries that **SELECT** a sub-set of the columns of a table can easily 
 
 You could simply do:
 
-::
+.. activecode:: ch2_example_distinct
+    :language: sql
+    :dburl: /_static/simple_books.sqlite3
 
     SELECT genre FROM books;
 
@@ -204,7 +210,7 @@ This section contains some simple exercises using the same books and authors dat
 
     Write a query to find all books in the science fiction genre:
     ~~~~
-    
+
 
 .. reveal:: ch2_self_test_where1_hint
     :showtitle: Show answer
@@ -221,7 +227,7 @@ This section contains some simple exercises using the same books and authors dat
 
     Write a query to find the publication year and author for the book *Bodega Dreams*:
     ~~~~
-    
+
 
 .. reveal:: ch2_self_test_where2_hint
     :showtitle: Show answer
@@ -229,8 +235,8 @@ This section contains some simple exercises using the same books and authors dat
 
     ::
 
-        SELECT publication_year, author 
-        FROM books 
+        SELECT publication_year, author
+        FROM books
         WHERE title = 'Bodega Dreams';
 
 
@@ -238,9 +244,9 @@ This section contains some simple exercises using the same books and authors dat
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
-    Write a query to find all books published prior to 1900;
+    Write a query to find all books published prior to 1950;
     ~~~~
-    
+
 
 .. reveal:: ch2_self_test_where3_hint
     :showtitle: Show answer
@@ -248,7 +254,7 @@ This section contains some simple exercises using the same books and authors dat
 
     ::
 
-        SELECT * FROM books WHERE publication_year < 1900;
+        SELECT * FROM books WHERE publication_year < 1950;
 
 
 .. activecode:: ch2_self_test_order
@@ -257,7 +263,7 @@ This section contains some simple exercises using the same books and authors dat
 
     Write a query to get books in order by title:
     ~~~~
-    
+
 
 .. reveal:: ch2_self_test_order_hint
     :showtitle: Show answer
@@ -274,7 +280,7 @@ This section contains some simple exercises using the same books and authors dat
 
     Write a query to get the authors publishing since 1980, in order by author name:
     ~~~~
-    
+
 
 .. reveal:: ch2_self_test_challenge1_hint
     :showtitle: Show answer
@@ -294,7 +300,7 @@ This section contains some simple exercises using the same books and authors dat
 
     Write a query to get the unique publication years for the books in our database published since 1980, ordered latest to earliest:
     ~~~~
-    
+
 
 .. reveal:: ch2_self_test_challenge2_hint
     :showtitle: Show answer
@@ -302,10 +308,10 @@ This section contains some simple exercises using the same books and authors dat
 
     ::
 
-        SELECT DISTINCT publication_year 
+        SELECT DISTINCT publication_year
         FROM books
         WHERE publication_year > 1979
-        ORDER BY publication_year;
+        ORDER BY publication_year DESC;
 
 
 ----
@@ -315,4 +321,3 @@ This section contains some simple exercises using the same books and authors dat
 .. [#] There is actually a third possible value, ``NULL``, which may occur in expressions used in the **WHERE** clause of a query.  ``NULL`` is a complex topic which will be covered in `Chapter 3`_.  For now, assume a normal Boolean result of true or false.
 
 .. [#] You can change the sort order for strings by applying the **COLLATE** operator. **COLLATE** is out of scope for this textbook, and varies with the dialect of SQL.  Please see the documentation for your particular DBMS.
-

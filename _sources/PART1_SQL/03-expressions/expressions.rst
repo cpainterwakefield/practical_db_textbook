@@ -19,13 +19,13 @@ Column expressions
 
 The use of a column name in a SQL statement is a special expression that evaluates to the value stored in that column for the current row being processed.  So, when we do
 
-.. activecode:: ch3_section1
+.. activecode:: ch3_example_column
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
-    SELECT * FROM books WHERE author = 'Voltaire';  
+    SELECT * FROM books WHERE author = 'J.R.R. Tolkien';
 
-the query execution examines each row of the the table **books** in turn to evaluate the expression ``author = 'Voltaire'``.  This expression compares the value of the **author** column to the literal value ``'Voltaire'`` using the **=** operator.  If the two are the same, the overall expression evaluates to ``True``, and the row is included in the output; otherwise, the row is excluded.
+the query execution examines each row of the the table **books** in turn to evaluate the expression ``author = 'J.R.R. Tolkien'``.  This expression compares the value of the **author** column to the literal value ``'J.R.R. Tolkien'`` using the **=** operator.  If the two are the same, the overall expression evaluates to ``True``, and the row is included in the output; otherwise, the row is excluded.
 
 .. index:: literal; numeric, literal; character string, literal; Boolean
 
@@ -37,11 +37,11 @@ Literals are simple values expressed in a form that the database understands as 
 - Numbers: these are expressed in the usual fashion, for example, ``-1``, ``3.14159``, ``0.0008``; depending on the database, you may also be able to use numeric literals in scientific notation or other formats, for instance, ``6.02e23`` (which stands for :math:`6.02 \times 10^{23}`).
 - Character strings: these are strings of characters enclosed in single quotes, for example, ``'apple'``.  If you need to express a literal character string which contains a single quote, you simply write the single quote twice; this is tricky to read, but produces the desired result.  For example,
 
-.. activecode:: ch3_section2
+.. activecode:: ch3_example_literal
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
-    SELECT author FROM books 
+    SELECT author FROM books
     WHERE title = 'The Handmaid''s Tale';
 
 - Boolean values: ``True`` or ``False``.  Note, however, that not all SQL implementations support Boolean literals.
@@ -69,7 +69,7 @@ Comparison operators
 
 We've already seen the equality operator (**=**) used to test if some column is equal to a literal value in the **WHERE** clause of queries.  We can instead test for inequality using the (**<>**) operator:
 
-.. activecode:: ch3_section3_1
+.. activecode:: ch3_example_comparison
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
@@ -86,7 +86,7 @@ Mathematics
 
 You can expect the basic arithmetic operators to work with any numeric values: addition (**+**), subtraction (**-**), multiplication (**\***), and division (**/**) are standard.  Your database may implement others, but make sure you read the documentation for your database to ensure other operators do what you think they do.  You can actually use your database as a simple calculator!  Try running these:
 
-.. activecode:: ch3_section3_2
+.. activecode:: ch3_example_math
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
@@ -125,7 +125,7 @@ Character string operators and functions
 
 SQL provides two very useful string operators, **||** (two vertical bars) and **LIKE**. The operator **||** is used for string concatenation, which has many applications.  For example, if we don't like the columnar output from our **books** table, we could concatenate the columns together (with appropriate spacing or other separators):
 
-.. activecode:: ch3_section3_3
+.. activecode:: ch3_example_string
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
@@ -153,16 +153,13 @@ We can use the operator more than once:
 
 ::
 
-    SELECT title FROM books WHERE title LIKE '%Love%';
-    SELECT title FROM books WHERE title LIKE '%Invisible%';
-
-For the last example, recall that **%** can match a zero-length string.
+    SELECT title FROM books WHERE title LIKE '%Earth%';
 
 Now, suppose we are interested in authors who use an initial instead of their full first name.  An initial looks like some character followed by a period - both are required.  Here's what the query would look like, using both the **%** and **_** operators:
 
 ::
 
-    SELECT name FROM authors WHERE name LIKE '_. %';
+    SELECT name FROM authors WHERE name LIKE '_.%';
 
 The **LIKE** operator can also be combined with two very useful functions, **upper** and **lower**; these functions put strings in all uppercase or lowercase, respectively.  These functions do not make sense in all language settings, of course.  You can use **upper** or **lower** whenever you want to get back strings in all uppercase or lowercase; you can also use them when pattern matching if you aren't sure of the capitalization of the strings in your database:
 
@@ -183,19 +180,19 @@ SQL provides logical operators that operate on Boolean values.  These operators 
 
 These logical operators allow us to build up complex Boolean expressions from simpler Boolean expressions to express the particular logical conditions we want for our **WHERE** clause.  So, for example, we might be interested in fantasy books published since the year 2000:
 
-.. activecode:: ch3_section3_4
+.. activecode:: ch3_example_boolean
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
-    SELECT * 
-    FROM books 
+    SELECT *
+    FROM books
     WHERE genre = 'fantasy' AND publication_year > 2000;
 
 Or, we might be interested in books in either the fantasy or science fiction genres:
 
 ::
 
-    SELECT * FROM books 
+    SELECT * FROM books
     WHERE genre = 'fantasy' OR genre = 'science fiction';
 
 If we simply hate science fiction, we might do
@@ -209,7 +206,7 @@ which gives the same result as
 ::
 
     SELECT * FROM books WHERE genre <> 'science fiction';
-    
+
 For more complex expressions involving combinations of **AND**, **OR**, and **NOT**, we may need to use parentheses to make our meaning clear.  In SQL, **NOT** is applied before **AND**, and **AND** is applied before **OR**. For example, perhaps we are interested in any books other than fantasy books published after the year 2000.  We might be tempted to write
 
 ::
@@ -236,7 +233,12 @@ Similarly, we might be interested in either science fiction or fantasy books, bu
 
     SELECT *
     FROM books
-    WHERE 
+    WHERE genre = 'science fiction' OR genre = 'fantasy'
+    AND publication_year > 2000;
+
+    SELECT *
+    FROM books
+    WHERE
         (genre = 'science fiction' OR genre = 'fantasy')
         AND publication_year > 2000;
 
@@ -253,7 +255,7 @@ Date and time data are extremely important in many database applications, such a
 
 One useful SQL function that most databases implement is the **CURRENT_DATE** function (also try **CURRENT_TIME** and **CURRENT_TIMESTAMP**):
 
-.. activecode:: ch3_section3_5
+.. activecode:: ch3_example_datetime
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
@@ -263,7 +265,7 @@ We will see in `Chapter 5`_ how this function can be used to automatically recor
 
 
 .. index:: NULL, three value logic
-    
+
 NULL
 ::::
 
@@ -277,7 +279,7 @@ A very important consequence of this behavior is that ``NULL`` values cannot be 
 
 To find out if a value is ``NULL`` or not ``NULL`` requires special operators: **IS NULL** and **IS NOT NULL**.  For example, if we want to discover authors for whom we have no death date, we would do the query:
 
-.. activecode:: ch3_section4
+.. activecode:: ch3_example_null
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
@@ -299,8 +301,8 @@ In this case, the expression ``death = NULL`` will evaluate to ``NULL`` for ever
 
 ::
 
-    SELECT * FROM authors 
-    WHERE birth <= '2000-12-31' 
+    SELECT * FROM authors
+    WHERE birth <= '2000-12-31'
     AND death >= '2000-01-01';
 
 This is a perfectly valid query - dates in this standard format can be compared in this fashion in our database.  However, if you do the query, you'll see that all of our living authors are not in the result.  This happened, again, because the **death** column in those rows contained ``NULL`` values; comparing these to ``'2000-01-01'`` also yielded ``NULL``, and the **WHERE** clause therefore filtered them out.
@@ -310,7 +312,7 @@ In this case, we need to use more logic, and query the database thus:
 ::
 
     SELECT * FROM authors
-    WHERE birth <= '2000-12-31' AND 
+    WHERE birth <= '2000-12-31' AND
         (death >= '2000-01-01' OR death IS NULL);
 
 This works correctly, but you might be wondering why.  We said that ``NULL`` used in expressions usually results in ``NULL``; here, we have a compound Boolean expression using the operators **AND** and **OR**.  So shouldn't we again lose all living authors?  Well, no: Boolean operators are an exception.  This is because, used in Boolean expressions, ``NULL`` means that we simply cannot know if the value is ``True`` or ``False``; the value is unknown.  However, we can still evaluate an expression like ``True OR NULL`` to be ``True``, because ``True OR True`` is ``True``, and so is ``True OR False`` in Boolean logic.  Either way, we get ``True``, so not knowing which it might be doesn't matter.  So the expression in the parentheses is ``True`` if either one of the two conditions within it is true.
@@ -339,23 +341,24 @@ The basic form of the **CASE** expression is
 
 The **CASE** keyword comes first, followed by one or more **WHEN** clauses giving a condition and the result if the condition is true.  The first true condition determines the result.  If none of the conditions evaluate to ``True``, then the **ELSE** result is used, if provided, or ``NULL`` if there is no **ELSE** clause.  The expression is finished with the **END** keyword.
 
-For example, we could categorize our books as either fiction or non-fiction using **CASE**:
+For example, we could put our books into different categories, maybe for different sections in a library, using **CASE**:
 
-.. activecode:: ch3_section5
+.. activecode:: ch3_example_case
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
-    SELECT 
+    SELECT
         author, title,
-        CASE WHEN genre = 'autobiography' THEN 'non-fiction'
+        CASE WHEN genre = 'fantasy' THEN 'speculative fiction'
+             WHEN genre = 'science fiction' THEN 'speculative fiction'
+             WHEN genre = 'poetry' THEN 'poetry'
              WHEN genre = 'history' THEN 'non-fiction'
-             WHEN genre = 'philosophy' THEN 'non-fiction'
-             ELSE 'fiction'
+             ELSE 'general fiction'
         END
         AS category
     FROM books;
 
-Here we have included tests for some genres not present in our current dataset.  A bookstore application might have several categories, each encompassing multiple genres.  Using a **CASE** expression would be one way to output books with their categories, although it depends on knowledge of all the possible genres in our database.  A more data-driven way would be to look up categories in another database table using a *join*, a technique we will discuss in `Chapter 4`_.
+Here we have included tests for some genres not present in our current dataset.  A library application might have many categories, each encompassing multiple genres.  Using a **CASE** expression would be one way to output books with their categories, although it depends on knowledge of all the possible genres in our database.  A more data-driven way would be to look up categories in another database table using a *join*, a technique we will discuss in `Chapter 4`_.
 
 Another form of **CASE** matches an expression to possible values.  The above query can be re-written using this form:
 
@@ -363,11 +366,12 @@ Another form of **CASE** matches an expression to possible values.  The above qu
 
     SELECT
         author, title,
-        CASE genre 
-            WHEN 'autobiography' THEN 'non-fiction'
+        CASE genre
+            WHEN 'fantasy' THEN 'speculative fiction'
+            WHEN 'science fiction' THEN 'speculative fiction'
+            WHEN 'poetry' THEN 'poetry'
             WHEN 'history' THEN 'non-fiction'
-            WHEN 'philosophy' THEN 'non-fiction'
-            ELSE 'fiction'
+            ELSE 'general fiction'
         END
         AS category
     FROM books;
@@ -387,7 +391,7 @@ Finally, the **NULLIF** function takes two arguments; if the arguments are equal
     FROM books;
 
 
-   
+
 Self-check exercises
 ::::::::::::::::::::
 
@@ -416,12 +420,12 @@ This section contains some exercises using the same books and authors database u
         WHERE publication_year BETWEEN 1980 AND 2000
         ORDER BY publication_year;
 
-        
+
 .. activecode:: ch3_self_test_pattern
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
-    Write a query to find the authors whose name starts with the letter "M":
+    Write a query to find the authors whose name starts with the letter "J":
     ~~~~
 
 .. reveal:: ch3_self_test_pattern_hint
@@ -430,14 +434,14 @@ This section contains some exercises using the same books and authors database u
 
     ::
 
-        SELECT name FROM authors WHERE name LIKE 'M%';
+        SELECT name FROM authors WHERE name LIKE 'J%';
 
-        
+
 .. activecode:: ch3_self_test_boolean1
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
-    Write a query to find books written between 1900 and 1999, excluding poetry:
+    Write a query to find books written between 1950 and 1999, excluding poetry:
     ~~~~
 
 .. reveal:: ch3_self_test_boolean1_hint
@@ -447,15 +451,15 @@ This section contains some exercises using the same books and authors database u
     ::
 
         SELECT * FROM books
-        WHERE publication_year >= 1900 AND publication_year <= 1999
+        WHERE publication_year >= 1950 AND publication_year <= 1999
         AND genre <> 'poetry';
-    
+
 
 .. activecode:: ch3_self_test_boolean2
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
-    Write a query to find books written before 1900 or after 1999, excluding science fiction:
+    Write a query to find books written before 1950 or after 1999, excluding science fiction:
     ~~~~
 
 .. reveal:: ch3_self_test_boolean2_hint
@@ -465,7 +469,7 @@ This section contains some exercises using the same books and authors database u
     ::
 
         SELECT * FROM books
-        WHERE (publication_year < 1900 OR publication_year > 1999)
+        WHERE (publication_year < 1950 OR publication_year > 1999)
         AND genre <> 'science fiction';
 
 
@@ -525,7 +529,7 @@ This section contains some exercises using the same books and authors database u
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
-    Write a query giving book titles and authors together with the century in which they were written, spelled out like 'Twentieth Century' (you only need to worry about the 18th - 20th centuries):
+    Write a query giving book titles and authors together with the century in which they were written, spelled out like 'Twentieth Century' (you only need to worry about the 20th - 21st centuries):
     ~~~~
 
 .. reveal:: ch3_self_test_conditional_hint
@@ -535,9 +539,7 @@ This section contains some exercises using the same books and authors database u
     ::
 
         SELECT title, author,
-            CASE WHEN publication_year >= 1700 AND publication_year < 1800 THEN 'Eighteenth Century'
-                 WHEN publication_year >= 1800 AND publication_year < 1900 THEN 'Nineteenth Century'
-                 WHEN publication_year >= 1900 AND publication_year < 2000 THEN 'Twentieth Century'
+            CASE WHEN publication_year >= 1900 AND publication_year < 2000 THEN 'Twentieth Century'
                  WHEN publication_year >= 2000 AND publication_year < 2100 THEN 'Twenty-first Century'
             END
             AS century
