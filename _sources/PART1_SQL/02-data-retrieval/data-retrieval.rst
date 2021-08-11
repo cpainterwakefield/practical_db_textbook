@@ -80,6 +80,19 @@ To some extent, the names of things (tables, columns, functions, etc.) act as if
 
 Note the conventions used in this textbook may be different from those used by your teacher, at your place of work, or in code found on the internet!
 
+Comments
+--------
+
+SQL provides for two types of comments, which we will occasionally use to annotate queries in this book.  Multi-line comments are any text between `/*` and `*/`.  Single-line comments start with two dashes.  Here is yet another query that is identical to the query above:
+
+::
+
+    SELECT *
+    /* here is a
+      multi-line comment */
+    FROM      -- single-line comment
+      books;
+
 
 Retrieving specific columns
 ---------------------------
