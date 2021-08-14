@@ -1,5 +1,5 @@
 ====================
-Basic Table Creation
+Basic table creation
 ====================
 
 - very brief introduction to table creation
@@ -117,4 +117,3 @@ Below is a list of some other data types you might encounter or wish to use in a
 - SQL also defines types designed to hold binary data.  This can sometimes be useful, although binary data such as images or music files take up a great deal of space; it is often preferable to store them externally, and only store in the database information about how to retrieve the files (e.g., a file path or URL).  The SQL standard includes the types **BINARY**, **BINARY VARYING**, and **BINARY LARGE OBJECT**; most implementations provide something analogous to **BINARY LARGE OBJECT**, usually under a different name.
 - SQL provides for user-defined types; that is, custom data types created by the database user for specific applications.
 - Many RBDMSes support types not defined in the SQL standard, or defined as optional extensions, such as types for storing and working with JSON and XML documents, geometric objects, geographical or spatial coordinates, arrays, and more.
-

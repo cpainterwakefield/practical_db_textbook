@@ -1,5 +1,5 @@
 ===============
-SQL Expressions
+SQL expressions
 ===============
 
 .. _`Chapter 2`: ../02-data-retrieval/data-retrieval.html

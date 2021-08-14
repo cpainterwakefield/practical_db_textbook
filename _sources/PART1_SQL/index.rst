@@ -8,7 +8,7 @@ SQL
     01-introduction/introduction
     02-data-retrieval/data-retrieval
     03-expressions/expressions
-    04-joins/joins
+    04-multiple-tables/multiple-tables
     05-table-creation/table-creation
     06-data-modification/data-modification
     07-subqueries/subqueries
