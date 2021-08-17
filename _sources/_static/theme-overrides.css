@@ -80,6 +80,7 @@ a.footnote-reference {
     margin-left: auto !important;
     margin-right: auto !important;
 }
+    font-size: 1.66rem !important;
 
 #main-content>* {
     max-width: 600pt !important;
@@ -127,7 +128,7 @@ a.footnote-reference {
     width: 14px !important;
 }
 
-/* 
+/*
     some overrides to change Pygments highlighting to follow CodeMirror theming,
     at least for SQL.  Nasty kludge.
 */
@@ -137,3 +138,11 @@ a.footnote-reference {
 .highlight .o { color: #000 !important } /* Operator */
 .highlight .m { color: #164 !important } /* Literal.Number */
 .highlight .s1 { color: #a11 !important } /* Literal.String.Single */
+
+/* custom classes for this textbook */
+.data-dictionary {
+  border-radius: 10px !important;
+  background-color: lightgray !important;
+  padding: 12px !important;
+  margin-bottom: 10px;
+}

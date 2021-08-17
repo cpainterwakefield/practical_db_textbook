@@ -156,6 +156,17 @@ When using table aliasing, you should qualify all of your column names using the
 
 Just remember, aliasing only affects the query in which the renaming occurs; a new query will know nothing about any previous aliasing applied to tables or columns.
 
+As a final note, the **AS** keyword is actually optional in SQL - you can create an alias with this keyword omitted.  Simply put a valid identifier string after the name of a table or after a column expression:
+
+::
+
+  SELECT b.title, b.author, a.birth, a.death
+  FROM books b, authors a
+  WHERE b.author = a.name;
+
+Leaving out a keyword may seem strange, but you are likely to read code at some point using this form of aliasing, so be aware.
+
+
 Names with spaces or mixed-case
 -------------------------------
 
@@ -179,9 +190,10 @@ While data can be related to each other in very complex ways, there are some bas
 
 An example of a one-to-one relationship, sticking with our books theme, might appear in a database for a seller of used books.  In this database, each of the seller's books is recorded in a table named **catalog**.  Each row in **catalog** will record things such as the book's author and title, condition, and current price.  This imagined database also contains a table named **sales**, which records information when a book is sold, such as the date sold, payment type, a receipt number, and a reference back to the **catalog** to allow us to join the tables together.  (We will shortly discuss what these references should look like.)  Note that every record in the **sales** table corresponds to exactly one record in the **catalog** table; however, any unsold books still in the seller's possession will not have a corresponding **sales** record.
 
-*One-to-many* refers to the case when rows in one table correspond to some number of rows in another table, but rows in the second table correspond to at most one row in the other table.  In some cases, rows in the first table always have at least one corresponding row; other times, rows can have zero or more corresponding rows.  In our earlier books database, we had exactly one **books** record for each **authors** record.  This is not reflective of the real world, in which authors may have written many books!  In the expanded database we will start using shortly, we assume a one-to-many relationship between authors and books - each author has one or more books, but each book has exactly one author.  (Even this is not reflective of the real world - many books exist that were written by two or more authors working together.  However, for simplicity our database only contains single-author books.)  Note that we can also talk of *many-to-one* relationships, which are just the symmetric equivalent of one-to-many; we can say that **authors** is in a one-to-many relationship with **books**, or that **books** is in a many-to-one relationship with **authors**.
+*One-to-many* refers to the case when rows in one table correspond to some number of rows in another table, but rows in the second table correspond to at most one row in the other table.  In some cases, rows in the first table always have at least one corresponding row; other times, rows can have zero or more corresponding rows.  In our earlier books database, we had exactly one **books** record for each **authors** record.  This is not reflective of the real world, in which authors may have written many books.  In the expanded database we will start using shortly, we assume a one-to-many relationship between authors and books - each author has one or more books, but each book has exactly one author.  (Even this is not reflective of the real world - many books exist that were written by two or more authors working together!  However, for simplicity our database only contains single-author books.)  Note that we can also talk of *many-to-one* relationships, which are just the symmetric equivalent of one-to-many; we can say that **authors** is in a one-to-many relationship with **books**, or that **books** is in a many-to-one relationship with **authors**.
 
 *Many-to-many*, you can probably guess, implies that rows in one table may correspond to multiple rows in the other table, and vice versa.  One possible example of this, of course, is the relationship between authors and books in the real world, as mentioned above.  In our expanded database, though, our examples of many-to-many relationships will involve book and author awards.  For example, the Hugo Award is given out each year to a book in the science fiction genre.  In our database, there are many books that have won a Hugo Award; therefore, rows in the **awards** table can relate to multiple rows in the **books** table.  Especially good science fiction books might win both a Hugo Award and a Nebula Award; so rows in the **books** table can correspond to multiple **awards** rows.  As we will see, this relationship type requires additional work to represent efficiently in a relational database; in fact, it will require a third table to keep track of the connections between records in the original two tables.
+
 
 Identity columns
 ::::::::::::::::
@@ -196,11 +208,115 @@ The solution we adopt, and which is widely used in practice, is to create an art
 
 In the expanded books database (to be revealed in the next section, finally), the **authors** table has an **id** column.  Each row in the **authors** table has a unique **id** value.  The **books** table, meanwhile, no longer has a column storing the author's name.  Instead, it has the column **author_id**.  Each **author_id** is equal to some **id** value from the **authors** table.  Thus, to join the two tables we simply use the join condition ``authors.id = books.author_id``.
 
+
 The expanded books database
 :::::::::::::::::::::::::::
 
-- id columns
-- full books database
+We are now ready to describe the database we will be using for the rest of this book.  The new database is still centered around **book** and **authors** tables, modified to use id columns as described above, but also adds several other tables.  All of the tables and their basic relationships to each other are described below, after which we will discuss some basic join queries using the tables.
+
+.. container:: data-dictionary
+
+    Table **authors** records persons who have authored books:
+
+    ========== ================= ===================================
+    column     type              description
+    ========== ================= ===================================
+    id         integer           unique identifier for author
+    name       character string  full name of author
+    birth      date              birth date of author, if known
+    death      date              death date of author, if known
+    ========== ================= ===================================
+
+.. container:: data-dictionary
+
+    Table **books** records works of fiction, non-fiction, poetry, etc. by a single author:
+
+    ================ ================= ===================================
+    column           type              description
+    ================ ================= ===================================
+    id               integer           unique identifier for book
+    author_id        integer           id of book's author from **authors** table
+    title            character string  book title
+    publication_year integer           year book was first published
+    ================ ================= ===================================
+
+
+.. container:: data-dictionary
+
+    Table **editions** records specific publications of a book:
+
+    ================== ================= ===================================
+    column             type              description
+    ================== ================= ===================================
+    id                 integer           unique identifier for edition
+    book_id            integer           id of book (from **books** table) published as edition
+    publication_year   integer           year this edition was published
+    publisher          character string  name of the publisher
+    publisher_location character string  city or other location(s) where the publisher is located
+    title              character string  title this edition was published under
+    pages              integer           number of pages in this edition
+    isbn10             character string  10-digit international standard book number
+    isbn13             character string  13-digit international standard book number
+    ================== ================= ===================================
+
+
+.. container:: data-dictionary
+
+    Table **awards** records various author and/or book awards:
+
+    ================== ================= ===================================
+    column             type              description
+    ================== ================= ===================================
+    id                 integer           unique identifier for award
+    name               character string  name of award
+    sponsor            character string  name of organization giving the award
+    criteria           character string  what the award is given for
+    ================== ================= ===================================
+
+
+.. container:: data-dictionary
+
+    Table **authors_awards** is a *cross-reference* table; each entry in the table records the giving of an award to an author in a particular year:
+
+    ================== ================= ===================================
+    column             type              description
+    ================== ================= ===================================
+    author_id          integer           id of the author receiving the award
+    award_id           integer           id of the award received
+    year               integer           year the award was given
+    ================== ================= ===================================
+
+
+.. container:: data-dictionary
+
+    Table **books_awards** is a *cross-reference* table; each entry in the table records the giving of an award to an author for a specific book in a particular year:
+
+    ================== ================= ===================================
+    column             type              description
+    ================== ================= ===================================
+    book_id            integer           id of the book for which the award was given
+    award_id           integer           id of the award received
+    year               integer           year the award was given
+    ================== ================= ===================================
+
+One-to-many relationships in the expanded database
+--------------------------------------------------
+
+.. activecode:: ch4_example_one_to_many
+    :language: sql
+    :dburl: /_static/books.sqlite3
+
+    SELECT a.name, b.title, b.publication_year
+    FROM authors AS a, books AS b
+    WHERE a.id = b.author_id;
+
+
+Many-to-many relationships in the expanded database
+---------------------------------------------------
+
+
+Joins using cr
+Joins
 - joins on 2 tables with id columns
 - joins on 2 tables with xref table
 - joins on 3 tables or more
@@ -208,10 +324,6 @@ The expanded books database
 JOIN clause, inner and outer joins
 ::::::::::::::::::::::::::::::::::
 
-
-.. activecode:: ch4_example_books
-    :language: sql
-    :dburl: /_static/books.sqlite3
 
 
 .. [#] Cross products are seldom a desired result on their own.  Because a cross product has a number of rows equal to the number of rows in one table times the number of rows in the other table, the product is very large when the tables involved are large.  When database systems process joins, they generally do not create the cross product and then apply the **WHERE** clause conditions, as that would require a lot of memory or temporary storage and be very slow; however, the conceptual model is helpful in understanding the end result.  We will discuss some strategies databases use to implement joins in part 4, chapter XXX.
