@@ -477,7 +477,7 @@ This section contains some exercises using the same books and authors database u
     :language: sql
     :dburl: /_static/simple_books.sqlite3
 
-    Write a query to find books with a title beginning with the letters "T" or "I", in the fiction, fantasy, or poetry genres.
+    Write a query to find books with a title beginning with the letters "T" or "I", in the fiction, fantasy, or poetry genres:
     ~~~~
 
 .. reveal:: ch3_self_test_boolean3_hint
