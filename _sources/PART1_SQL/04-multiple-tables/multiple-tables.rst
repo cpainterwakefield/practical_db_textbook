@@ -208,7 +208,7 @@ Usually, names of things are case-insensitive and do not contain spaces.  Also, 
 
 ::
 
-    SELECT name AS "Name of Author" FROM authors;
+    SELECT 42 AS "The Answer";
 
 the header in the output column will be both mixed-case and contain spaces.
 

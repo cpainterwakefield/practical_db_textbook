@@ -103,7 +103,7 @@ The SQL standard additionally provides functions for many useful mathematical fu
     SELECT log10(1e5);
     SELECT cos(0);
 
-You will most likely find yourself using mathematical operators in SQL if you are working with numerical data such as financial or scientific data.  In `Chapter 4`_ we will discuss the many different data types available for storing numbers - integers, decimal numbers, and floating point values.  Each has applications to various problems.
+You will most likely find yourself using mathematical operators in SQL if you are working with numerical data such as financial or scientific data.  In `Chapter 5`_ we will discuss some of the different data types available for storing numbers - integers, decimal numbers, and floating point values.  Each has applications to various problems.
 
 As a somewhat contrived example applying mathematical operators to an actual table, consider the problem of finding out which century a book was published in.  In the English language, the 1st century is traditionally considered to be the years numbered 1 - 100.  Each subsequent 100 years adds 1 to the century, so the 20th century included the years 1901 - 2000.
 

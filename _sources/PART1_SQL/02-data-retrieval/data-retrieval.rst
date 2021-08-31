@@ -30,7 +30,7 @@ The illustration above shows a table named "fruit_stand" with three columns name
 Some notes on terms:
 
 - *Tables* are some times called *relations*, which is their name in the *relational theory* (see chapter XXX) that relational databases are based on.
-- The definition of a table's structure is some times called it's *schema*.
+- The definition of a table's structure is some times called its *schema*.
 - *Columns* are also known as *attributes*, particularly in the context of the table's specification and in relational theory.
 
 .. index:: SELECT, FROM, clause

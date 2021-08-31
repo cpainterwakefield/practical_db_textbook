@@ -1,13 +1,17 @@
-====================
-Basic table creation
-====================
+==============
+Table creation
+==============
 
 - very brief introduction to table creation
-    - datatypes: stick with strings, integers, numeric, and dates?
-    - no keys, defaults, auto increments, etc.
+- how to display created tables in sqlite (select name, sql from sqlite_master)
+- datatypes - keep simple, move details to reference
+- keys/constraints
+- defaults
+- auto increments (GENERATED AS IDENTITY) (mention sequences - tools to manage - briefly)
+- simple insert
+- create as...select
 
-- reminder of how to display created tables (select name, sql from sqlite_master)
-
+Now that we have seen how to get data out of tables, it is time to discuss how tables are created in the first place.  In this chapter,
 
 Data types in SQL
 :::::::::::::::::
