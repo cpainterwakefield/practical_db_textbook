@@ -17,6 +17,7 @@ While relational databases can contain many types of *objects*, the object type 
 We can visualize a simple table as, well, a table:
 
 .. image:: table_illustration.svg
+    :alt: Illustration of a table
 
 The illustration above shows a table named "fruit_stand" with three columns named "item", "price", and "unit".  Although the illustration does not show the data types, we might infer that the **item** and **unit** columns contain text and the **price** column contains decimal numbers.  Each row of **fruit_stand** contains information about one kind of fruit sold at the fruit stand.
 

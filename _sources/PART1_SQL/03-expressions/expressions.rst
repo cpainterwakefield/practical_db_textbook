@@ -398,21 +398,21 @@ Another form of **CASE** matches an expression to possible values.  The above qu
             ELSE 'general fiction'
         END
         AS category
-    FROM books;
+    FROM simple_books;
 
 There are two functions that perform specialized conditional logic.  The **COALESCE** function takes a variable number of arguments.  The result of the function is the first non-``NULL`` expression in the argument list, or ``NULL`` if all arguments are ``NULL``.  This can be useful for replacing ``NULL`` values with more descriptive values:
 
 ::
 
     SELECT name, COALESCE('died: ' || death, 'living')
-    FROM authors;
+    FROM simple_authors;
 
 Finally, the **NULLIF** function takes two arguments; if the arguments are equal, the function results in ``NULL``, otherwise it results in the first argument.  This can be used to replace specific values with ``NULL``.  For example,
 
 ::
 
     SELECT title, author, NULLIF(genre, 'science fiction')
-    FROM books;
+    FROM simple_books;
 
 
 
@@ -563,8 +563,10 @@ This section contains some exercises using the same books and authors database u
     ::
 
         SELECT title, author,
-            CASE WHEN publication_year >= 1900 AND publication_year < 2000 THEN 'Twentieth Century'
-                 WHEN publication_year >= 2000 AND publication_year < 2100 THEN 'Twenty-first Century'
+            CASE WHEN publication_year >= 1900 AND publication_year < 2000
+                   THEN 'Twentieth Century'
+                 WHEN publication_year >= 2000 AND publication_year < 2100
+                   THEN 'Twenty-first Century'
             END
             AS century
         FROM simple_books;

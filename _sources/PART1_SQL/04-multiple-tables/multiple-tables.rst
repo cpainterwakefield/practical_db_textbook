@@ -10,8 +10,16 @@ Queries on multiple tables
 .. _`Appendix A`: ../../appendix-a-datasets/datasets.html
 
 
-So far, we have seen how to retrieve data from individual tables, filtering data on different criteria, ordering the data, and formatting the data with various expressions.  Now we turn to the question of how to retrieve data from more than one table in a single query.  For example, using the example database from previous chapters, we might to see book titles together with author's name **and** birth date. The author's name is in both the **authors** and **books** tables, but book titles are in **books**, while author birth dates are in **authors**.  How can we get these together in one result?  This chapter will explain how to retrieve data from multiple tables using *joins*, along the way introducing an expanded books database that will be used going forward.
+So far, we have seen how to retrieve data from individual tables, filtering data on different criteria, ordering the data, and formatting the data with various expressions.  Now we turn to the question of how to retrieve data from more than one table in a single query.  For example, using the example database from previous chapters, we might to see book titles together with author's name **and** birth date. The author's name is in both the **simple_authors** and **simple_books** tables, but book titles are in **simple_books**, while author birth dates are in **simple_authors**.  How can we get these together in one result?  This chapter will explain how to retrieve data from multiple tables using *joins*, and explore various issues in working with multiple tables.
 
+
+Tables used in this chapter
+:::::::::::::::::::::::::::
+
+We will use three different sets of tables in this chapter, starting with some abstract tables used to illustrate joins:  **s**, **s2**, **s3**, **t**, **t2**, and **t3**.  These abstract tables are illustrated below, but are also available in the database for your own experimentation.  We will also use the **simple_books** and **simple_authors** tables used previously.  Finally, we will start working with a more complex set of tables about books and authors:  **books**, **authors**, **editions**, **awards**, **books_awards**, and **authors_awards**.   Full explanation of all of these tables can be found in :ref:`Appendix A <appendix-a>`.
+
+
+.. index:: join
 
 Simple joins
 ::::::::::::
@@ -28,23 +36,21 @@ There is no real meaning to this data, but you might notice that the table data 
 
 When rows from one table are paired with rows from another table, we call the result a *join* of the tables.  Here is a query that joins **s** and **t** to produce the result shown above:
 
-.. activecode:: ch4_example_simple_join
+.. activecode:: joins_example_simple_join
     :language: sql
-    :dburl: /_static/joins.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
-    Note that this interactive tool accesses a database containing just the abstract tables described in this section.  It does not contain any tables related to authors and books!
-    ~~~~
     SELECT *
     FROM
       s
       JOIN t ON sy = ty
     ;
 
-As you can see, we start with some table (table **s** in the example above), then use the **JOIN** keyword to add a second table (table **t**), and the **ON** keyword to add a Boolean condition explaining to SQL which rows from the first table go with which rows from the second table.  The Boolean condition after **ON** is known as a *join condition*, because it compares a column from one table with a column from another table.
+We start our **FROM** clause with table **s**, then use the **JOIN** keyword to bring in table **t**, followed by the **ON** keyword, and finally a Boolean condition explaining to SQL which rows from **s** go with which rows from **t**.  The Boolean condition after **ON** is known as a *join condition*.  Join conditions always compare an expression on one table with an expression on another table.
 
 To understand what happens when you run this query, think about examining each row in **s** in turn.  For each row in **s**, examine each row in **t**.  If the join condition comparing the row in **s** with the row in **t** evaluates to ``True``, then make a new row pairing up the row from **s** with the row from **t**, and add it to the result.  (This can be compared to performing nested **for** loops in a programming language like Python or Java; the outer loop is over the rows in **s**, and the inner loop is over the rows in **t**.)
 
-So, for example, we start by looking at the first row in **s**, which we can write as ``('one', 1)``.  The value of **sy** in this row is 1.  Now, we look at each row in **t** to see which ones have **ty** also equal to 1.  The first row in **t** is ``(1, 'green')``, which has a **ty** value of 1, so we make the row ``('one', 1, 1, 'green')`` and add it to the output.  No other rows in **t** match, so we move on to the next row in **s**, ``('two', 2)``.  Again, we consider each row in **t**, this time looking for a **ty** value equal to 2; this time we match the row ``(2, 'blue')``.  This process continues until we have processed every row in **s**.
+So, for example, we start by looking at the first row in **s**, which we can write as ``('one', 1)``.  The value of **sy** in this row is 1.  Now, we look at each row in **t** to see which ones have **ty** also equal to 1.  The first row in **t** is ``(1, 'green')``, which has a **ty** value of 1, so we make the row ``('one', 1, 1, 'green')`` and add it to the output.  No other rows in **t** match, so we move on to the next row in **s**, ``('two', 2)``.  Again, we consider each row in **t**, this time looking for a **ty** value equal to 2; this time we match the row ``(2, 'blue')``, and we add ``('two', 2, 2, 'blue')`` to the output.  This process continues until we have processed every row in **s**.
 
 In the first example, each row in **s** matched exactly one row in **t**, and each row in **t** matched exactly one row in **s**.  What happens if this is not the case?  First, consider tables **s2** and **t2** below, in which a row in each table fails to match any rows in the other table:
 
@@ -71,7 +77,7 @@ This time, the **s3** row ``('two', 2)`` matches *two* different rows in **t3**,
 
 Tables **s3** and **t3** are also in the database accessible in the interactive tool above.
 
-Two tables can be related via multiple columns rather than just one in each table.  To join them, you would use a compound join condition using **AND**.  In fact, join conditions do not have to be equality (although they usually are); any logical expression relating rows in one table with rows in another can be used.  The conceptual model of examining each row in the first table and comparing with each row in the second table still works.  See if you can figure out what this query will produce (then try it in the interactive tool above):do
+Two tables can be related via multiple columns rather than just one in each table.  To join them, you would use a compound join condition using **AND**.  In fact, join conditions do not have to be equality (although they usually are); any logical expression relating rows in one table with rows in another can be used.  The conceptual model of examining each row in the first table and comparing with each row in the second table still works.  See if you can figure out what this query will produce (then try it in the interactive tool above):
 
 ::
 
@@ -91,23 +97,19 @@ Two tables can be related via multiple columns rather than just one in each tabl
       JOIN t ON sy = ty
     WHERE tz = 'blue';
 
-Think of the **FROM** clause as being the first part of the query processed by the database.  The result is some collection of rows, dowhich we can then filter with a **WHERE** clause, or put in a particular order with an **ORDER BY** clause, and so forth.
+Think of the **FROM** clause as being the first part of the query processed by the database.  The result is some collection of rows, which we can then filter with a **WHERE** clause, or put in a particular order with an **ORDER BY** clause, and so forth.
 
-We have a lot more to talk about with joins, but before moving on, let's see how to answer the question raised earlier, of seeing both book titles and author birth dates in one query result using the database from the previous chapters.  Here's an interactive tool on that database (we will be changing to a new database later in this chapter).
+We have a lot more to talk about with joins, but before moving on, let's see how to answer the question raised earlier, of seeing both book titles and author birth dates in one query result using **simple_books** and **simple_authors**.  Here is the solution:
 
-.. activecode:: ch4_example_simple_books_join
-    :language: sql
-    :dburl: /_static/simple_books.sqlite3
+::
 
-    This interactive tool accesses the database used in chapters 2 and 3.
-    ~~~~
     SELECT title, author, birth
     FROM
-      books
-      JOIN authors ON author = name
+      simple_books
+      JOIN simple_authors ON author = name
     ;
 
-Note here that we are choosing specific columns to return as part of our result, using our **SELECT** clause.  The column **name**, used in the join condition, is the column containing author names in the **authors** table.  We compare this column to the **author** column in **books** for our join, but we don't include it in the columns we retrieve; otherwise we would have the same author name showing in two different columns.
+Note here that we are choosing specific columns to return as part of our result, using our **SELECT** clause.  The column **name**, used in the join condition, is the column containing author names in the **simple_authors** table.  We compare this column to the **author** column in **simple_books** for our join, but we don't include it in the columns we retrieve; otherwise we would have the same author name showing in two different columns.
 
 
 Names of things
@@ -115,22 +117,32 @@ Names of things
 
 We have (mostly) not worried about the *names* of things in our discussion so far.  We have said that we can use a column name as an expression representing the value in the column for some row under consideration, but we now need to consider some scenarios in which a column's name by itself is not sufficiently specific.  We have also given some examples where we renamed the output columns for a **SELECT** query, but we deferred discussion of that technique.  This section will go into both of these topics and more.
 
+.. index:: name; collision, ambiguity
+
 Name collisions and ambiguity
 -----------------------------
 
 In all of our examples so far, all of the columns in the tables we queried had unique names.  For example, the join of **s** and **t** contained columns named **sx**, **sy**, **ty**, and **tz**.  However, we will often not be so lucky when working with multiple tables.  When two columns from tables involved in a join have the same name, we say that the column names *collide*.  When a naming collision occurs, we cannot use the column name by itself as an expression in any part of our query, because the database will not know which table's column you mean; the database will give an error message that the column name is *ambiguous*.
 
+.. index:: name; qualified
+
 Qualified names
 ---------------
 
-Fortunately, there is an easy way to specify a particular column in a particular table: simply give the table name first, followed by a dot ("."), and then the column name.  You can do this even if names are not ambiguous. For example the last query above could be expressed as
+Fortunately, there is an easy way to specify a particular column in a particular table: simply give the table name first, followed by a period ("."), and then the column name.  You can do this even if names are not ambiguous. For example the last query above could be expressed as
 
-::
+.. activecode:: joins_example_qualified_names
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
 
-    SELECT books.title, books.author, authors.birth
+    SELECT
+      simple_books.title,
+      simple_books.author,
+      simple_authors.birth
     FROM
-      books
-      JOIN authors ON books.author = authors.name
+      simple_books
+      JOIN simple_authors
+        ON simple_books.author = simple_authors.name
     ;
 
 This has the added benefit of making clear where each column is coming from, for anyone reading the query who is not familiar with the database.
@@ -139,26 +151,31 @@ You can also use the asterisk shortcut to mean all columns in a specific table b
 
 ::
 
-    SELECT books.*, authors.birth
+    SELECT simple_books.*, simple_authors.birth
     FROM
-      books
-      JOIN authors ON books.author = authors.name
+      simple_books
+      JOIN simple_authors ON simple_books.author = simple_authors.name
     ;
 
 The expressions using both the table name and the column name are known as *qualified* column names, and can be used with any database.  In some database implementations, tables can be grouped together into larger containers; in those databases, it is possible to have multiple tables of the same name (in different containers), which now must be qualified using the container name.  Each database implementation is different, so you will need to learn about your particular database system's rules for qualifying names.
 
-When doing a join, it is good practice to qualify all of your column names as we did in the queries above.  This will make it easier for anyone reading or maintaining your code to understand what your query is doing.
+When doing a join, it is good practice to qualify all of your column names.  This will make it easier for anyone reading or maintaining your code to understand what your query is doing.
+
+.. index:: alias, AS
 
 Aliasing
 --------
 
-SQL provides facilities to change the names of tables and columns within the context of a single query.  This can be useful, and at times, necessary.  We already used column renaming to get nicer column headers in our output.  For example, in the query
+SQL provides facilities to change the names of tables and columns within the context of a single query.  This can be useful, and at times, necessary.  In a previous chapter, we used column renaming to get nicer column headers in our output.  For example, in the query
 
 ::
 
-    SELECT title, floor((publication_year + 99) / 100) AS century FROM books;
+    SELECT
+      title,
+      floor((publication_year + 99) / 100) AS century
+    FROM simple_books;
 
-we supplied the name "century" for the output column (which otherwise would have a header that looked like the mathematical expression we computed).  This technique is known as *aliasing*, and is accomplished with the **AS** keyword.  Aliasing for columns is most often used for the purpose of giving a helpful name for the column in the output, although it can be applied for other reasons we shall see.
+we supplied the name "century" for the second output column (which otherwise would have a header that looked like the mathematical expression we computed).  This technique is known as *aliasing*, and is accomplished with the **AS** keyword.  Aliasing for columns is most often used for the purpose of giving a helpful name for the column in the output, although it can be applied for other reasons we shall see.
 
 Aliasing can also be used with tables.  This is often used to shorten table names to keep qualified names short and readable.  Here, the **AS** keyword is used in the **FROM** clause after each table that should be renamed.  The alias can then be used in the **SELECT**, **WHERE**, and other clauses in place of the table name.  Here is a query we did above, rewritten using table aliasing:
 
@@ -166,25 +183,25 @@ Aliasing can also be used with tables.  This is often used to shorten table name
 
     SELECT b.title, b.author, a.birth
     FROM
-      books AS b
-      JOIN authors AS a ON b.author = a.name
+      simple_books AS b
+      JOIN simple_authors AS a ON b.author = a.name
     ;
 
 When working with large queries using many tables, aliasing can make the query significantly smaller and more readable.
 
-One instance where table aliasing is required is when joining a table to itself.  This can be done when there is some kind of relationship between rows within the same table, and happens more often than you might guess.  As an example of a query we might do with our books and authors database, consider the question, "what books were published in the same year as *The Three-Body Problem*?".  Here is one way to answer that question with a query:
+One instance where table aliasing is required is when joining a table to itself.  This can be done when there is some kind of relationship between rows within the same table, and happens more often than you might guess.  As an example of a query we might do with our simple books and authors data, consider the question, "what books were published in the same year as *The Three-Body Problem*?".  Here is one way to answer that question with a query:
 
 ::
 
     SELECT b2.*
     FROM
-      books AS b1
-      JOIN books AS b2
+      simple_books AS b1
+      JOIN simple_books AS b2
         ON b1.publication_year = b2.publication_year
     WHERE
       b1.title = 'The Three-Body Problem';
 
-If this seems confusing, think about it as using two tables, **b1** and **b2**, each containing the same data as **books**.  Work through what happens if you join **b1** and **b2** applying the join condition ``b1.publication_year = b2.publication_year``; then, filter that result with the condition ``b1.title = 'The Three-Body Problem'``; finally, output just the columns from **b2**.  If you have trouble visualizing what the result should be at each step, remember you can query the database using the interactive tool above.
+If this seems confusing, think about it as using two tables, **b1** and **b2**, each containing the same data as **simple_books**.  Work through what happens if you join **b1** and **b2** applying the join condition ``b1.publication_year = b2.publication_year``; then, filter that result with the condition ``b1.title = 'The Three-Body Problem'``; finally, output just the columns from **b2**.  If you have trouble visualizing what the result should be at each step, remember you can query the database using the interactive tool above.
 
 When using table aliasing, you should qualify all of your column names using the aliases as a matter of good style.  Some databases allow you to use original table names instead of aliases, but mixing aliases with original table names is inconsistent and confusing, and in some cases can result in incorrect code that is difficult to debug.
 
@@ -196,12 +213,13 @@ As a final note, the **AS** keyword is actually optional in SQL - you can create
 
   SELECT b.title, b.author, a.birth
   FROM
-    books b
-    JOIN authors a ON b.author = a.name
+    simple_books b
+    JOIN simple_authors a ON b.author = a.name
   ;
 
-Leaving out a keyword may seem strange, but you are likely to read code at some point using this form of aliasing, so be aware.  There is no consensus on which style is better; for this textbook, we will consistently use **AS** for additional clarity.  Note for Oracle users: the **AS** keyword is optional for columns, but is not supported for table aliases - you must omit the **AS** in Oracle queries when aliasing a table.
+Leaving out a keyword may seem strange, but you are likely to read code at some point using this form of aliasing, so be aware.  There is no consensus on which style is better; for this textbook, we will consistently use **AS** for additional clarity.  (Note for Oracle users: the **AS** keyword is optional for columns, but is not supported for table aliases - you must omit the **AS** in Oracle queries when aliasing a table.)
 
+.. index:: double quotes
 
 Names with spaces or mixed-case
 -------------------------------
@@ -216,32 +234,39 @@ the header in the output column will be both mixed-case and contain spaces.
 
 Very rarely, you may encounter a database where table or column names are mixed-case or contain spaces.  This can occur when the database creator used double quotes in the SQL code creating the tables.  In general, this is not a good practice, as it forces the use of double quotes for any queries using the table.
 
+
+.. index::
+    single: column; identity,
+    single: universally unique identifier,
+    see: id; column; identity
+    see: UUID; universally unique identifier
+
 Identity columns
 ::::::::::::::::
 
-If we want to make a connection between data in one table and data in another using a join, we need the tables to share some data elements in common.  In our original books database, the common element was the author's name, which was in both the **books** and **authors** tables; this let us join the two tables with the join condition ``books.author = authors.name``.
+If we want to make a connection between data in one table and data in another using a join, we need the tables to share some data elements in common.  In our simple books dataset, the common element was the author's name, which was present in both the **simple_books** and **simple_authors** tables; this let us join the two tables with the join condition ``simple_books.author = simple_authors.name``.
 
 For some types of data, some element of the data is unique for every possible data item and can be used as an identifier for the data in a database.  For example, international travel to many countries requires the traveler to have a passport; the issuing country together with the passport number uniquely identifies any traveler.  However, this only works for international travel; most countries do not require passports for travel within the country's own borders, and therefore there are many people who have no passport at all.  A database trying to track domestic travelers, then, cannot use passport information as a unique identifier.
 
-Author names might seem like a good identifier for authors, but in fact, we have to be careful here as well, due to multiple authors sharing the same name.  For example, there are two novelists named Richard Wright, and both a novelist and a poet named David Diop.  We could further distinguish between these authors using their birth dates, or if that wasn't enough, we could consider their birthplace or other attributes.  That only works, of course, if we *know* the birth date and so forth of each author in our database, and in any case it begins to be an unsatisfactory solution due to the complexity of having to store multiple pieces of information about each author for any tables that relate to our **authors** table.
+Author names might seem like a good identifier for authors, but in fact, we have to be careful here as well, due to multiple authors sharing the same name.  For example, there are two novelists named Richard Wright, and both a novelist and a poet named David Diop.  We could further distinguish between these authors using their birth dates, or perhaps we could consider their birthplace or other attributes.  That only works, of course, if we *know* the birth date and so forth of each author in our database, and in any case it begins to be an unsatisfactory solution due to the complexity of having to store so many pieces of information about each author for any tables we want to join to our table of authors.
 
-The solution we adopt, and which is widely used in practice, is to create an artificial unique identifier, or *id*, for each author in our database.  Unique identifiers can take different forms.  The most common scheme is to keep a counter in the database (using a special database object called a *sequence* - we will discuss these in `Chapter 5`_), and increment it each time a row is added to a table; the counter value is used as the id value for the new row.  Another popular scheme is to use a very large integer generated at random - a *universally unique identifier*, or UUID.  In this scheme, due to the large number of possible UUIDs, each new id value is very likely to be different from any other previously id in the table. (It is easy to detect if there is a duplicate, in which case another value can be generated.)
+The solution we adopt, and which is widely used in practice, is to create an artificial unique identifier, or *id*, for each author in our database.  Unique identifiers can take different forms.  The most common scheme is to keep a counter in the database (we will discuss how to do this in :numref:`Chapter {number} <table-creation-chapter>`), and increment it each time a row is added to a table; the counter value is used as the id value for the new row.  Another popular scheme is to use a very large integer generated at random - a *universally unique identifier*, or UUID.  In this scheme, due to the large number of possible UUIDs, each new id value is very likely to be different from any other previously id in the table. (It is easy to detect if there is a duplicate, in which case another value can be generated.)
 
-In the expanded books database that we will use from now on, the **authors** table has an **id** column.  Each row in the **authors** table has a unique **id** value.  The **books** table, meanwhile, no longer has a column storing the author's name.  Instead, it has the column **author_id**.  Each **author_id** is equal to some **id** value from the **authors** table.  Thus, to join the two tables we simply use the join condition ``authors.id = books.author_id``:
+In our database, there is a table named **authors** which has an **id** column holding a unique value for each row.  There is also a **books** table, which, in contrast with **simple_books**, has no column storing the author's name.  Instead, it has the column **author_id**.  Each **author_id** is equal to some **id** value from the **authors** table.  To get the author's name together with the book information, we will need to join **books** to **authors** using the common id value:
 
-.. activecode:: ch4_example_expanded_books_join
+.. activecode:: joins_example_expanded_books_join
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
-    This interactive tool accesses the new, expanded books database.
-    ~~~~
     SELECT books.title, authors.name, authors.birth
     FROM
       books
       JOIN authors ON authors.id = books.author_id
     ;
 
-Note that, in the query above, we *must* qualify the column **id** as **authors.id**, because the books table also has a column named **id**.  If you try the above query without qualification, you will see that the database complains of ambiguity with respect to this name.
+Note that, in the query above, we *must* qualify the column **id** as **authors.id**, because the **books** table *also* has a column named **id**.  If you try the above query without qualification, you will see that the database complains of ambiguity with respect to the name **id**.
+
+The **id** column for **books** is the unique identifier for **books**, and has nothing to do with the **id** column for **authors**.  This may be confusing, but it is a common way of organizing tables.
 
 
 The expanded books database
@@ -336,9 +361,9 @@ We are now ready to describe the database we will be using for the rest of this 
 
 We strongly recommend that you spend a little time using **SELECT** queries on each table above, to get a sense of what the data looks like.  Here is an interactive tool to get you started:
 
-.. activecode:: ch4_example_expanded_books_explore
+.. activecode:: joins_example_expanded_books_explore
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     SELECT * FROM authors;
 
@@ -390,9 +415,9 @@ We can store other information in the cross-reference table.  In the case of **b
 
 To use the cross-reference table, we will need to join together *three* tables.  The basic principles for joining three tables are the same as for two; start by joining two tables, then join that result with the third table.  The finished query looks like this:
 
-.. activecode:: ch4_example_many_to_many
+.. activecode:: joins_example_many_to_many
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     SELECT b.title, a.name AS award, ba.year
     FROM
@@ -416,9 +441,9 @@ There are three types of outer join: *left*, *right*, and *full*.  These are imp
 
 When the join specifies that all rows from a table should be returned, and a row has no match in the other table, what should the row contain for the missing data from the other table?  A logical choice is to fill in those columns with ``NULL`` values, which is exactly what happens.  Here is one query to retrieve all books, and awards where relevant:
 
-.. activecode:: ch4_example_outer_join
+.. activecode:: joins_example_outer_join
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     SELECT b.title, a.name AS award, ba.year
     FROM
@@ -460,9 +485,9 @@ Returning to our abstract examples from the start of this chapter:
 
 In the implicit join syntax, the first step is to simply list all tables involved in the join after the **FROM** clause.  In SQL, this implies a *cross product* of the tables.  In a cross product of two tables, *every* row in one table is paired with *every* row from the other table.  You can see this in action in the query below:
 
-.. activecode:: ch4_example_implicit_join
+.. activecode:: joins_example_implicit_join
     :language: sql
-    :dburl: /_static/joins.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     SELECT * FROM s, t;
 
@@ -491,9 +516,9 @@ If you are joining together *n* tables using the implicit syntax, then always re
 
 A good clue that you have omitted a join condition is if you suddenly get very many rows more than you expected.  If you look more closely at the data (you may need to include more columns in your **SELECT** clause to see it), you can see that you have created a cross product.  Consider an implicit join of **books**, **books_awards**, and **awards** with a missing join condition:
 
-.. activecode:: ch4_example_missing_join_condition
+.. activecode:: joins_example_missing_join_condition
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     SELECT b.title, a.name AS award, ba.year
     FROM books AS b, awards AS a, books_awards AS ba
@@ -516,14 +541,14 @@ Self-check exercises
 
 This section contains some exercises using the expanded books database introduced above.  If you get stuck, click on the "Show answer" button below the exercise to see a correct answer.  For each of these, try writing the answer first using explicit join syntax, and then using the implicit syntax (where possible).
 
-.. activecode:: ch4_self_test_two_way_join
+.. activecode:: joins_self_test_two_way_join
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query listing all of the editions (publisher, year, and published title) for the book titled "The Hobbit":
     ~~~~
 
-.. reveal:: ch4_self_test_two_way_join_hint
+.. reveal:: joins_self_test_two_way_join_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
@@ -546,14 +571,14 @@ This section contains some exercises using the expanded books database introduce
         WHERE b.id = e.book_id
         AND   b.title = 'The Hobbit';
 
-.. activecode:: ch4_self_test_two_way_join2
+.. activecode:: joins_self_test_two_way_join2
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query listing the distinct titles under which the book 'The Fellowship of the Ring' was published:
     ~~~~
 
-.. reveal:: ch4_self_test_two_way_join2_hint
+.. reveal:: joins_self_test_two_way_join2_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
@@ -570,14 +595,14 @@ This section contains some exercises using the expanded books database introduce
         WHERE b.id = e.books_id
         AND   b.title = 'The Fellowship of the Ring';
 
-.. activecode:: ch4_self_test_two_way_join3
+.. activecode:: joins_self_test_two_way_join3
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query listing editions (title, corresponding book title, publisher, and publisher location) for editions published since 2005 under a different name than the book:
     ~~~~
 
-.. reveal:: ch4_self_test_two_way_join3_hint
+.. reveal:: joins_self_test_two_way_join3_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
@@ -596,14 +621,14 @@ This section contains some exercises using the expanded books database introduce
         AND   b.title <> e.title
         AND   e.publication_year > 2005;
 
-.. activecode:: ch4_self_test_three_way_join
+.. activecode:: joins_self_test_three_way_join
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query listing author, book title, edition title, and publisher for editions published since 2005:
     ~~~~
 
-.. reveal:: ch4_self_test_three_way_join_hint
+.. reveal:: joins_self_test_three_way_join_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
@@ -622,14 +647,14 @@ This section contains some exercises using the expanded books database introduce
         AND   b.id = e.book_id
         AND   e.publication_year > 2005;
 
-.. activecode:: ch4_self_test_cross_reference1
+.. activecode:: joins_self_test_cross_reference1
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query to list the authors who have won the Neustadt International Prize for Literature (note: this is an *author* award, not a *book* award):
     ~~~~
 
-.. reveal:: ch4_self_test_cross_reference1_hint
+.. reveal:: joins_self_test_cross_reference1_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
@@ -648,14 +673,14 @@ This section contains some exercises using the expanded books database introduce
         AND   aa.award_id = aw.id
         AND   aw.name = 'Neustadt International Prize for Literature';
 
-.. activecode:: ch4_self_test_cross_reference2
+.. activecode:: joins_self_test_cross_reference2
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query to list the authors who have won author awards (not book awards), together with their awards and the year of the award. Give the output descriptive headers (not just "name" and "name").  Order by author name:
     ~~~~
 
-.. reveal:: ch4_self_test_cross_reference2_hint
+.. reveal:: joins_self_test_cross_reference2_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
@@ -674,14 +699,14 @@ This section contains some exercises using the expanded books database introduce
         AND   aa.award_id = aw.id
         ORDER BY au.name;
 
-.. activecode:: ch4_self_test_outer_join1
+.. activecode:: joins_self_test_outer_join1
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query listing all authors, together with their (author) awards, if any:
     ~~~~
 
-.. reveal:: ch4_self_test_outer_join1_hint
+.. reveal:: joins_self_test_outer_join1_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
@@ -694,14 +719,14 @@ This section contains some exercises using the expanded books database introduce
         LEFT JOIN awards AS aw ON aa.award_id = aw.id
       ORDER BY au.name;
 
-.. activecode:: ch4_self_test_outer_join2
+.. activecode:: joins_self_test_outer_join2
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query listing authors who have *not* won any of the awards listed in our database (hint: how might you detect the absence of an award in the query above?):
     ~~~~
 
-.. reveal:: ch4_self_test_outer_join2_hint
+.. reveal:: joins_self_test_outer_join2_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
@@ -714,14 +739,14 @@ This section contains some exercises using the expanded books database introduce
       WHERE aa.author_id IS NULL;
 
 
-.. activecode:: ch4_self_test_recursive_join1
+.. activecode:: joins_self_test_recursive_join1
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query listing all the books by the author of "Interpreter of Maladies".
     ~~~~
 
-.. reveal:: ch4_self_test_recursive_join1_hint
+.. reveal:: joins_self_test_recursive_join1_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
@@ -739,14 +764,14 @@ This section contains some exercises using the expanded books database introduce
         AND   b2.title = 'Interpreter of Maladies';
 
 
-.. activecode:: ch4_self_test_recursive_join2
+.. activecode:: joins_self_test_recursive_join2
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Same as above, but show the author's name as well.
     ~~~~
 
-.. reveal:: ch4_self_test_recursive_join2_hint
+.. reveal:: joins_self_test_recursive_join2_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
@@ -765,14 +790,14 @@ This section contains some exercises using the expanded books database introduce
         AND   b2.author_id = a.id
         AND   b2.title = 'Interpreter of Maladies';
 
-.. activecode:: ch4_self_test_challenge1
+.. activecode:: joins_self_test_challenge1
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query to list books (author name and title) that have won the Nebula Award; show the year of the award, and list the most recent awards first.
     ~~~~
 
-.. reveal:: ch4_self_test_recursive_challenge1_hint
+.. reveal:: joins_self_test_recursive_challenge1_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
@@ -795,14 +820,14 @@ This section contains some exercises using the expanded books database introduce
         AND   aw.name = 'Nebula Award'
         ORDER BY ba.year DESC;
 
-.. activecode:: ch4_self_test_challenge2
+.. activecode:: joins_self_test_challenge2
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query giving a distinct list of book awards won by authors who have also won the Nobel Prize in Literature (an author award).
     ~~~~
 
-.. reveal:: ch4_self_test_recursive_challenge2_hint
+.. reveal:: joins_self_test_recursive_challenge2_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
