@@ -73,6 +73,10 @@ a.footnote-reference {
     vertical-align: text-top !important;
 }
 
+div[class*="highlight-"] {
+  margin-bottom: 10px;
+}
+
 /* Runestone elements and page layout */
 
 .container .section>*:not(.section):not(.ac_section) {

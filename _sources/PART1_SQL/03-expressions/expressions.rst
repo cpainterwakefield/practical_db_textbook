@@ -1,16 +1,18 @@
-===============
-SQL expressions
-===============
+.. _expressions-chapter:
 
-.. _`Chapter 2`: ../02-data-retrieval/data-retrieval.html
-.. _`Chapter 4`: ../04-joins/joins.html
-.. _`Chapter 5`: ../05-table-creation/table-creation.html
-.. _`Chapter 8`: ../08-grouping-and-aggregation/grouping-and-aggregation.html
-.. _`Appendix B`: ../../appendix-b-reference/reference.html
+===========
+Expressions
+===========
 
 .. index:: expression
 
-An *expression* in SQL is anything that can be *evaluated* - anything that results in a value.  Some examples include literal values, operator expressions, and function call expressions.  Expressions are used in most clauses of a SQL query; for example, in the **SELECT** clause, expressions result in the values we see returned from the query, while in the **WHERE** clause, expressions determine whether or not a row is returned from the query.  You can also **ORDER BY** expressions, and later we'll see other uses for expressions.  This chapter will explore some of the most common expression types; additional expressions will be introduced at the appropriate time.
+An *expression* in SQL is anything that can be *evaluated* - anything that results in a value.  Some examples include literal values, operator expressions, and function call expressions.  Expressions are used in most clauses of a SQL query; for example, in the **SELECT** clause, expressions result in the values we see returned from the query, while in the **WHERE** clause, expressions determine whether or not a row is returned from the query.  You can also **ORDER BY** expressions, and later we will see other uses for expressions.  This chapter will explore some of the most common expression types; additional expressions will be introduced at the appropriate time.
+
+Tables used in this chapter
+:::::::::::::::::::::::::::
+
+We will again be working with the **simple_books** and **simple_authors** tables for this chapter.  Reminder: you can read a full explanation of these tables in :ref:`Appendix A <appendix-a>`.
+
 
 .. index:: column expression
 
@@ -19,29 +21,32 @@ Column expressions
 
 The use of a column name in a SQL statement is a special expression that evaluates to the value stored in that column for the current row being processed.  So, when we do
 
-.. activecode:: ch3_example_column
+.. activecode:: expressions_example_column
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
-    SELECT * FROM books WHERE author = 'J.R.R. Tolkien';
+    SELECT *
+    FROM simple_books
+    WHERE author = 'J.R.R. Tolkien';
 
-the query execution examines each row of the the table **books** in turn to evaluate the expression ``author = 'J.R.R. Tolkien'``.  This expression compares the value of the **author** column to the literal value ``'J.R.R. Tolkien'`` using the **=** operator.  If the two are the same, the overall expression evaluates to ``True``, and the row is included in the output; otherwise, the row is excluded.
+the query execution examines each row of the the table **simple_books** in turn to evaluate the expression ``author = 'J.R.R. Tolkien'``.  This expression compares the value of the **author** column to the literal value ``'J.R.R. Tolkien'`` using the **=** operator.  If the two are the same, the overall expression evaluates to ``True``, and the row is included in the output; otherwise, the row is excluded.
+
 
 .. index:: literal; numeric, literal; character string, literal; Boolean
 
 Literals
 ::::::::
 
-Literals are simple values expressed in a form that the database understands as a value.  There are only a few types of literals in SQL, although these can be converted to many different types in the database.  We will discuss SQL data types further in `Chapter 5`_.  The main types of literals you will encounter are:
+Literals are simple values expressed in a form that the database understands as a value.  There are only a few types of literals in SQL, although these can be converted to many different types in the database.  We will discuss SQL data types further in :numref:`Chapter {number} <table-creation-chapter>`.  The main types of literals you will encounter are:
 
 - Numbers: these are expressed in the usual fashion, for example, ``-1``, ``3.14159``, ``0.0008``; depending on the database, you may also be able to use numeric literals in scientific notation or other formats, for instance, ``6.02e23`` (which stands for :math:`6.02 \times 10^{23}`).
 - Character strings: these are strings of characters enclosed in single quotes, for example, ``'apple'``.  If you need to express a literal character string which contains a single quote, you simply write the single quote twice; this is tricky to read, but produces the desired result.  For example,
 
-.. activecode:: ch3_example_literal
+.. activecode:: expressions_example_literal
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
-    SELECT author FROM books
+    SELECT author FROM simple_books
     WHERE title = 'The Handmaid''s Tale';
 
 - Boolean values: ``True`` or ``False``.  Note, however, that not all SQL implementations support Boolean literals.
@@ -52,7 +57,7 @@ You can ask for literal expressions in the **SELECT** clause - this is sometimes
 
 ::
 
-    SELECT 42, 'hello', author FROM books;
+    SELECT 42, 'hello', author FROM simple_books;
 
 If you try this query in the interactive tool above, note that the output provides column names based on the literal expressions selected.  Later we will see how to change the names of columns in the output, if we want to make them more meaningful.
 
@@ -60,7 +65,8 @@ If you try this query in the interactive tool above, note that the output provid
 Operators and functions
 :::::::::::::::::::::::
 
-SQL defines a number of useful operations on its various types.  Some of these use simple operators, as in mathematical expressions, while others take the form of functions.  `Appendix B`_ provides more extensive lists of operators and functions defined by the SQL standard, but we'll discuss some of the most commonly used ones here, along with examples of their use.
+SQL defines a number of useful operations on its various types.  Some of these use simple operators, as in mathematical expressions, while others take the form of functions.  :ref:`Appendix B <appendix-b>` provides more extensive lists of operators and functions defined by the SQL standard, but we'll discuss some of the most commonly used ones here, along with examples of their use.
+
 
 .. index:: operators; comparison
 
@@ -69,15 +75,16 @@ Comparison operators
 
 We've already seen the equality operator (**=**) used to test if some column is equal to a literal value in the **WHERE** clause of queries.  We can instead test for inequality using the (**<>**) operator:
 
-.. activecode:: ch3_example_comparison
+.. activecode:: expressions_example_comparison
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
-    SELECT * FROM books WHERE genre <> 'fantasy';
+    SELECT * FROM simple_books WHERE genre <> 'fantasy';
 
-Though non-standard, most databases also recognize **!=** as an inequality operator.
+Though non-standard, most databases also recognize **!=** as an inequality operator.  (Note that SQL does not use **==**, which is used in many programming languages.  SQLite does recognize it as an equality comparison operator, but **do not use it**, as it will be a difficult habit to break.)
 
-We can also test to see if a value is less than (**\<**), greater than (**\>**), less than or equal to (**\<=**), or greater than or equal to (**\>=**) some other value.  There is also a ternary operator, **BETWEEN**, that tests if a value is between two other values (see Appendix B, `Comparison operators <../../appendix-b-reference/reference.html#comparison-operators>`_ for details).
+We can also test to see if a value is less than (**\<**), greater than (**\>**), less than or equal to (**\<=**), or greater than or equal to (**\>=**) some other value.  There is also a ternary operator, **BETWEEN**, that tests if a value is between two other values (see Appendix B, :ref:`appendix-b-comparison-operators` for details).
+
 
 .. index:: operators; mathematics, functions; mathematics
 
@@ -86,9 +93,9 @@ Mathematics
 
 You can expect the basic arithmetic operators to work with any numeric values: addition (**+**), subtraction (**-**), multiplication (**\***), and division (**/**) are standard.  Your database may implement others, but make sure you read the documentation for your database to ensure other operators do what you think they do.  You can actually use your database as a simple calculator!  Try running these:
 
-.. activecode:: ch3_example_math
+.. activecode:: expressions_example_math
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     SELECT 4 + 7;
     SELECT 302.78 * 14;
@@ -103,7 +110,7 @@ The SQL standard additionally provides functions for many useful mathematical fu
     SELECT log10(1e5);
     SELECT cos(0);
 
-You will most likely find yourself using mathematical operators in SQL if you are working with numerical data such as financial or scientific data.  In `Chapter 5`_ we will discuss some of the different data types available for storing numbers - integers, decimal numbers, and floating point values.  Each has applications to various problems.
+You will most likely find yourself using mathematical operators in SQL if you are working with numerical data such as financial or scientific data.  In :numref:`Chapter {number} <table-creation-chapter>` we will discuss some of the different data types available for storing numbers - integers, decimal numbers, and floating point values.  Each has applications to various problems.
 
 As a somewhat contrived example applying mathematical operators to an actual table, consider the problem of finding out which century a book was published in.  In the English language, the 1st century is traditionally considered to be the years numbered 1 - 100.  Each subsequent 100 years adds 1 to the century, so the 20th century included the years 1901 - 2000.
 
@@ -111,27 +118,30 @@ With a little math, we can extract the century in which each book in our databas
 
 ::
 
-    SELECT title, floor((publication_year + 99) / 100) AS century FROM books;
+    SELECT
+      title,
+      floor((publication_year + 99) / 100) AS century
+    FROM simple_books;
 
-Note the use of parentheses to enforce an order of operations; the addition operation occurs before the division; the result of the division is provided to the **floor()** function.  We have also introduced something new - a renaming operation to give our result column a more informative name. The **AS** keyword lets us rename a column in the output of our query.  We will learn more about using **AS** in `Chapter 4`_.
+Note the use of parentheses to enforce an order of operations; the addition operation occurs before the division; the result of the division is provided to the **floor()** function.  We have also introduced something new - a renaming operation to give our result column a more informative name. The **AS** keyword lets us rename a column in the output of our query.  We will learn more about using **AS** in :numref:`Chapter {number} <joins-chapter>`.
 
-See Appendix B, `Mathematical operators and functions <../../appendix-b-reference/reference.html#mathematical-operators-and-functions>`_ for a complete list of standard operators and functions.
+See Appendix B, :ref:`appendix-b-math-operators` for a complete list of standard operators and functions.
+
 
 .. index:: operators; string, functions; string, string concatenation, LIKE
-
 
 Character string operators and functions
 ----------------------------------------
 
-SQL provides two very useful string operators, **||** (two vertical bars) and **LIKE**. The operator **||** is used for string concatenation, which has many applications.  For example, if we don't like the columnar output from our **books** table, we could concatenate the columns together (with appropriate spacing or other separators):
+SQL provides two very useful string operators, **||** (two vertical bars) and **LIKE**. The operator **||** is used for string concatenation, which has many applications.  For example, if we don't like the columnar output from our **simple_books** table, we could concatenate the columns together (with appropriate spacing or other separators):
 
-.. activecode:: ch3_example_string
+.. activecode:: expressions_example_string
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
-    SELECT title || ', by ' || author FROM books;
+    SELECT title || ', by ' || author FROM simple_books;
 
-(In SQL Server, you will need to use **+** instead of **||**; in MySQL, you will need to use the MySQL **concat** function, e.g.: ``SELECT concat(title, ', by ', author) FROM books;``.)
+(In SQL Server, you will need to use **+** instead of **||**; in MySQL, you will need to use the MySQL **concat** function, e.g.: ``SELECT concat(title, ', by ', author) FROM simple_books;``.)
 
 The **LIKE** operator is a Boolean operator that is used almost exclusively in the **WHERE** clause.  **LIKE** provides very simple pattern matching capabilities in SQL.  A *pattern* is just a string that can contain regular text and special *wildcard* characters, which can match one or many unspecified characters.  The two wildcards are **%**, which can match any string of zero or more characters, and **_**, which can match exactly one of any character.  (If you are familiar with standard regular expression syntax, the **%** wildcard corresponds to the regular expression ".*", and the **_** wildcard corresponds to the regular expression ".".)  Normal text matches itself exactly.
 
@@ -139,92 +149,93 @@ Consider the case in which we recall the first name of an author, but not the fu
 
 ::
 
-    SELECT name FROM authors WHERE name LIKE 'Isabel %';
+    SELECT name FROM simple_authors WHERE name LIKE 'Isabel %';
 
-Since the **%** can match any string, the pattern ``'Isabel %'`` would match "Isabel Allende", "Isabel Granada", or "Isabel del Puerto" for example (only one of these is in our **authors** table, though).
+Since the **%** can match any string, the pattern ``'Isabel %'`` would match "Isabel Allende", "Isabel Granada", or "Isabel del Puerto" for example (only one of these is in our **simple_authors** table, though).
 
 Similarly, if we remember the last part of the name, but not the start, we can use the **%** operator again:
 
 ::
 
-    SELECT name FROM authors WHERE name LIKE '% Ginsberg';
+    SELECT name FROM simple_authors WHERE name LIKE '% Ginsberg';
 
 We can use the operator more than once:
 
 ::
 
-    SELECT title FROM books WHERE title LIKE '%Earth%';
+    SELECT title FROM simple_books WHERE title LIKE '%Earth%';
 
 Now, suppose we are interested in authors who use an initial instead of their full first name.  An initial looks like some character followed by a period - both are required.  Here's what the query would look like, using both the **%** and **_** operators:
 
 ::
 
-    SELECT name FROM authors WHERE name LIKE '_.%';
+    SELECT name FROM simple_authors WHERE name LIKE '_.%';
 
 The **LIKE** operator can also be combined with two very useful functions, **upper** and **lower**; these functions put strings in all uppercase or lowercase, respectively.  These functions do not make sense in all language settings, of course.  You can use **upper** or **lower** whenever you want to get back strings in all uppercase or lowercase; you can also use them when pattern matching if you aren't sure of the capitalization of the strings in your database:
 
 ::
 
-    SELECT * FROM books WHERE lower(title) LIKE '%love%';
+    SELECT * FROM simple_books WHERE lower(title) LIKE '%love%';
 
-In addition to the functions discussed so far, SQL provides functions for various string manipulations tasks, such as substring extraction or replacement, finding the location of a substring, trimming whitespace (or other characters) from the front and/or back of a string, and many more.  See Appendix B, `Character string operators and functions <../../appendix-b-reference/reference.html#character-string-operators-and-functions>`_ for these.
+In addition to the functions discussed so far, SQL provides functions for various string manipulations tasks, such as substring extraction or replacement, finding the location of a substring, trimming whitespace (or other characters) from the front and/or back of a string, and many more.  See Appendix B, :ref:`appendix-b-string-operators` for these.
+
 
 .. index:: operators; Boolean, AND, OR, NOT
 
 Boolean operators
 -----------------
 
-As discussed in `Chapter 2`_, the **WHERE** clause of a **SELECT** query expects a Boolean expression after the **WHERE** keyword.  Some expressions that are Boolean in SQL include expressions using comparison operators, or an expression using the **LIKE** operator.  Many functions also result in a Boolean value.
+As discussed in :numref:`Chapter {number} <data-retrieval-chapter>`, the **WHERE** clause of a **SELECT** query expects a Boolean expression after the **WHERE** keyword.  Some expressions that are Boolean in SQL include expressions using comparison operators, or an expression using the **LIKE** operator.  Many functions also result in a Boolean value.
 
 SQL provides logical operators that operate on Boolean values.  These operators are **AND**, **OR**, and **NOT**, which perform the logical operations that their names imply.  For example, if we have an expression of the form ``expr1 AND expr2``, the result is ``True`` if and only if both ``expr1`` and ``expr2`` evaluate to ``True``.  Similarly, ``expr1 OR expr2`` evaluates to ``True`` if either ``expr1`` or ``expr2`` are ``True``.  Finally, ``NOT`` inverts the truth value:  ``NOT True`` results in ``False``, and ``NOT False`` results in ``True``.
 
 These logical operators allow us to build up complex Boolean expressions from simpler Boolean expressions to express the particular logical conditions we want for our **WHERE** clause.  So, for example, we might be interested in fantasy books published since the year 2000:
 
-.. activecode:: ch3_example_boolean
+.. activecode:: expressions_example_boolean
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     SELECT *
-    FROM books
+    FROM simple_books
     WHERE genre = 'fantasy' AND publication_year > 2000;
 
 Or, we might be interested in books in either the fantasy or science fiction genres:
 
 ::
 
-    SELECT * FROM books
+    SELECT * FROM simple_books
     WHERE genre = 'fantasy' OR genre = 'science fiction';
 
 If we simply hate science fiction, we might do
 
 ::
 
-    SELECT * FROM books WHERE NOT genre = 'science fiction';
+    SELECT * FROM simple_books WHERE NOT genre = 'science fiction';
 
 which gives the same result as
 
 ::
 
-    SELECT * FROM books WHERE genre <> 'science fiction';
+    SELECT * FROM simple_books WHERE genre <> 'science fiction';
 
 For more complex expressions involving combinations of **AND**, **OR**, and **NOT**, we may need to use parentheses to make our meaning clear.  In SQL, **NOT** is applied before **AND**, and **AND** is applied before **OR**. For example, perhaps we are interested in any books other than fantasy books published after the year 2000.  We might be tempted to write
 
 ::
 
-    SELECT * FROM books
+    SELECT * FROM simple_books
     WHERE NOT genre = 'fantasy' AND publication_year > 2000;
 
 However, this isn't quite right (try it!).  Since the **NOT** is applied first, this query returns books that a) are not fantasy and b) were published since the year 2000.  The expression ``NOT genre = 'fantasy' AND publication_year > 2000`` is equivalent to ``(NOT genre = 'fantasy') AND (publication_year > 2000)``.  To get what we originally wanted, we need to use parentheses explicitly:
 ::
 
-    SELECT * FROM books
+    SELECT * FROM simple_books
     WHERE NOT (genre = 'fantasy' AND publication_year > 2000);
 
 You can see that the above query only excludes the books in the list
 
 ::
 
-    SELECT * FROM books
+    SELECT * FROM simple_books
     WHERE genre = 'fantasy' AND publication_year > 2000;
 
 Similarly, we might be interested in either science fiction or fantasy books, but only if they were published after 2000.  Compare the two queries below:
@@ -232,36 +243,37 @@ Similarly, we might be interested in either science fiction or fantasy books, bu
 ::
 
     SELECT *
-    FROM books
+    FROM simple_books
     WHERE genre = 'science fiction' OR genre = 'fantasy'
     AND publication_year > 2000;
 
     SELECT *
-    FROM books
+    FROM simple_books
     WHERE
         (genre = 'science fiction' OR genre = 'fantasy')
         AND publication_year > 2000;
 
 The first query above returns any science fiction books, and fantasy books published after 2000.  The second returns the desired result: books published after 2000 in either the fantasy or science fiction genres.
 
-For a fuller discussion of Boolean operators, we need to know more about ``NULL`` values, which will be discussed below.  See Appendix B, `Boolean operators <../../appendix-b-reference/reference.html#boolean-operators>`_ for complete documentation on the SQL Boolean operators.
+For a fuller discussion of Boolean operators, we need to know more about ``NULL`` values, which will be discussed below.  See Appendix B, :ref:`appendix-b-boolean-operators` for complete documentation on the SQL Boolean operators.
+
 
 .. index:: operators; date and time, functions; date and time
 
 Date and time operators and functions
 -------------------------------------
 
-Date and time data are extremely important in many database applications, such as those supporting governmental or financial institutions.  SQL provides extensive functionality for managing dates and times.  Unfortunately, this is an area where different SQL implementations vary widely in their conformance to the SQL standard. See Appendix B, `Date and time operators and functions <../../appendix-b-reference/reference.html#date-and-time-operators-and-functions>`_ for a fuller discussion, and consult your database implementation's documentation to see what capabilities it offers with respect to date and time handling.
+Date and time data are extremely important in many database applications, such as those supporting governmental or financial institutions.  SQL provides extensive functionality for managing dates and times.  Unfortunately, this is an area where different SQL implementations vary widely in their conformance to the SQL standard. See Appendix B, :ref:`appendix-b-datetime-operators` for a fuller discussion, and consult your database implementation's documentation to see what capabilities it offers with respect to date and time handling.
 
 One useful SQL function that most databases implement is the **CURRENT_DATE** function (also try **CURRENT_TIME** and **CURRENT_TIMESTAMP**):
 
-.. activecode:: ch3_example_datetime
+.. activecode:: expressions_example_datetime
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     SELECT CURRENT_DATE;
 
-We will see in `Chapter 5`_ how this function can be used to automatically record the date in a newly created row.
+We will see in :numref:`Chapter {number} <table-creation-chapter>` how this function can be used to automatically record the date in a newly created row.
 
 
 .. index:: NULL, three value logic
@@ -279,11 +291,11 @@ A very important consequence of this behavior is that ``NULL`` values cannot be 
 
 To find out if a value is ``NULL`` or not ``NULL`` requires special operators: **IS NULL** and **IS NOT NULL**.  For example, if we want to discover authors for whom we have no death date, we would do the query:
 
-.. activecode:: ch3_example_null
+.. activecode:: expressions_example_null
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
-    SELECT * FROM authors WHERE death IS NULL;
+    SELECT * FROM simple_authors WHERE death IS NULL;
 
 You can discover authors for whom we do have death dates by replacing **IS NULL** with **IS NOT NULL** in the above query.
 
@@ -291,7 +303,7 @@ What happens if we instead do
 
 ::
 
-    SELECT * FROM authors WHERE death = NULL;
+    SELECT * FROM simple_authors WHERE death = NULL;
 
 ?
 
@@ -301,7 +313,7 @@ In this case, the expression ``death = NULL`` will evaluate to ``NULL`` for ever
 
 ::
 
-    SELECT * FROM authors
+    SELECT * FROM simple_authors
     WHERE birth <= '2000-12-31'
     AND death >= '2000-01-01';
 
@@ -311,7 +323,7 @@ In this case, we need to use more logic, and query the database thus:
 
 ::
 
-    SELECT * FROM authors
+    SELECT * FROM simple_authors
     WHERE birth <= '2000-12-31' AND
         (death >= '2000-01-01' OR death IS NULL);
 
@@ -319,8 +331,20 @@ This works correctly, but you might be wondering why.  We said that ``NULL`` use
 
 On the other hand, ``False OR NULL`` will gives us ``NULL``.  In this case, whether the ``NULL`` is standing in for ``True`` or ``False`` actually matters, because each gives a different outcome. Since we do not know the outcome, the result is ``NULL``.
 
-Because Boolean expressions can result in ``True``, ``False``, or ``NULL``, we say that SQL has a *three-valued logic* (not truly Boolean logic).  Appendix B, `Boolean operators <../../appendix-b-reference/reference.html#boolean-operators>`_ provides truth tables for this three-valued logic, but as shown above, you can usually work out the answer by simply thinking of ``NULL`` as meaning "unknown".
+Because Boolean expressions can result in ``True``, ``False``, or ``NULL``, we say that SQL has a *three-valued logic* (not truly Boolean logic).  Appendix B, :ref:`appendix-b-boolean-operators` provides truth tables for this three-valued logic, but as shown above, you can usually work out the answer by simply thinking of ``NULL`` as meaning "unknown".
 
+Ordering and NULLs
+------------------
+
+Given that you cannot meaningfully compare ``NULL`` with other values, what happens when we **ORDER BY** a column containing ``NULL`` values?  Unfortunately, it depends on which database implementation you are working with.  You will need to consult your database documentation (or simply try an experiment) to see what its default behavior is.  The standard does provide a way to specify whether ``NULL`` values should sort to the top or bottom.  Compare these two queries:
+
+::
+
+    SELECT * FROM simple_authors ORDER BY death NULLS FIRST;
+
+    SELECT * FROM simple_authors ORDER BY death NULLS LAST;
+
+(The **NULLS FIRST** and **NULLS LAST** modifiers are not supported in MySQL or SQL Server.)
 
 .. index:: conditional expressions
 
@@ -343,9 +367,9 @@ The **CASE** keyword comes first, followed by one or more **WHEN** clauses givin
 
 For example, we could put our books into different categories, maybe for different sections in a library, using **CASE**:
 
-.. activecode:: ch3_example_case
+.. activecode:: expressions_example_case
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     SELECT
         author, title,
@@ -356,9 +380,9 @@ For example, we could put our books into different categories, maybe for differe
              ELSE 'general fiction'
         END
         AS category
-    FROM books;
+    FROM simple_books;
 
-Here we have included tests for some genres not present in our current dataset.  A library application might have many categories, each encompassing multiple genres.  Using a **CASE** expression would be one way to output books with their categories, although it depends on knowledge of all the possible genres in our database.  A more data-driven way would be to look up categories in another database table using a *join*, a technique we will discuss in `Chapter 4`_.
+Here we have included tests for some genres not present in our current dataset.  A library application might have many categories, each encompassing multiple genres.  Using a **CASE** expression would be one way to output books with their categories, although it depends on knowledge of all the possible genres in our database.  A more data-driven way would be to look up categories in another database table using a *join*, a technique we will discuss in :numref:`Chapter {number} <joins-chapter>`.
 
 Another form of **CASE** matches an expression to possible values.  The above query can be re-written using this form:
 
@@ -397,142 +421,142 @@ Self-check exercises
 
 This section contains some exercises using the same books and authors database used in the text above.  If you get stuck, click on the "Show answer" button below the exercise to see a correct answer.
 
-.. activecode:: ch3_self_test_comparison
+.. activecode:: expressions_self_test_comparison
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query to find all books published from the year 1980 through the year 2000, in order by publication year:
     ~~~~
 
-.. reveal:: ch3_self_test_comparison_hint
+.. reveal:: expressions_self_test_comparison_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
-    There are usually many ways to achieve the same goal in SQL.  Here are a couple of solutions:
+    There are usually many ways to achieve the same goal in SQL.  Here are two solutions:
 
     ::
 
-        SELECT * FROM books
+        SELECT * FROM simple_books
         WHERE publication_year >= 1980 AND publication_year <= 2000
         ORDER BY publication_year;
 
-        SELECT * FROM books
+        SELECT * FROM simple_books
         WHERE publication_year BETWEEN 1980 AND 2000
         ORDER BY publication_year;
 
 
-.. activecode:: ch3_self_test_pattern
+.. activecode:: expressions_self_test_pattern
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query to find the authors whose name starts with the letter "J":
     ~~~~
 
-.. reveal:: ch3_self_test_pattern_hint
+.. reveal:: expressions_self_test_pattern_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
     ::
 
-        SELECT name FROM authors WHERE name LIKE 'J%';
+        SELECT name FROM simple_authors WHERE name LIKE 'J%';
 
 
-.. activecode:: ch3_self_test_boolean1
+.. activecode:: expressions_self_test_boolean1
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query to find books written between 1950 and 1999, excluding poetry:
     ~~~~
 
-.. reveal:: ch3_self_test_boolean1_hint
+.. reveal:: expressions_self_test_boolean1_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
     ::
 
-        SELECT * FROM books
+        SELECT * FROM simple_books
         WHERE publication_year >= 1950 AND publication_year <= 1999
         AND genre <> 'poetry';
 
 
-.. activecode:: ch3_self_test_boolean2
+.. activecode:: expressions_self_test_boolean2
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query to find books written before 1950 or after 1999, excluding science fiction:
     ~~~~
 
-.. reveal:: ch3_self_test_boolean2_hint
+.. reveal:: expressions_self_test_boolean2_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
     ::
 
-        SELECT * FROM books
+        SELECT * FROM simple_books
         WHERE (publication_year < 1950 OR publication_year > 1999)
         AND genre <> 'science fiction';
 
 
-.. activecode:: ch3_self_test_boolean3
+.. activecode:: expressions_self_test_boolean3
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query to find books with a title beginning with the letters "T" or "I", in the fiction, fantasy, or poetry genres:
     ~~~~
 
-.. reveal:: ch3_self_test_boolean3_hint
+.. reveal:: expressions_self_test_boolean3_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
     ::
 
-        SELECT * FROM books
+        SELECT * FROM simple_books
         WHERE (title LIKE 'T%' OR title LIKE 'I%')
         AND (genre = 'fiction' OR genre = 'fantasy' OR genre = 'poetry');
 
 
-.. activecode:: ch3_self_test_null1
+.. activecode:: expressions_self_test_null1
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query to find authors for whom we have no birth date:
     ~~~~
 
-.. reveal:: ch3_self_test_null1_hint
+.. reveal:: expressions_self_test_null1_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
     ::
 
-        SELECT name FROM authors WHERE birth IS NULL;
+        SELECT name FROM simple_authors WHERE birth IS NULL;
 
 
-.. activecode:: ch3_self_test_null2
+.. activecode:: expressions_self_test_null2
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query to find deceased authors born after 1915:
     ~~~~
 
-.. reveal:: ch3_self_test_null2_hint
+.. reveal:: expressions_self_test_null2_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
     ::
 
-        SELECT name FROM authors
+        SELECT name FROM simple_authors
         WHERE death IS NOT NULL
         AND birth > '1915-12-31';
 
 
-.. activecode:: ch3_self_test_conditional
+.. activecode:: expressions_self_test_conditional
     :language: sql
-    :dburl: /_static/simple_books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     Write a query giving book titles and authors together with the century in which they were written, spelled out like 'Twentieth Century' (you only need to worry about the 20th - 21st centuries):
     ~~~~
 
-.. reveal:: ch3_self_test_conditional_hint
+.. reveal:: expressions_self_test_conditional_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
@@ -543,7 +567,15 @@ This section contains some exercises using the same books and authors database u
                  WHEN publication_year >= 2000 AND publication_year < 2100 THEN 'Twenty-first Century'
             END
             AS century
-        FROM books;
+        FROM simple_books;
 
 
-.. [#] Database scholars frequently reject calling ``NULL`` a *value*.  If ``NULL`` were truly a value, then it should be comparable to itself and other values.  One alternative is to say that a column is in a ``NULL`` *state*, rather than that it contains a ``NULL`` value.  However, this distinction breaks down in other SQL settings, such as grouping and aggregation (`Chapter 8`_).  Because of this and other concerns, the inclusion of ``NULL`` in SQL is controversial.
+.. |chapter-end| unicode:: U+274F
+
+|chapter-end|
+
+----
+
+**Notes**
+
+.. [#] Database scholars frequently reject calling ``NULL`` a *value*.  If ``NULL`` were truly a value, then it should be comparable to itself and other values.  One alternative is to say that a column is in a ``NULL`` *state*, rather than that it contains a ``NULL`` value.  However, this distinction breaks down in other SQL settings, such as grouping and aggregation (discussed in :numref:`Chapter {number} <grouping-chapter>`).  Because of this and other concerns, the inclusion of ``NULL`` in SQL is controversial.

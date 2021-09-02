@@ -1,3 +1,5 @@
+.. _data-modification-chapter:
+
 =======================
 Modifying data with SQL
 =======================

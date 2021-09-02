@@ -1,3 +1,5 @@
+.. _joins-chapter:
+
 ==========================
 Queries on multiple tables
 ==========================

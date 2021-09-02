@@ -5,7 +5,7 @@ SQL
 .. toctree::
     :maxdepth: 3
 
-    01-introduction/introduction
+    01-sql-basics/sql-basics
     02-data-retrieval/data-retrieval
     03-expressions/expressions
     04-multiple-tables/multiple-tables

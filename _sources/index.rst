@@ -15,13 +15,15 @@ Table of Contents
    :maxdepth: 1
 
    00-preface/preface
-   
+
 .. toctree::
    :numbered:
    :maxdepth: 2
 
    PART1_SQL/index
    PART2_DATA_MODELING/index
+   PART3_RELATIONAL_DATABASE_THEORY/index
+   PART4_SELECTED_TOPICS/index
 
 .. toctree::
    :maxdepth: 1

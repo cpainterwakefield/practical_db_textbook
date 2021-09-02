@@ -1,6 +1,8 @@
-=============
-SQL Reference
-=============
+.. _appendix-b:
+
+=========================
+Appendix B: SQL Reference
+=========================
 
 This appendix contains documentation on various aspects of the SQL standard (2016).  This is not an exhaustive guide to the standard.  Where possible, variations from the standard by various database implementations (SQLite, PostgreSQL, MySQL, Oracle, Microsoft SQL Server) are shown.  Note that documentation of this sort is a moving target, so the information below may be out-of-date when you read it.  Consult your database vendor's documentation for current information.
 
@@ -17,7 +19,7 @@ meaning both of the following expressions are valid:
     SUBSTRING('hello, world' FROM 1 FOR 5)
     SUBSTRING('hello, world' FROM 8)
 
-(The first expression evaluates to ``'hello'``, and the second to ``'world'``.) 
+(The first expression evaluates to ``'hello'``, and the second to ``'world'``.)
 
 Data types
 ::::::::::
@@ -25,6 +27,8 @@ Data types
 
 Operators and functions
 :::::::::::::::::::::::
+
+.. _appendix-b-comparison-operators:
 
 Comparison operators
 --------------------
@@ -36,7 +40,7 @@ Character string comparison is somewhat complex, as the comparison done depends 
 A comparison of any value with ``NULL`` results in ``NULL`` when using any of the operators in the table below.
 
 =========== ========================= =========================== =============================================
-operator    meaning                   usage                       notes                  
+operator    meaning                   usage                       notes
 =========== ========================= =========================== =============================================
 \=          equal to                  *x* \= *y*
 \<\>        not equal to              *x* \<\> *y*                can also use != in most DBMSes (nonstandard)
@@ -64,7 +68,9 @@ IS NOT DISTINCT FROM *x* IS NOT DISTINCT FROM *y* True if *x* = *y* is true, or 
 ==================== ============================ =========================================================== ================
 
 Also see the `Boolean operators`_ section below for comparison operators that only apply to Boolean values.
- 
+
+.. _appendix-b-math-operators:
+
 Mathematical operators and functions
 ------------------------------------
 
@@ -86,7 +92,7 @@ EXP                exponential function  EXP(*x*)
 POWER              raise to power        POWER(*base*, *exponent*)
 SQRT               square root           SQRT(*x*)
 FLOOR              floor function        FLOOR(*x*)
-CEILING            ceiling function      CEILING(*x*) or CEIL(*x*)        
+CEILING            ceiling function      CEILING(*x*) or CEIL(*x*)
 SIN                sine function         SIN(*x*)                         argument in radians
 COS                cosine function       COS(*x*)
 TAN                tangent function      TAN(*x*)
@@ -102,10 +108,13 @@ Most database implementations provide additional non-standard functions and oper
 
 Mathematical expressions where one or more operands or inputs are ``NULL`` evaluate to ``NULL``.
 
+
+.. _appendix-b-string-operators:
+
 Character string operators and functions
 ----------------------------------------
 
-Below is a partial listing of operators and functions acting on character strings, omitting some less frequently implemented functions and some less frequently used optional parameters.  
+Below is a partial listing of operators and functions acting on character strings, omitting some less frequently implemented functions and some less frequently used optional parameters.
 
 The SQL standard defines several operators and functions making use of three different pattern-matching languages: the one used by the operator **LIKE** (discussed in `Chapter 3`_), and two different regular expression (regex) languages; however the databases considered for this book mostly do not conform to the standard with respect to these operators and functions.  Many implementations provide functions with similar effect, but under different names and using different regex languages.  These functions are therefore omitted, but you are encouraged to read the documentation for your database to see what options are available to you.
 
@@ -120,7 +129,7 @@ NOT LIKE           inverse of LIKE                    *s* NOT LIKE *pattern*    
 CHAR_LENGTH        length of string                   CHARACTER_LENGTH(*s*) or CHAR_LENGTH(*s*)          in SQLite and Oracle, use LENGTH(*s*); in SQL Server, use LEN(*s*)
 POSITION           index of substring                 POSITION(*t* IN *s*)                               in SQLite and Oracle, use INSTR(*s*, *t*)
 SUBSTRING          substring extraction               SUBSTRING(*s* FROM *start* [FOR *length*])         in SQLite and Oracle, use SUBSTR(*s*, *start*, *length*); in SQL Server, use SUBSTRING(*s*, *start*, *length*)
-UPPER              convert to uppercase               UPPER(*s*)                                         
+UPPER              convert to uppercase               UPPER(*s*)
 LOWER              convert to lowercase               LOWER(*s*)
 TRIM               remove leading/trailing characters TRIM([[LEADING|TRAILING|BOTH] [*t*] FROM] *s*)     If *t* is omitted, whitespace is trimmed; BOTH is the default if LEADING etc. are omitted; in SQLite, Oracle, and SQL Server use LTRIM, RTRIM and TRIM (varying usage)
 OVERLAY            substring replacement              OVERLAY(*s* PLACING *t* FROM *start* FOR *length*) not in SQLite, Oracle, or SQL Server, but see REPLACE
@@ -130,6 +139,8 @@ Most database implementations provide additional non-standard functions and oper
 
 String operator or function expressions where the operands or inputs are ``NULL`` result in ``NULL``.
 
+
+.. _appendix-b-boolean-operators:
 
 Boolean operators
 -----------------
@@ -167,6 +178,8 @@ SQL Server and Oracle do not implement **IS [NOT] TRUE**, **IS [NOT] FALSE**, an
 Some database implementations provide additional non-standard operators, such as **XOR**, **&** as an alternative to **AND**, etc.
 
 
+.. _appendix-b-datetime-operators:
+
 Date and time operators and functions
 -------------------------------------
 
@@ -191,15 +204,15 @@ So, for example, a subtraction of one **TIMESTAMP** from another yields an **INT
 
 Other operators and functions involving dates and times:
 
-===================== ============================================ ======================================  
-operator or function  meaning                                      usage                                  
-===================== ============================================ ======================================  
+===================== ============================================ ======================================
+operator or function  meaning                                      usage
+===================== ============================================ ======================================
 CURRENT_DATE          evaluates to the current date                CURRENT_DATE
 CURRENT_TIME          evaluates to the current time                CURRENT_TIME
 CURRENT_TIMESTAMP     evaluates to the current date and time       CURRENT_TIMESTAMP
 EXTRACT               get a date or time field from a date or time EXTRACT(*field* FROM *date/time/interval*), where *field* is e.g., 'YEAR', 'HOUR', etc.
 OVERLAPS              test if one span of time overlaps another    *period1* OVERLAPS *period2*, where each *period* can be (*start date/time*, *end date/time*) or (*start date/time*, *interval*)
-===================== ============================================ ======================================  
+===================== ============================================ ======================================
 
 Examples:
 
@@ -222,5 +235,3 @@ CASE
 CAST
 
 WIDTH_BUCKET
-
-
