@@ -1,3 +1,5 @@
+.. _data-modeling-part:
+
 =============
 DATA MODELING
 =============

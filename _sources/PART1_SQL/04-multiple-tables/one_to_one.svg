@@ -174,35 +174,35 @@
   <g class="com.sun.star.drawing.TableShape">
    <g>
     <rect class="BoundingBox" stroke="none" fill="none" x="2598" y="14447" width="16364" height="2540"/>
-    <path fill="rgb(89,131,176)" stroke="none" d="M 2600,14449 L 6180,14449 6180,15294 2600,15294 2600,14449 Z"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="2850" y="14973"><tspan fill="rgb(0,0,0)" stroke="none">receipt_no</tspan></tspan></tspan></text>
-    <path fill="rgb(89,131,176)" stroke="none" d="M 6180,14449 L 10478,14449 10478,15294 6180,15294 6180,14449 Z"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="6430" y="14973"><tspan fill="rgb(0,0,0)" stroke="none">date_sold</tspan></tspan></tspan></text>
-    <path fill="rgb(89,131,176)" stroke="none" d="M 10478,14449 L 14389,14449 14389,15294 10478,15294 10478,14449 Z"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="10728" y="14973"><tspan fill="rgb(0,0,0)" stroke="none">payment</tspan></tspan></tspan></text>
-    <path fill="rgb(89,131,176)" stroke="none" d="M 14389,14449 L 18959,14449 18959,15294 14389,15294 14389,14449 Z"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="14639" y="14973"><tspan fill="rgb(0,0,0)" stroke="none">stock_number</tspan></tspan></tspan></text>
-    <path fill="rgb(180,199,220)" stroke="none" d="M 2600,15294 L 6180,15294 6180,16139 2600,16139 2600,15294 Z"/>
+    <path fill="rgb(89,131,176)" stroke="none" d="M 2600,14449 L 6824,14449 6824,15294 2600,15294 2600,14449 Z"/>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="2850" y="14973"><tspan fill="rgb(0,0,0)" stroke="none">receipt_number</tspan></tspan></tspan></text>
+    <path fill="rgb(89,131,176)" stroke="none" d="M 6824,14449 L 10839,14449 10839,15294 6824,15294 6824,14449 Z"/>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="7074" y="14973"><tspan fill="rgb(0,0,0)" stroke="none">stock_number</tspan></tspan></tspan></text>
+    <path fill="rgb(89,131,176)" stroke="none" d="M 10839,14449 L 14761,14449 14761,15294 10839,15294 10839,14449 Z"/>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="11089" y="14973"><tspan fill="rgb(0,0,0)" stroke="none">date_sold</tspan></tspan></tspan></text>
+    <path fill="rgb(89,131,176)" stroke="none" d="M 14761,14449 L 18959,14449 18959,15294 14761,15294 14761,14449 Z"/>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="15011" y="14973"><tspan fill="rgb(0,0,0)" stroke="none">payment</tspan></tspan></tspan></text>
+    <path fill="rgb(180,199,220)" stroke="none" d="M 2600,15294 L 6824,15294 6824,16139 2600,16139 2600,15294 Z"/>
     <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="2850" y="15818"><tspan fill="rgb(0,0,0)" stroke="none">948</tspan></tspan></tspan></text>
-    <path fill="rgb(180,199,220)" stroke="none" d="M 6180,15294 L 10478,15294 10478,16139 6180,16139 6180,15294 Z"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="6430" y="15818"><tspan fill="rgb(0,0,0)" stroke="none">2021-07-23</tspan></tspan></tspan></text>
-    <path fill="rgb(180,199,220)" stroke="none" d="M 10478,15294 L 14389,15294 14389,16139 10478,16139 10478,15294 Z"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="10728" y="15818"><tspan fill="rgb(0,0,0)" stroke="none">cash</tspan></tspan></tspan></text>
-    <path fill="rgb(180,199,220)" stroke="none" d="M 14389,15294 L 18959,15294 18959,16139 14389,16139 14389,15294 Z"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="14639" y="15818"><tspan fill="rgb(0,0,0)" stroke="none">1423</tspan></tspan></tspan></text>
-    <path fill="rgb(180,199,220)" stroke="none" d="M 2600,16139 L 6180,16139 6180,16984 2600,16984 2600,16139 Z"/>
+    <path fill="rgb(180,199,220)" stroke="none" d="M 6824,15294 L 10839,15294 10839,16139 6824,16139 6824,15294 Z"/>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="7074" y="15818"><tspan fill="rgb(0,0,0)" stroke="none">1423</tspan></tspan></tspan></text>
+    <path fill="rgb(180,199,220)" stroke="none" d="M 10839,15294 L 14761,15294 14761,16139 10839,16139 10839,15294 Z"/>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="11089" y="15818"><tspan fill="rgb(0,0,0)" stroke="none">2021-07-23</tspan></tspan></tspan></text>
+    <path fill="rgb(180,199,220)" stroke="none" d="M 14761,15294 L 18959,15294 18959,16139 14761,16139 14761,15294 Z"/>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="15011" y="15818"><tspan fill="rgb(0,0,0)" stroke="none">cash</tspan></tspan></tspan></text>
+    <path fill="rgb(180,199,220)" stroke="none" d="M 2600,16139 L 6824,16139 6824,16984 2600,16984 2600,16139 Z"/>
     <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="2850" y="16663"><tspan fill="rgb(0,0,0)" stroke="none">949</tspan></tspan></tspan></text>
-    <path fill="rgb(180,199,220)" stroke="none" d="M 6180,16139 L 10478,16139 10478,16984 6180,16984 6180,16139 Z"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="6430" y="16663"><tspan fill="rgb(0,0,0)" stroke="none">2021-07-25</tspan></tspan></tspan></text>
-    <path fill="rgb(180,199,220)" stroke="none" d="M 10478,16139 L 14389,16139 14389,16984 10478,16984 10478,16139 Z"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="10728" y="16663"><tspan fill="rgb(0,0,0)" stroke="none">credit card</tspan></tspan></tspan></text>
-    <path fill="rgb(180,199,220)" stroke="none" d="M 14389,16139 L 18959,16139 18959,16984 14389,16984 14389,16139 Z"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="14639" y="16663"><tspan fill="rgb(0,0,0)" stroke="none">1421</tspan></tspan></tspan></text>
+    <path fill="rgb(180,199,220)" stroke="none" d="M 6824,16139 L 10839,16139 10839,16984 6824,16984 6824,16139 Z"/>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="7074" y="16663"><tspan fill="rgb(0,0,0)" stroke="none">1421</tspan></tspan></tspan></text>
+    <path fill="rgb(180,199,220)" stroke="none" d="M 10839,16139 L 14761,16139 14761,16984 10839,16984 10839,16139 Z"/>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="11089" y="16663"><tspan fill="rgb(0,0,0)" stroke="none">2021-07-25</tspan></tspan></tspan></text>
+    <path fill="rgb(180,199,220)" stroke="none" d="M 14761,16139 L 18959,16139 18959,16984 14761,16984 14761,16139 Z"/>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="15011" y="16663"><tspan fill="rgb(0,0,0)" stroke="none">credit card</tspan></tspan></tspan></text>
     <path fill="none" stroke="rgb(255,255,255)" stroke-width="26" stroke-linejoin="round" d="M 2587,14449 L 18972,14449"/>
     <path fill="none" stroke="rgb(255,255,255)" stroke-width="26" stroke-linejoin="round" d="M 2600,14436 L 2600,16997"/>
-    <path fill="none" stroke="rgb(255,255,255)" stroke-width="26" stroke-linejoin="round" d="M 6180,14436 L 6180,16997"/>
-    <path fill="none" stroke="rgb(255,255,255)" stroke-width="26" stroke-linejoin="round" d="M 10478,14436 L 10478,16997"/>
-    <path fill="none" stroke="rgb(255,255,255)" stroke-width="26" stroke-linejoin="round" d="M 14389,14436 L 14389,16997"/>
+    <path fill="none" stroke="rgb(255,255,255)" stroke-width="26" stroke-linejoin="round" d="M 6824,14436 L 6824,16997"/>
+    <path fill="none" stroke="rgb(255,255,255)" stroke-width="26" stroke-linejoin="round" d="M 10839,14436 L 10839,16997"/>
+    <path fill="none" stroke="rgb(255,255,255)" stroke-width="26" stroke-linejoin="round" d="M 14761,14436 L 14761,16997"/>
     <path fill="none" stroke="rgb(255,255,255)" stroke-width="26" stroke-linejoin="round" d="M 18959,14436 L 18959,16997"/>
     <path fill="none" stroke="rgb(255,255,255)" stroke-width="26" stroke-linejoin="round" d="M 2587,15294 L 18972,15294"/>
     <path fill="none" stroke="rgb(255,255,255)" stroke-width="26" stroke-linejoin="round" d="M 2587,16139 L 18972,16139"/>

@@ -1,8 +1,8 @@
 .. _data-modification-chapter:
 
-=======================
-Modifying data with SQL
-=======================
+==============
+Modifying data
+==============
 
 We have so far concentrated on the basics of retrieving data from relational databases using SQL, and future chapters will explore more advanced topics in data retrieval.  You may be wondering how to get data *into* a database in the first place.  This chapter will explain the basic mechanism for adding data to tables, as well as how to remove or modify data.
 

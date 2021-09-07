@@ -10,13 +10,13 @@ Queries on multiple tables
 .. _`Appendix A`: ../../appendix-a-datasets/datasets.html
 
 
-So far, we have seen how to retrieve data from individual tables, filtering data on different criteria, ordering the data, and formatting the data with various expressions.  Now we turn to the question of how to retrieve data from more than one table in a single query.  For example, using the example database from previous chapters, we might to see book titles together with author's name **and** birth date. The author's name is in both the **simple_authors** and **simple_books** tables, but book titles are in **simple_books**, while author birth dates are in **simple_authors**.  How can we get these together in one result?  This chapter will explain how to retrieve data from multiple tables using *joins*, and explore various issues in working with multiple tables.
+In past chapters, we saw how to retrieve data from individual tables, filter data on different criteria, order the data, and format the data with various expressions.  Now we turn to the question of how to retrieve data from more than one table in a single query.  For example, using the tables **simple_books** and **simple_authors**, we might like to see book titles together with author's name and birth date. The author's name is in both tables, but book titles are in **simple_books**, while author birth dates are in **simple_authors**.  How can we get these together in one result?  This chapter will explain how to retrieve data from multiple tables using joins, and explore various issues in working with multiple tables.
 
 
 Tables used in this chapter
 :::::::::::::::::::::::::::
 
-We will use three different sets of tables in this chapter, starting with some abstract tables used to illustrate joins:  **s**, **s2**, **s3**, **t**, **t2**, and **t3**.  These abstract tables are illustrated below, but are also available in the database for your own experimentation.  We will also use the **simple_books** and **simple_authors** tables used previously.  Finally, we will start working with a more complex set of tables about books and authors:  **books**, **authors**, **editions**, **awards**, **books_awards**, and **authors_awards**.   Full explanation of all of these tables can be found in :ref:`Appendix A <appendix-a>`.
+We will use three different sets of tables in this chapter, starting with some abstract tables used to illustrate joins.  These abstract tables are illustrated below, but are also available in the database for your own experimentation.  We will also use the **simple_books** and **simple_authors** tables used previously.  Finally, we will start working with a more complex set of tables about books and authors, which will be introduced below.  A full explanation of all tables can be found in :ref:`Appendix A <appendix-a>`.
 
 
 .. index:: join
@@ -48,11 +48,11 @@ When rows from one table are paired with rows from another table, we call the re
 
 We start our **FROM** clause with table **s**, then use the **JOIN** keyword to bring in table **t**, followed by the **ON** keyword, and finally a Boolean condition explaining to SQL which rows from **s** go with which rows from **t**.  The Boolean condition after **ON** is known as a *join condition*.  Join conditions always compare an expression on one table with an expression on another table.
 
-To understand what happens when you run this query, think about examining each row in **s** in turn.  For each row in **s**, examine each row in **t**.  If the join condition comparing the row in **s** with the row in **t** evaluates to ``True``, then make a new row pairing up the row from **s** with the row from **t**, and add it to the result.  (This can be compared to performing nested **for** loops in a programming language like Python or Java; the outer loop is over the rows in **s**, and the inner loop is over the rows in **t**.)
+To understand what happens when you run this query, consider each row in **s** in turn.  For each row in **s**, look at each row in **t** and apply the join condition.  If the join condition evaluates to ``True``, then make a new row by concatenating the row from **s** with the row from **t**, and add it to the result.  (This can be likened to performing nested **for** loops in a programming language like Python or Java; the outer loop is over the rows in **s**, and the inner loop is over the rows in **t**.)
 
 So, for example, we start by looking at the first row in **s**, which we can write as ``('one', 1)``.  The value of **sy** in this row is 1.  Now, we look at each row in **t** to see which ones have **ty** also equal to 1.  The first row in **t** is ``(1, 'green')``, which has a **ty** value of 1, so we make the row ``('one', 1, 1, 'green')`` and add it to the output.  No other rows in **t** match, so we move on to the next row in **s**, ``('two', 2)``.  Again, we consider each row in **t**, this time looking for a **ty** value equal to 2; this time we match the row ``(2, 'blue')``, and we add ``('two', 2, 2, 'blue')`` to the output.  This process continues until we have processed every row in **s**.
 
-In the first example, each row in **s** matched exactly one row in **t**, and each row in **t** matched exactly one row in **s**.  What happens if this is not the case?  First, consider tables **s2** and **t2** below, in which a row in each table fails to match any rows in the other table:
+In the first example, each row in **s** matched exactly one row in **t**, and each row in **t** matched exactly one row in **s**.  What happens if this is not the case?  First, consider tables **s2** and **t2** below, in which one row in each table fails to match any rows in the other table:
 
 .. image:: joins2.svg
     :alt: Tables s2 and t2
@@ -189,7 +189,7 @@ Aliasing can also be used with tables.  This is often used to shorten table name
 
 When working with large queries using many tables, aliasing can make the query significantly smaller and more readable.
 
-One instance where table aliasing is required is when joining a table to itself.  This can be done when there is some kind of relationship between rows within the same table, and happens more often than you might guess.  As an example of a query we might do with our simple books and authors data, consider the question, "what books were published in the same year as *The Three-Body Problem*?".  Here is one way to answer that question with a query:
+One instance where table aliasing is required is when joining a table to itself.  This can be done when there is some kind of relationship between rows within the same table, which happens more often than you might guess.  As an example of a query we might do with our simple books and authors data, consider the question, "what books were published in the same year as *The Three-Body Problem*?".  Here is one way to answer that question with a query:
 
 ::
 
@@ -244,128 +244,39 @@ Very rarely, you may encounter a database where table or column names are mixed-
 Identity columns
 ::::::::::::::::
 
-If we want to make a connection between data in one table and data in another using a join, we need the tables to share some data elements in common.  In our simple books dataset, the common element was the author's name, which was present in both the **simple_books** and **simple_authors** tables; this let us join the two tables with the join condition ``simple_books.author = simple_authors.name``.
+If we want to make a connection between data in one table and data in another using a join, we need the tables to share some data elements in common.  In our simple books dataset, the common element was the author's name, which was present in both the **simple_books** and **simple_authors** tables; this let us join the two tables with the join condition ``simple_books.author = simple_authors.name``.  We can be confident in our result because we know the author's name uniquely identifies the authors in our simple database.  But what if author names were not unique?  Then we might join authors to books they did not actually write!
 
 For some types of data, some element of the data is unique for every possible data item and can be used as an identifier for the data in a database.  For example, international travel to many countries requires the traveler to have a passport; the issuing country together with the passport number uniquely identifies any traveler.  However, this only works for international travel; most countries do not require passports for travel within the country's own borders, and therefore there are many people who have no passport at all.  A database trying to track domestic travelers, then, cannot use passport information as a unique identifier.
 
 Author names might seem like a good identifier for authors, but in fact, we have to be careful here as well, due to multiple authors sharing the same name.  For example, there are two novelists named Richard Wright, and both a novelist and a poet named David Diop.  We could further distinguish between these authors using their birth dates, or perhaps we could consider their birthplace or other attributes.  That only works, of course, if we *know* the birth date and so forth of each author in our database, and in any case it begins to be an unsatisfactory solution due to the complexity of having to store so many pieces of information about each author for any tables we want to join to our table of authors.
 
-The solution we adopt, and which is widely used in practice, is to create an artificial unique identifier, or *id*, for each author in our database.  Unique identifiers can take different forms.  The most common scheme is to keep a counter in the database (we will discuss how to do this in :numref:`Chapter {number} <table-creation-chapter>`), and increment it each time a row is added to a table; the counter value is used as the id value for the new row.  Another popular scheme is to use a very large integer generated at random - a *universally unique identifier*, or UUID.  In this scheme, due to the large number of possible UUIDs, each new id value is very likely to be different from any other previously id in the table. (It is easy to detect if there is a duplicate, in which case another value can be generated.)
+This type of problem comes up a lot.  The solution we adopt, and which is widely used in practice, is to create an artificial unique identifier, or *id*, for each author in our database.  Unique identifiers can take different forms.  The most common scheme is to keep a counter in the database, and increment it each time a row is added to a table; the counter value is used as the id value for the new row (we will discuss how to do this in :numref:`Chapter {number} <table-creation-chapter>`).  Another popular scheme is to use a very large integer generated at random - a *universally unique identifier*, or UUID.  In this scheme, due to the large number of possible UUIDs, each new id value is very likely to be different from any other previously id in the table. (It is easy to detect if there is a duplicate, in which case another value can be generated.)
 
-In our database, there is a table named **authors** which has an **id** column holding a unique value for each row.  There is also a **books** table, which, in contrast with **simple_books**, has no column storing the author's name.  Instead, it has the column **author_id**.  Each **author_id** is equal to some **id** value from the **authors** table.  To get the author's name together with the book information, we will need to join **books** to **authors** using the common id value:
+In our database, there is a table named **authors** which has an **author_id** column holding a unique value for each row.  There is also a **books** table, which, in contrast with **simple_books**, has no column storing the author's name.  Instead, it also has the column **author_id**.  Each **author_id** in **books** is equal to some **author_id** value in **authors**.  Note that **author_id** is not unique in **books**, because some authors have written multiple books.
 
-.. activecode:: joins_example_expanded_books_join
+To get the author's name together with their books, we will need to join **books** to **authors** using the common id value:
+
+.. activecode:: joins_example_books_join
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    SELECT books.title, authors.name, authors.birth
+    SELECT authors.name, books.title
     FROM
       books
-      JOIN authors ON authors.id = books.author_id
+      JOIN authors ON authors.author_id = books.author_id
     ;
 
-Note that, in the query above, we *must* qualify the column **id** as **authors.id**, because the **books** table *also* has a column named **id**.  If you try the above query without qualification, you will see that the database complains of ambiguity with respect to the name **id**.
 
-The **id** column for **books** is the unique identifier for **books**, and has nothing to do with the **id** column for **authors**.  This may be confusing, but it is a common way of organizing tables.
+The **books** and **authors** tables introduced above are part of a set of related tables.  All of the tables are described in full in :ref:`Appendix A <appendix-a>`, but in brief:
 
+- **authors** contains author name, birth, and death dates (where known).
+- **books** contains book title and publication year; it links to **authors** via the **author_id** column.
+- **editions** contains information about the printed editions of books: publisher information, year printed, and so forth.  It links to **books** through the **book_id** column [#]_.
+- **awards** contains information about some prominent awards, some given to authors for their body of work, and some given to authors for specific books.
+- **authors_awards** is a *cross-reference* table linking **authors** to their **awards**; cross-reference tables are explained below.
+- **books_awards** is a cross-reference table linking **books** to **awards**.
 
-The expanded books database
-:::::::::::::::::::::::::::
-
-We are now ready to describe the database we will be using for the rest of this book.  The new database is still centered around **book** and **authors** tables, modified to use id columns as described above, but also adds several other tables.  All of the tables and their basic relationships to each other are described below, after which we will discuss some basic join queries using the tables.  The descriptions below are also repeated in `Appendix A`_ for future reference.
-
-.. container:: data-dictionary
-
-    Table **authors** records persons who have authored books:
-
-    ========== ================= ===================================
-    column     type              description
-    ========== ================= ===================================
-    id         integer           unique identifier for author
-    name       character string  full name of author
-    birth      date              birth date of author, if known
-    death      date              death date of author, if known
-    ========== ================= ===================================
-
-.. container:: data-dictionary
-
-    Table **books** records works of fiction, non-fiction, poetry, etc. by a single author:
-
-    ================ ================= ===================================
-    column           type              description
-    ================ ================= ===================================
-    id               integer           unique identifier for book
-    author_id        integer           id of book's author from **authors** table
-    title            character string  book title
-    publication_year integer           year book was first published
-    ================ ================= ===================================
-
-
-.. container:: data-dictionary
-
-    Table **editions** records specific publications of a book:
-
-    ================== ================= ===================================
-    column             type              description
-    ================== ================= ===================================
-    id                 integer           unique identifier for edition
-    book_id            integer           id of book (from **books** table) published as edition
-    publication_year   integer           year this edition was published
-    publisher          character string  name of the publisher
-    publisher_location character string  city or other location(s) where the publisher is located
-    title              character string  title this edition was published under
-    pages              integer           number of pages in this edition
-    isbn10             character string  10-digit international standard book number
-    isbn13             character string  13-digit international standard book number
-    ================== ================= ===================================
-
-
-.. container:: data-dictionary
-
-    Table **awards** records various author and/or book awards:
-
-    ================== ================= ===================================
-    column             type              description
-    ================== ================= ===================================
-    id                 integer           unique identifier for award
-    name               character string  name of award
-    sponsor            character string  name of organization giving the award
-    criteria           character string  what the award is given for
-    ================== ================= ===================================
-
-
-.. container:: data-dictionary
-
-    Table **authors_awards** is a *cross-reference* table (explained below) relating **authors** and **awards**; each entry in the table records the giving of an award to an author (not for any particular book) in a particular year:
-
-    ================== ================= ===================================
-    column             type              description
-    ================== ================= ===================================
-    author_id          integer           id of the author receiving the award
-    award_id           integer           id of the award received
-    year               integer           year the award was given
-    ================== ================= ===================================
-
-
-.. container:: data-dictionary
-
-    Table **books_awards** is a *cross-reference* table (explained below) relating **books** and **awards**; each entry in the table records the giving of an award to an author for a specific book in a particular year:
-
-    ================== ================= ===================================
-    column             type              description
-    ================== ================= ===================================
-    book_id            integer           id of the book for which the award was given
-    award_id           integer           id of the award received
-    year               integer           year the award was given
-    ================== ================= ===================================
-
-We strongly recommend that you spend a little time using **SELECT** queries on each table above, to get a sense of what the data looks like.  Here is an interactive tool to get you started:
-
-.. activecode:: joins_example_expanded_books_explore
-    :language: sql
-    :dburl: /_static/textbook.sqlite3
-
-    SELECT * FROM authors;
+You might wish to spend some time doing **SELECT** queries on all of these tables, to get a sense of what the data looks like.
 
 
 Table relationships
@@ -373,16 +284,16 @@ Table relationships
 
 One of the strengths of relational databases compared to earlier database systems is that relationships are not explicitly stored in the database.  This provides a number of advantages regarding database design and software complexity, which are mostly beyond the scope of this book.  One important advantage of the relational approach is that you can easily express queries concerning relationships which were not anticipated by the designer of the database; for example, the query we did earlier looking for books published in the same year as another book.  However, this flexibility also means that, when you encounter a new relational database, you may not immediately understand the structure and relationships in the database, or how (or why) to join two tables together.
 
-A well structured database usually gives some indication of likely places to join tables together.  One indication may be in the names of columns - e.g., **book_id** strongly suggests a column that links to the **id** column of the **books** table.  Another indication can come in the form of *foreign key constraints*, a topic we will explore in `Chapter 5`_.  Exploring the database to find these implicit relationships is an important first step in learning any new database.
+A well structured database usually gives some indication of likely places to join tables together.  One indication may be in the names of columns - e.g., **book_id** in a table strongly suggests a column that links to the identity column of the **books** table.  Another indication can come in the form of *foreign key constraints*, a topic we will discuss in :numref:`Chapter {number} <table-creation-chapter>`.  Exploring the database to find these implicit relationships is an important first step in learning any new database.
 
-Your database might also come with a data model diagram, which is something we will explore more in `Part 2`_.  The data model will typically make explicit the relationships between tables.  While data can be related to each other in very complex ways, there are some basic relationship types that capture the important aspects of most relationships.  These relationships are commonly called "one-to-one", "one-to-many", and "many-to-many".  Below, we discuss these common relationships and how they are used in our expanded books database.  In `Part 2`_ of the book, we will explore the discover and modeling of these relationships when creating a database.
+Your database might also come with a data model diagram, discussed in :numref:`Part {number} <data-modeling-part>` of this book.  The data model will typically make explicit the relationships between tables.  While data can be related to each other in very complex ways, there are some basic relationship types that capture the important aspects of most relationships.  These relationships are commonly called "one-to-one", "one-to-many", and "many-to-many".  Below, we discuss these common relationships and where they appear in our books database.
 
 One-to-one
 ----------
 
-*One-to-one* describes a relationship between two types of data.  If we think of each data type as having its own table, then each row in one table has a well-defined relationship with *at most* one row in the other table, and vice versa.  Sometimes each row in a table has exactly one corresponding row in the other table, and vice versa; other times, some rows in one or both tables may have no corresponding rows in the other table.  When there is a true one-to-one correspondence between tables, it is sometimes desirable to combine the tables into one larger table (whether or not to do this is a design concern that we will consider more in `Part 2`_).
+*One-to-one* describes a relationship between two types of data.  If we think of each data type as having its own table, then each row in one table has a well-defined relationship with *at most* one row in the other table, and vice versa.  Sometimes each row in a table has exactly one corresponding row in the other table, and vice versa; other times, some rows in one or both tables may have no corresponding rows in the other table.  When there is a true one-to-one correspondence between tables, it is sometimes desirable to combine the tables into one larger table (whether or not to do this is a design decision).
 
-There are no obvious one-to-one relationships in our expanded books database.  An example of a one-to-one relationship, sticking with our books theme, might appear in a database for a seller of used books.  In this database, each of the seller's books is recorded in a table named **catalog**.  Each row in **catalog** will record things such as the book's author and title, condition, and current price.  This imagined database also contains a table named **sales**, which records information when a book is sold, such as the date sold, payment type, and a receipt number.  The two tables can be joined by the common column **stock_number**, which is unique for each book in the **catalog**.  Note that every record in the **sales** table corresponds to exactly one record in the **catalog** table; however, any unsold books still in the seller's possession will not have a corresponding **sales** record.
+There are no obvious one-to-one relationships in our books database.  An example of a one-to-one relationship, sticking with our books theme, might appear in a database for a seller of used books.  In this database, each of the seller's books is recorded in a table named **catalog**.  Each row in **catalog** will record things such as the book's author and title, condition, and current price.  This imagined database also contains a table named **sales**, which records information when a book is sold, such as the date sold, payment type, and a receipt number.  The two tables can be joined by the common column **stock_number**, which is unique for each book in the **catalog**.  Note that every record in the **sales** table corresponds to exactly one record in the **catalog** table; however, any unsold books still in the seller's possession will not have a corresponding **sales** record.
 
 .. figure:: one_to_one.svg
 
@@ -393,13 +304,12 @@ One-to-many
 
 *One-to-many* refers to the case when rows in one table correspond to some number of rows in another table, but rows in the second table correspond to at most one row in the other table.  In some cases, rows in the first table always have at least one corresponding row; other times, rows can have zero or more corresponding rows.
 
-In our earlier books database, we had exactly one **books** record for each **authors** record.  This is not reflective of the real world, in which authors may have written many books.  In the expanded database we will start using shortly, we assume a one-to-many relationship between authors and books - each author has one or more books, but each book has exactly one author.  (This is not reflective of the real world, either - many books exist that were written by two or more authors working together!  However, for simplicity our database only contains single-author books.)  Note that we can also talk of *many-to-one* relationships, which are just the symmetric equivalent of one-to-many; we can say that **authors** is in a one-to-many relationship with **books**, or that **books** is in a many-to-one relationship with **authors**.
+In our database, we have a one-to-many relationship between **authors** and **books** - each author has one or more books, but each book has exactly one author.  (This is not reflective of the real world - many books exist that were written by two or more authors working together!  However, for simplicity our database only contains single-author books.)  Note that we can also talk of *many-to-one* relationships, which are just the symmetric equivalent of one-to-many; we can say that **authors** is in a one-to-many relationship with **books**, or that **books** is in a many-to-one relationship with **authors**.
 
-To connect rows from one table to rows in another table where a one-to-many relationship exists between the tables, the simplest approach is to ensure that the table on the "one" side of the relationship has a unique id column of some sort; the table on the "many" side can then have a column that uses the id values from the "one" side table.  As we saw above, this strategy is used with **books** and **authors**; the **authors** table has an **id** column, which is unique for every row, and the **books** table has the corresponding column **author_id**.
+To connect rows from one table to rows in another table where a one-to-many relationship exists between the tables, the simplest approach is to ensure that the table on the "one" side of the relationship has a unique id column of some sort; the table on the "many" side can then have a column that uses the id values from the "one" side table.  As we saw above, this strategy is used with **books** and **authors**; the **authors** table has the **author_id** column, which is unique for every row, and the **books** table has the corresponding column **author_id**.
 
-Similarly, in our expanded database the **books** table has a one-to-many relationship with the **editions** table.  In this case, the **editions** table has a **book_id** column, which, as you might guess, contains values from the **id** column of **books**.
+Similarly, in our expanded database the **books** table has a one-to-many relationship with the **editions** table.  In this case, the **editions** table has a **book_id** column, which, as you might guess, contains values from the **book_id** column of **books**.
 
-Note that, because the database would be rather large (for use in your web browser) if we included all the known editions of all of the books in our database, the **editions** table only contains editions for books by author J.R.R. Tolkien.  The editions data is particularly "dirty", in the sense that there are many missing pieces of information, and the accuracy and completeness of the data are questionable (you can read more about the data and how it was collected in `Appendix A`_).
 
 
 Many-to-many
@@ -407,9 +317,9 @@ Many-to-many
 
 *Many-to-many*, you can probably guess, implies that rows in one table may correspond to multiple rows in the other table, and vice versa.  In our expanded database, our examples of many-to-many relationships will involve book and author awards.  For example, the Hugo Award is given out each year to a book in the science fiction genre.  In our database, there are many books that have won a Hugo Award; therefore the row for the Hugo Award in the **awards** table relates to multiple rows in the **books** table.  Especially good science fiction books might win both a Hugo Award and a Nebula Award; so rows in the **books** table can correspond to multiple **awards** rows.
 
-How do you connect rows from one table to rows in another table when there is a many-to-many relationship?  If you try the trick we used with one-to-many relationships, you quickly run into trouble.  For example, suppose we try to use the **id** column from **books** in the **awards** table; since many books have won the Hugo Award, we need to store many book ids, so we would have many rows for the Hugo Award, all identical except for the book id. On the other hand, if we try to store award ids in the **books** table, books that have won multiple awards will need multiple rows, all identical except for the award ids [#]_.  Having multiple nearly identical rows creates a number of problems, some of which we will explore in chapter XXX.
+How do you connect rows from one table to rows in another table when there is a many-to-many relationship?  If you try the trick we used with one-to-many relationships, you quickly run into trouble.  For example, suppose we try to store id values from **books** in the **awards** table; since many books have won the Hugo Award, we need to store many book ids, so we would have many rows for the Hugo Award, all identical except for the book id. On the other hand, if we try to store award ids in the **books** table, books that have won multiple awards will need multiple rows, all identical except for the award ids [#]_.  Having multiple nearly identical rows creates a number of problems, some of which we will explore in chapter XXX.
 
-The solution is to use a third table, known as a *cross-reference* table, as a connector.  At minimum, a cross-reference table will have a column for each of the unique id columns in the two tables being connected.  For example, the **books_awards** table in our database has a column **book_id** referring to the **id** column of **books**, and an **award_id** column referring to the **id** column of **awards**.  The existence of a book id, award id pair in the **books_awards** table means that the corresponding book has won the corresponding award.
+The solution is to use a third table, known as a *cross-reference* table, as a connector.  At minimum, a cross-reference table will have a column for each of the unique id columns in the two tables being connected.  For example, the **books_awards** table in our database has a column **book_id** referring to the **book_id** column of **books**, and an **award_id** column referring to the **award_id** column of **awards**.  The existence of a book id, award id pair in the **books_awards** table means that the corresponding book has won the corresponding award.
 
 We can store other information in the cross-reference table.  In the case of **books_awards** we also have a **year** column, which stores the year in which the award was given to the book.  Note that the cross-reference table is really the only place we can store this information; the year doesn't properly "belong" to the award, as an award is given out in many years; and it doesn't properly belong to the book, as books can win awards in different years.
 
@@ -423,9 +333,9 @@ To use the cross-reference table, we will need to join together *three* tables. 
     FROM
       books AS b
       JOIN books_awards AS ba
-        ON b.id = ba.book_id
+        ON b.book_id = ba.book_id
       JOIN awards AS a
-        ON a.id = ba.award_id
+        ON a.award_id = ba.award_id
     ;
 
 Looking at the query above, think of the first join as adding award ids from the cross-reference table to the rows from the books table; and think of the second join as then bringing in the award information matching the award ids.  (Again, you can break this query down into smaller pieces and try them in the interactive tool to help build your intuition about how SQL works.)
@@ -449,9 +359,9 @@ When the join specifies that all rows from a table should be returned, and a row
     FROM
       books AS b
       LEFT JOIN books_awards AS ba
-        ON b.id = ba.book_id
+        ON b.book_id = ba.book_id
       LEFT JOIN awards AS a
-        ON a.id = ba.award_id
+        ON a.award_id = ba.award_id
     ;
 
 Note that we have to do two outer joins in the above query.  The first outer join between **books** and **books_awards** is necessary because books without awards will have no matching records in the **books_awards** cross reference table.  The result of that join, then, will have ``NULL`` values for the **award_id** column coming from the **books_awards** table.  So, when we join with **awards** we again need an outer join, because the ``NULL`` **award_id** values will not match any rows in the **awards** table.
@@ -469,7 +379,7 @@ In most databases, we could instead write the query using one right outer join (
         ON b.id = ba.book_id
     ;
 
-Here, the **awards** and **books_awards** tables can use a regular join, as we only care about awards that are referenced in the **books_awards** table, and all rows in the **books_awards** table have a matching entry already in the **awards** table.  However, a right outer join would have worked equally well - an outer join is equivalent to an inner join if all rows match!
+Here, the **awards** and **books_awards** tables can use a regular join, as we only care about awards that are referenced in the **books_awards** table, and all rows in the **books_awards** table have a matching entry already in the **awards** table.  However, a right outer join would have worked equally well - an outer join is equivalent to an inner join if all rows match.
 
 The above queries do exhibit one behavior which may be unwanted, which is that we have multiple rows for books that have won multiple awards.  Some databases provide a way to produce a list of awards after each book, rather than multiple rows; however, that will have to wait until we explore grouping and aggregation in `Chapter 8`_.
 
@@ -522,15 +432,15 @@ A good clue that you have omitted a join condition is if you suddenly get very m
 
     SELECT b.title, a.name AS award, ba.year
     FROM books AS b, awards AS a, books_awards AS ba
-    WHERE b.id = ba.book_id
-    -- missing: AND a.id = ba.award_id
+    WHERE b.book_id = ba.book_id
+    -- missing: AND a.award_id = ba.award_id
     ;
 
 It looks like every book that has won an award has won *every* award!  That is due to the cross product resulting from the missing join condition.
 
 Implicit join syntax is standard only for inner joins.  Some database implementations do provide non-standard ways of doing outer joins using the implicit form, and you may see older queries using these.  Since notations vary, we will not include any examples here.
 
-As a final note, cross products are seldom a desired result on their own.  However, if you actually need a cross product and wish to be explicit about it, SQL provides the **CROSS JOIN** key phrase for your use:
+As a final note, cross products are seldom a desired result on their own.  However, if you actually need a cross product and wish to be explicit about it, SQL provides the **CROSS JOIN** key phrase for the purpose:
 
 ::
 
@@ -559,7 +469,7 @@ This section contains some exercises using the expanded books database introduce
         SELECT e.publisher, e.publication_year, e.title
         FROM
           books AS b
-          JOIN editions AS e ON b.id = e.book_id
+          JOIN editions AS e ON b.book_id = e.book_id
         WHERE b.title = 'The Hobbit';
 
     Implicit:
@@ -568,7 +478,7 @@ This section contains some exercises using the expanded books database introduce
 
         SELECT e.publisher, e.publication_year, e.title
         FROM books AS b, editions AS e
-        WHERE b.id = e.book_id
+        WHERE b.book_id = e.book_id
         AND   b.title = 'The Hobbit';
 
 .. activecode:: joins_self_test_two_way_join2
@@ -587,12 +497,12 @@ This section contains some exercises using the expanded books database introduce
         SELECT DISTINCT e.title
         FROM
           books AS b
-          JOIN editions AS e ON b.id = e.book_id
+          JOIN editions AS e ON b.book_id = e.book_id
         WHERE b.title = 'The Fellowship of the Ring';
 
         SELECT DISTINCT e.title
         FROM books AS b, editions AS e
-        WHERE b.id = e.books_id
+        WHERE b.book_id = e.book_id
         AND   b.title = 'The Fellowship of the Ring';
 
 .. activecode:: joins_self_test_two_way_join3
@@ -612,12 +522,12 @@ This section contains some exercises using the expanded books database introduce
         FROM
           books AS b
           JOIN editions AS e
-            ON b.id = e.book_id AND b.title <> e.title
+            ON b.book_id = e.book_id AND b.title <> e.title
         WHERE e.publication_year > 2005;
 
         SELECT e.title, b.title, e.publisher, e.publisher_location
         FROM books AS b, editions AS e
-        WHERE b.id = e.book_id
+        WHERE b.book_id = e.book_id
         AND   b.title <> e.title
         AND   e.publication_year > 2005;
 
@@ -625,7 +535,7 @@ This section contains some exercises using the expanded books database introduce
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query listing author, book title, edition title, and publisher for editions published since 2005:
+    Write a query listing author, book title, edition title, and publisher for editions published since 2010:
     ~~~~
 
 .. reveal:: joins_self_test_three_way_join_hint
@@ -637,21 +547,21 @@ This section contains some exercises using the expanded books database introduce
         SELECT a.name, b.title, e.title, e.publisher
         FROM
           authors AS a
-          JOIN books AS b ON a.id = b.author_id
-          JOIN editions AS e ON b.id = e.book_id
-        WHERE e.publication_year > 2005;
+          JOIN books AS b ON a.author_id = b.author_id
+          JOIN editions AS e ON b.book_id = e.book_id
+        WHERE e.publication_year > 2010;
 
         SELECT a.name, b.title, e.title, e.publisher
         FROM authors AS a, books AS b, editions AS e
-        WHERE a.id = b.author_id
-        AND   b.id = e.book_id
-        AND   e.publication_year > 2005;
+        WHERE a.author_id = b.author_id
+        AND   b.book_id = e.book_id
+        AND   e.publication_year > 2010;
 
 .. activecode:: joins_self_test_cross_reference1
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to list the authors who have won the Neustadt International Prize for Literature (note: this is an *author* award, not a *book* award):
+    Write a query returning the author who won the Neustadt International Prize for Literature in 1996 (note: this is an *author* award, not a *book* award):
     ~~~~
 
 .. reveal:: joins_self_test_cross_reference1_hint
@@ -663,15 +573,17 @@ This section contains some exercises using the expanded books database introduce
         SELECT au.name
         FROM
           authors AS au
-          JOIN authors_awards AS aa ON aa.author_id = au.id
-          JOIN awards AS aw ON aa.award_id = aw.id
-        WHERE aw.name = 'Neustadt International Prize for Literature';
+          JOIN authors_awards AS aa ON aa.author_id = au.author_id
+          JOIN awards AS aw ON aa.award_id = aw.award_id
+        WHERE aw.name = 'Neustadt International Prize for Literature'
+        AND   aa.year = 1996;
 
         SELECT au.name
         FROM authors AS au, authors_awards AS aa, awards AS aw
-        WHERE aa.author_id = au.id
-        AND   aa.award_id = aw.id
-        AND   aw.name = 'Neustadt International Prize for Literature';
+        WHERE aa.author_id = au.author_id
+        AND   aa.award_id = aw.award_id
+        AND   aw.name = 'Neustadt International Prize for Literature'
+        AND   aa.year = 1996;
 
 .. activecode:: joins_self_test_cross_reference2
     :language: sql
@@ -689,14 +601,14 @@ This section contains some exercises using the expanded books database introduce
         SELECT au.name AS author, aw.name AS award, aa.year
         FROM
           authors AS au
-          JOIN authors_awards AS aa ON aa.author_id = au.id
-          JOIN awards AS aw ON aa.award_id = aw.id
+          JOIN authors_awards AS aa ON aa.author_id = au.author_id
+          JOIN awards AS aw ON aa.award_id = aw.award_id
         ORDER BY au.name;
 
         SELECT au.name AS author, aw.name AS award, aa.year
         FROM authors AS au, authors_awards AS aa, awards AS aw
-        WHERE aa.author_id = au.id
-        AND   aa.award_id = aw.id
+        WHERE aa.author_id = au.author_id
+        AND   aa.award_id = aw.award_id
         ORDER BY au.name;
 
 .. activecode:: joins_self_test_outer_join1
@@ -715,8 +627,8 @@ This section contains some exercises using the expanded books database introduce
       SELECT au.name AS author, aw.name AS award, aa.year
       FROM
         authors AS au
-        LEFT JOIN authors_awards AS aa ON aa.author_id = au.id
-        LEFT JOIN awards AS aw ON aa.award_id = aw.id
+        LEFT JOIN authors_awards AS aa ON aa.author_id = au.author_id
+        LEFT JOIN awards AS aw ON aa.award_id = aw.award_id
       ORDER BY au.name;
 
 .. activecode:: joins_self_test_outer_join2
@@ -735,7 +647,7 @@ This section contains some exercises using the expanded books database introduce
       SELECT au.name
       FROM
         authors AS au
-        LEFT JOIN authors_awards AS aa ON aa.author_id = au.id
+        LEFT JOIN authors_awards AS aa ON aa.author_id = au.author_id
       WHERE aa.author_id IS NULL;
 
 
@@ -780,15 +692,46 @@ This section contains some exercises using the expanded books database introduce
         SELECT b1.title, a.name
         FROM
           books AS b1
-          JOIN authors AS a ON b1.author_id = a.id
-          JOIN books AS b2 ON b2.author_id = a.id
+          JOIN authors AS a ON b1.author_id = a.author_id
+          JOIN books AS b2 ON b2.author_id = a.author_id
         WHERE b2.title = 'Interpreter of Maladies';
 
         SELECT b1.title, a.name
         FROM books AS b1, books AS b2, authors AS a
-        WHERE b1.author_id = a.id
-        AND   b2.author_id = a.id
+        WHERE b1.author_id = a.author_id
+        AND   b2.author_id = a.author_id
         AND   b2.title = 'Interpreter of Maladies';
+
+.. activecode:: joins_self_test_recursive_join3
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
+
+    Using the **books** and **authors** tables, find all books (author and title) published in the same year as *The Three-Body Problem*, excluding *The Three-Body Problem* itself.
+    ~~~~
+
+.. reveal:: joins_self_test_recursive_join3_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT a.name, b2.title
+        FROM
+          books AS b1
+          JOIN books AS b2
+            ON
+              b1.publication_year = b2.publication_year
+              AND b2.book_id <> b1.book_id
+          JOIN authors AS a ON a.author_id = b2.author_id
+        WHERE b1.title = 'The Three-Body Problem';
+
+        SELECT b2.*
+        FROM books AS b1, books AS b2, authors AS a
+        WHERE b1.publication_year = b2.publication_year
+        AND   b2.book_id <> b1.book_id
+        AND   a.author_id = b2.author_id
+        AND   b1.title = 'The Three-Body Problem';
+
 
 .. activecode:: joins_self_test_challenge1
     :language: sql
@@ -797,7 +740,7 @@ This section contains some exercises using the expanded books database introduce
     Write a query to list books (author name and title) that have won the Nebula Award; show the year of the award, and list the most recent awards first.
     ~~~~
 
-.. reveal:: joins_self_test_recursive_challenge1_hint
+.. reveal:: joins_self_test_challenge1_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
@@ -806,17 +749,17 @@ This section contains some exercises using the expanded books database introduce
         SELECT au.name AS author, b.title, ba.year
         FROM
           authors AS au
-          JOIN books AS b ON au.id = b.author_id
-          JOIN books_awards AS ba ON b.id = ba.book_id
-          JOIN awards AS aw ON aw.id = ba.award_id
+          JOIN books AS b ON au.author_id = b.author_id
+          JOIN books_awards AS ba ON b.book_id = ba.book_id
+          JOIN awards AS aw ON aw.award_id = ba.award_id
         WHERE aw.name = 'Nebula Award'
         ORDER BY ba.year DESC;
 
         SELECT au.name AS author, b.title, ba.year
         FROM authors AS au, books AS b, books_awards AS ba, awards AS aw
-        WHERE au.id = b.author_id
-        AND   b.id = ba.book_id
-        AND   aw.id = ba.award_id
+        WHERE au.author_id = b.author_id
+        AND   b.book_id = ba.book_id
+        AND   aw.award_id = ba.award_id
         AND   aw.name = 'Nebula Award'
         ORDER BY ba.year DESC;
 
@@ -827,7 +770,7 @@ This section contains some exercises using the expanded books database introduce
     Write a query giving a distinct list of book awards won by authors who have also won the Nobel Prize in Literature (an author award).
     ~~~~
 
-.. reveal:: joins_self_test_recursive_challenge2_hint
+.. reveal:: joins_self_test_challenge2_hint
     :showtitle: Show answer
     :hidetitle: Hide answer
 
@@ -836,10 +779,10 @@ This section contains some exercises using the expanded books database introduce
         SELECT DISTINCT aw1.name
         FROM
           books AS b
-          JOIN books_awards AS ba ON b.id = ba.book_id
-          JOIN awards AS aw1 ON aw1.id = ba.award_id  -- book awards
+          JOIN books_awards AS ba ON b.book_id = ba.book_id
+          JOIN awards AS aw1 ON aw1.award_id = ba.award_id  -- book awards
           JOIN authors_awards AS aa ON b.author_id = aa.author_id
-          JOIN awards AS aw2 ON aw2.id = aa.award_id  -- author awards
+          JOIN awards AS aw2 ON aw2.award_id = aa.award_id  -- author awards
         WHERE aw2.name = 'Nobel Prize in Literature';
 
         SELECT DISTINCT aw1.name
@@ -849,11 +792,13 @@ This section contains some exercises using the expanded books database introduce
           awards AS aw1,         -- book awards
           authors_awards AS aa,
           awards AS aw2          -- author awards
-        WHERE b.id = ba.book_id
-        AND   aw1.id = ba.award_id
+        WHERE b.book_id = ba.book_id
+        AND   aw1.award_id = ba.award_id
         AND   b.author_id = aa.author_id
-        AND   aw2.id = aa.award_id
+        AND   aw2.award_id = aa.award_id
         AND   aw2.name = 'Nobel Prize in Literature';
+
+.. [#] Because the database would be rather large (for use in your web browser) if we included all the known editions of all of the books in our database, the **editions** table only contains editions for books by author J.R.R. Tolkien.  The editions data is particularly "dirty", in the sense that there are many missing pieces of information, and the accuracy and completeness of the data are questionable (you can read more about the data and how it was collected in :ref:`Appendix A <appendix-a>`).
 
 .. [#] You could argue that the **books** table should store an *array* of award ids, instead of just a single award id, thus solving the dilemma.  This is actually possible in a handful of database implementations that support array-valued columns.  However, the use of such columns is not without controversy.  For this textbook, we will take the more common approach of using cross-reference tables.
 
