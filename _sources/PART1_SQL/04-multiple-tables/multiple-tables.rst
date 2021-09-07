@@ -266,11 +266,22 @@ To get the author's name together with their books, we will need to join **books
       JOIN authors ON authors.author_id = books.author_id
     ;
 
+Note that this query requires the use of qualified column names, at least for the two **author_id** columns - if we simply do
+
+::
+
+    SELECT name, title
+    FROM
+      books
+      JOIN authors ON author_id = author_id
+    ;
+
+we will get an error message that the **author_id** name is ambiguous.
 
 The **books** and **authors** tables introduced above are part of a set of related tables.  All of the tables are described in full in :ref:`Appendix A <appendix-a>`, but in brief:
 
 - **authors** contains author name, birth, and death dates (where known).
-- **books** contains book title and publication year; it links to **authors** via the **author_id** column.
+- **books** contains book title (in English) and publication year; it links to **authors** via the **author_id** column.
 - **editions** contains information about the printed editions of books: publisher information, year printed, and so forth.  It links to **books** through the **book_id** column [#]_.
 - **awards** contains information about some prominent awards, some given to authors for their body of work, and some given to authors for specific books.
 - **authors_awards** is a *cross-reference* table linking **authors** to their **awards**; cross-reference tables are explained below.
@@ -339,6 +350,7 @@ To use the cross-reference table, we will need to join together *three* tables. 
     ;
 
 Looking at the query above, think of the first join as adding award ids from the cross-reference table to the rows from the books table; and think of the second join as then bringing in the award information matching the award ids.  (Again, you can break this query down into smaller pieces and try them in the interactive tool to help build your intuition about how SQL works.)
+
 
 Inner and outer joins
 :::::::::::::::::::::
@@ -701,6 +713,7 @@ This section contains some exercises using the expanded books database introduce
         WHERE b1.author_id = a.author_id
         AND   b2.author_id = a.author_id
         AND   b2.title = 'Interpreter of Maladies';
+
 
 .. activecode:: joins_self_test_recursive_join3
     :language: sql
