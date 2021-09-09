@@ -69,12 +69,12 @@ table:not(.htCore) td {
 }
 
 a.footnote-reference {
-    font-size: 80% !important;
+    font-size: 1.33rem !important;
     vertical-align: text-top !important;
 }
 
-div[class*="highlight-"] {
-  margin-bottom: 10px;
+span.caption-text {
+    font-size: 1.5rem !important;
 }
 
 /* Runestone elements and page layout */
@@ -130,6 +130,10 @@ div[class*="highlight-"] {
     background-color: #B2B4B3 !important;
     border-radius: 4px !important;
     width: 14px !important;
+}
+
+div[class*="highlight-"] {
+  margin-bottom: 10px;
 }
 
 /*

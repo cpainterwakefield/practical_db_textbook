@@ -61,14 +61,20 @@
   <font id="EmbeddedFont_3" horiz-adv-x="2048">
    <font-face font-family="Noto Sans CJK TC embedded" units-per-em="2048" font-weight="bold" font-style="normal" ascent="2355" descent="582"/>
    <missing-glyph horiz-adv-x="2048" d="M 0,0 L 2047,0 2047,2047 0,2047 0,0 Z"/>
+   <glyph unicode="y" horiz-adv-x="1139" d="M 262,-461 C 518,-461 641,-305 741,-35 L 1149,1147 860,1147 702,614 C 676,508 647,397 621,291 L 610,291 C 578,401 549,512 514,614 L 332,1147 29,1147 475,20 455,-47 C 422,-147 356,-221 240,-221 213,-221 180,-213 160,-207 L 104,-438 C 150,-453 195,-461 262,-461 Z"/>
+   <glyph unicode="v" horiz-adv-x="1139" d="M 420,0 L 768,0 1151,1147 862,1147 694,575 C 664,463 633,344 602,227 L 592,227 C 561,344 530,463 500,575 L 332,1147 29,1147 420,0 Z"/>
    <glyph unicode="t" horiz-adv-x="795" d="M 582,-29 C 682,-29 762,-6 823,14 L 774,233 C 743,221 698,209 662,209 559,209 506,270 506,401 L 506,909 788,909 788,1147 506,1147 506,1456 256,1456 221,1147 43,1133 43,909 205,909 205,401 C 205,145 309,-29 582,-29 Z"/>
    <glyph unicode="s" horiz-adv-x="901" d="M 489,-29 C 788,-29 946,133 946,334 946,547 778,623 627,680 506,725 399,756 399,840 399,905 449,950 553,950 637,950 717,911 799,852 L 934,1034 C 840,1106 711,1176 545,1176 283,1176 117,1030 117,825 117,633 279,545 424,489 545,442 664,403 664,317 664,246 612,197 498,197 391,197 293,242 190,322 L 53,133 C 168,39 336,-29 489,-29 Z"/>
+   <glyph unicode="r" horiz-adv-x="742" d="M 162,0 L 463,0 463,684 C 526,850 635,909 725,909 772,909 805,903 846,891 L 897,1151 C 862,1165 825,1176 762,1176 643,1176 520,1094 436,944 L 430,944 408,1147 162,1147 162,0 Z"/>
    <glyph unicode="o" horiz-adv-x="1113" d="M 641,-29 C 928,-29 1192,193 1192,573 1192,954 928,1176 641,1176 354,1176 90,954 90,573 90,193 354,-29 641,-29 Z M 641,217 C 485,217 397,356 397,573 397,788 485,930 641,930 797,930 885,788 885,573 885,356 797,217 641,217 Z"/>
+   <glyph unicode="n" horiz-adv-x="1006" d="M 162,0 L 463,0 463,788 C 547,872 606,918 700,918 813,918 862,856 862,678 L 862,0 1163,0 1163,715 C 1163,1004 1057,1176 809,1176 653,1176 537,1094 436,995 L 430,995 408,1147 162,1147 162,0 Z"/>
    <glyph unicode="l" horiz-adv-x="451" d="M 444,-29 C 516,-29 565,-16 600,-2 L 563,221 C 543,217 535,217 522,217 494,217 463,240 463,309 L 463,1634 162,1634 162,322 C 162,109 236,-29 444,-29 Z"/>
-   <glyph unicode="g" horiz-adv-x="1113" d="M 565,-498 C 948,-498 1190,-322 1190,-90 1190,111 1038,197 762,197 L 567,197 C 432,197 387,229 387,291 387,338 406,363 436,389 485,373 539,363 584,363 829,363 1026,494 1026,752 1026,823 1004,887 975,926 L 1169,926 1169,1147 756,1147 C 709,1163 647,1176 584,1176 340,1176 121,1030 121,762 121,627 195,518 274,461 L 274,453 C 205,403 145,324 145,238 145,143 190,84 250,45 L 250,35 C 145,-25 86,-107 86,-203 86,-406 295,-498 565,-498 Z M 584,549 C 483,549 403,625 403,762 403,895 481,971 584,971 686,971 764,895 764,762 764,625 684,549 584,549 Z M 610,-307 C 444,-307 338,-252 338,-156 338,-109 360,-63 412,-23 453,-33 502,-39 571,-39 L 711,-39 C 834,-39 901,-59 901,-141 901,-231 782,-307 610,-307 Z"/>
+   <glyph unicode="k" horiz-adv-x="1086" d="M 162,0 L 459,0 459,291 621,475 899,0 1225,0 795,674 1188,1147 858,1147 467,653 459,653 459,1634 162,1634 162,0 Z"/>
+   <glyph unicode="i" horiz-adv-x="372" d="M 162,0 L 463,0 463,1147 162,1147 162,0 Z M 313,1331 C 416,1331 487,1397 487,1497 487,1595 416,1661 313,1661 209,1661 137,1595 137,1497 137,1397 209,1331 313,1331 Z"/>
    <glyph unicode="e" horiz-adv-x="1033" d="M 662,-29 C 803,-29 948,20 1061,98 L 958,283 C 877,231 795,203 700,203 530,203 408,301 383,489 L 1090,489 C 1098,516 1104,571 1104,629 1104,944 940,1176 625,1176 352,1176 90,944 90,573 90,195 340,-29 662,-29 Z M 379,690 C 401,856 508,942 629,942 776,942 846,844 846,690 L 379,690 Z"/>
-   <glyph unicode="c" horiz-adv-x="954" d="M 649,-29 C 776,-29 915,14 1026,111 L 905,309 C 842,256 764,217 682,217 518,217 397,356 397,573 397,788 516,930 692,930 756,930 809,903 866,854 L 1010,1049 C 926,1120 817,1176 676,1176 365,1176 90,954 90,573 90,193 332,-29 649,-29 Z"/>
+   <glyph unicode="b" horiz-adv-x="1086" d="M 737,-29 C 989,-29 1225,199 1225,594 1225,944 1055,1176 772,1176 659,1176 545,1120 455,1038 L 463,1223 463,1634 162,1634 162,0 397,0 424,121 432,121 C 524,25 635,-29 737,-29 Z M 670,219 C 608,219 535,242 463,305 L 463,809 C 541,889 610,928 688,928 846,928 915,807 915,588 915,338 809,219 670,219 Z"/>
    <glyph unicode="a" horiz-adv-x="1007" d="M 444,-29 C 575,-29 690,37 791,123 L 799,123 819,0 1065,0 1065,670 C 1065,1001 915,1176 625,1176 444,1176 281,1108 145,1024 L 254,825 C 360,887 463,934 569,934 711,934 760,848 766,735 303,686 104,557 104,311 104,117 240,-29 444,-29 Z M 543,207 C 455,207 391,246 391,336 391,438 485,516 766,551 L 766,319 C 692,248 629,207 543,207 Z"/>
+   <glyph unicode="_" horiz-adv-x="1113" d="M 29,-317 L 1135,-317 1135,-141 29,-141 29,-317 Z"/>
   </font>
  </defs>
  <defs class="EmbeddedBulletChars">
@@ -136,7 +142,7 @@
     <path fill="rgb(180,199,220)" stroke="none" d="M 15856,10514 L 18959,10514 18959,11359 15856,11359 15856,10514 Z"/>
     <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="16106" y="11038"><tspan fill="rgb(0,0,0)" stroke="none">like new</tspan></tspan></tspan></text>
     <path fill="rgb(180,199,220)" stroke="none" d="M 18959,10514 L 21078,10514 21078,11359 18959,11359 18959,10514 Z"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="19209" y="11038"><tspan fill="rgb(0,0,0)" stroke="none">5.00</tspan></tspan></tspan></text>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="19209" y="11038"><tspan fill="rgb(0,0,0)" stroke="none">4.25</tspan></tspan></tspan></text>
     <path fill="rgb(180,199,220)" stroke="none" d="M 2600,11359 L 6180,11359 6180,12204 2600,12204 2600,11359 Z"/>
     <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Mono, monospace" font-size="423px" font-weight="400"><tspan class="TextPosition" x="2850" y="11883"><tspan fill="rgb(0,0,0)" stroke="none">1423</tspan></tspan></tspan></text>
     <path fill="rgb(180,199,220)" stroke="none" d="M 6180,11359 L 10478,11359 10478,12204 6180,12204 6180,11359 Z"/>
@@ -162,8 +168,8 @@
   </g>
   <g class="com.sun.star.drawing.TextShape">
    <g id="id3">
-    <rect class="BoundingBox" stroke="none" fill="none" x="2600" y="7849" width="2363" height="972"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="494px" font-weight="700"><tspan class="TextPosition" x="2850" y="8551"><tspan fill="rgb(0,0,0)" stroke="none">catalog</tspan></tspan></tspan></text>
+    <rect class="BoundingBox" stroke="none" fill="none" x="2600" y="7849" width="5630" height="972"/>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="494px" font-weight="700"><tspan class="TextPosition" x="2850" y="8551"><tspan fill="rgb(0,0,0)" stroke="none">bookstore_inventory</tspan></tspan></tspan></text>
    </g>
   </g>
   <g class="com.sun.star.drawing.CustomShape">
@@ -211,8 +217,8 @@
   </g>
   <g class="com.sun.star.drawing.TextShape">
    <g id="id5">
-    <rect class="BoundingBox" stroke="none" fill="none" x="2600" y="13474" width="2363" height="972"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="494px" font-weight="700"><tspan class="TextPosition" x="2850" y="14176"><tspan fill="rgb(0,0,0)" stroke="none">sales</tspan></tspan></tspan></text>
+    <rect class="BoundingBox" stroke="none" fill="none" x="2600" y="13474" width="4487" height="972"/>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="494px" font-weight="700"><tspan class="TextPosition" x="2850" y="14176"><tspan fill="rgb(0,0,0)" stroke="none">bookstore_sales</tspan></tspan></tspan></text>
    </g>
   </g>
   <g class="com.sun.star.drawing.OpenBezierShape">

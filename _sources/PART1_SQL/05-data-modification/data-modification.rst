@@ -4,14 +4,21 @@
 Modifying data
 ==============
 
-We have so far concentrated on the basics of retrieving data from relational databases using SQL, and future chapters will explore more advanced topics in data retrieval.  You may be wondering how to get data *into* a database in the first place.  This chapter will explain the basic mechanism for adding data to tables, as well as how to remove or modify data.
+This chapter will explain the basic mechanisms for adding data to tables, removing data from tables, and modifying data.
+
+Tables used in this chapter
+:::::::::::::::::::::::::::
+
+
 
 Adding data using INSERT
 ::::::::::::::::::::::::
 
-.. activecode:: ch5_example_insert
+To add rows to a table in the database, we use a query starting with the keyword **INSERT**.  In its simplest form, you add a single row to a table by providing a value for each column in the table as defined.  For example,
+
+.. activecode:: data_modification_example_insert
     :language: sql
-    :dburl: /_static/books.sqlite3
+    :dburl: /_static/textbook.sqlite3
 
     SELECT b.title, a.name AS award, ba.year
     FROM books AS b, awards AS a, books_awards AS ba
@@ -37,3 +44,12 @@ Modifying data with UPDATE
     - WHERE clause again
     - SET expressions
 - mention: TRUNCATE, MERGE
+
+
+.. |chapter-end| unicode:: U+274F
+
+|chapter-end|
+
+----
+
+**Notes**
