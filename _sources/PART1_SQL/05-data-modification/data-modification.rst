@@ -9,7 +9,7 @@ This chapter will explain the basic mechanisms for adding data to tables, removi
 Tables used in this chapter
 :::::::::::::::::::::::::::
 
-
+For this chapter, we will work with the tables **bookstore_inventory** and **bookstore_sales**, which simulate a simple database a seller of used books might use.  A full description of these tables can be found in :ref:`Appendix A <appendix-a>`.
 
 Adding data using INSERT
 ::::::::::::::::::::::::
@@ -20,11 +20,7 @@ To add rows to a table in the database, we use a query starting with the keyword
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    SELECT b.title, a.name AS award, ba.year
-    FROM books AS b, awards AS a, books_awards AS ba
-    WHERE b.id = ba.book_id
-    -- missing: AND a.id = ba.award_id
-    ;
+
 
 Removing data with DELETE
 :::::::::::::::::::::::::

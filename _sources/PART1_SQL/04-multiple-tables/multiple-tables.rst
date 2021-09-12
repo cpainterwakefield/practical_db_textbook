@@ -16,7 +16,7 @@ In past chapters, we saw how to retrieve data from individual tables, filter dat
 Tables used in this chapter
 :::::::::::::::::::::::::::
 
-We will use a number of different sets of tables in this chapter, starting with some abstract tables used to illustrate joins.  These abstract tables are illustrated below, but are also available in the database for your own experimentation.  We will also use the **simple_books** and **simple_authors** tables used previously.  We will illustrate one point with a synthetic dataset simulating the database for a used book store.  Finally, we will start working with a more complex set of tables about books and authors.  Brief explanations of newly introduced tables can be found below, and a full explanation of all of the datasets can be found in :ref:`Appendix A <appendix-a>`.
+We will use several collections of tables in this chapter, starting with some abstract tables used to illustrate joins.  These abstract tables are illustrated below, but are also available in the database for your own experimentation.  Also new to this chapter are a synthetic dataset simulating the database for a used book store, and a more complex set of tables about books and authors.  We will also use the **simple_books** and **simple_authors** tables used in previous chapters.  Brief explanations of newly introduced tables can be found below, and a full explanation of all of the datasets can be found in :ref:`Appendix A <appendix-a>`.
 
 You may wish to spend some time doing **SELECT** queries on each new table as it is introduced, to get a sense of what the data looks like.  Understanding your database is key!
 
@@ -397,6 +397,22 @@ In most databases, we could instead write the query using one right outer join (
 Here, the **awards** and **books_awards** tables can use a regular join, as we only care about awards that are referenced in the **books_awards** table, and all rows in the **books_awards** table have a matching entry already in the **awards** table.  However, a right outer join would have worked equally well - an outer join is equivalent to an inner join if all rows match.
 
 The above queries do exhibit one behavior which may be unwanted, which is that we have multiple rows for books that have won multiple awards.  Some databases provide a way to produce a list of awards after each book, rather than multiple rows; however, that will have to wait until we explore grouping and aggregation in `Chapter 8`_.
+
+One more example of the use of an outer join, this time using our bookstore tables - see if you can figure out what this query is doing:
+
+::
+
+    SELECT
+      inv.*,
+      CASE WHEN sales.stock_number IS NULL THEN 'in stock'
+           ELSE 'sold'
+      END
+        AS status
+    FROM
+      bookstore_inventory AS inv
+      LEFT JOIN bookstore_sales AS sales
+        ON inv.stock_number = sales.stock_number
+    ;
 
 
 Implicit join syntax

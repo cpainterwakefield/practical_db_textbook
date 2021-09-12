@@ -1,49 +1,40 @@
 .. _table-creation-chapter:
 
-==============
-Table creation
-==============
+=============================
+Data types and table creation
+=============================
 
-- very brief introduction to table creation
-- how to display created tables in sqlite (select name, sql from sqlite_master)
-- datatypes - keep simple, move details to reference
-- keys/constraints
-- defaults
-- auto increments (GENERATED AS IDENTITY) (mention sequences - tools to manage - briefly)
-- simple insert
-- create as...select
+This chapter will discuss basic table creation, starting with an explanation of SQL data types.
 
-Now that we have seen how to get data out of tables, it is time to discuss how tables are created in the first place.  In this chapter,
+Data types
+::::::::::
 
-Data types in SQL
-:::::::::::::::::
-
-The SQL standard defines several basic data types with which columns can be associated.  While most of the basic types exist in all RDBMSes, actual implementation of the types varies quite a bit.  In particular, SQLite is dynamically typed, and you can store values of any type in any column no matter how the column is defined.  Please read the documentation for your RDBMS for details on data types supported and their implementations.
+The SQL standard defines several basic data types with which columns can be associated.  While most of the basic types exist in all relational database systems, actual implementation of the types varies quite a bit.  Most database systems define additional, non-standard types for various uses.  Unusually, SQLite is dynamically typed, and you can store values of any type in any column no matter how the column is defined.  For all of these reasons, you will want to consult your database system's documentation to understand the types available to you.  In this section we survey the major data types, without discussion of database compatibility; for more information, see Appendix B, :ref:`appendix-b-data-types`.
 
 Numbers
 -------
 
-SQL provides support for several different types of number values, explained below.
+SQL provides support for several different types of numbers, each with different applications and limitations.  However, actual implementation of the standard varies quite a bit; see Appendix B, :ref:`appendix-b-number-types` for a full discussion of number types.
 
 Integers
 ########
 
-SQL defines three integer types, which differ only in the range of values they can store: **INTEGER**, **SMALLINT**, and **BIGINT**.  Implementations of these types vary, but it is not uncommon for **INTEGER** (often abbreviated as **INT**) to store 32-bit integers, **SMALLINT** 16-bit integers, and **BIGINT** 64-bit integers.  Additional integer types may be available for your RDBMS.
+SQL defines three integer types: **INTEGER**, **SMALLINT**, and **BIGINT**.  Implementations of these types vary, but it is not uncommon for **INTEGER** (often abbreviated as **INT**) to store 32-bit integers, **SMALLINT** 16-bit integers, and **BIGINT** 64-bit integers.  Not all databases recognize all of these types, but **INTEGER** is recognized by all of the databases considered for this book.  Additional integer types may be available for your RDBMS.
 
 Exact decimal numbers
 #####################
 
-Decimal number types allow for exact storage of numbers that have digits to the right of the decimal point, e.g., 1234.56789.  These numbers are exact (compare to the floating point types below), and permit exact mathematical operations where possible (e.g., for addition and subtraction).  The two defined types for SQL are **NUMERIC** and **DECIMAL**, which are typically just synonyms for each other.  These types may be defined with parameters representing *precision* and *scale*, where precision is the number of significant digits that can be stored, and scale is the number of digits following the decimal point.  If the precision is given, but not the scale, the scale defaults to zero.  Some implementations may also allow the omission of precision and scale, allowing for arbitrary numbers of digits before or after the decimal point (up to implementation-defined limits).
+Decimal number types allow for exact storage of numbers that have digits to the right of the decimal point, e.g., 1234.56789.  These numbers are exact (compare to the floating point types below), and permit exact mathematical operations where possible (addition, subtraction, and multiplication).  The two defined types for SQL are **NUMERIC** and **DECIMAL**, which are synonyms of each other.  These types may be defined with parameters representing *precision* and *scale*, where precision is the number of significant digits that can be stored, and scale is the number of digits following the decimal point.  If the precision is given, but not the scale, the scale defaults to zero.
 
 For example, in most implementations:
 
 - **NUMERIC(3, 2)** defines a type that can store the values between -999.99 and 999.99, with a maximum of 2 digits past the decimal point.
 - **NUMERIC(4)** defines a type that can store integers between -9999 and 9999.
-- **NUMERIC** defines a type that can exactly store decimal values with arbitrary numbers of digits before and after the decimal point.
+- **NUMERIC** defines a type that can exactly store decimal values with implementation-defined precision and scale.
 
 Different implementations behave differently when an attempt is made to store values with more digits than are allowed by the specified precision and scale.  This may result in an error, or (in the case of too many digits to the right of the decimal point), it may result in rounding or truncation of the value.
 
-Decimal number types are particularly important for the storage of monetary records, where exact addition, subtraction, and multiplication is necessary.
+Decimal number types are particularly important for the storage of monetary data, where exact addition, subtraction, and multiplication is necessary.
 
 Floating point numbers
 ######################
@@ -53,73 +44,214 @@ Floating point number types allow for (possibly inexact) storage of real numbers
 .. _`IEEE 754`: https://en.wikipedia.org/wiki/IEEE_754
 
 
-A summary of database support for number types is shown below (for the five databases this textbook attempts to cover):
-
-================  ===================== ============================== ======== ================================== ================
-Type              SQLite                PostgreSQL                     MySQL    Oracle                             SQL Server
-================  ===================== ============================== ======== ================================== ================
-INTEGER           yes                   yes                            yes      use NUMBER                         yes
-SMALLINT          equivalent to INTEGER yes                            yes      use NUMBER                         yes
-BIGINT            equivalent to INTEGER yes                            yes      use NUMBER                         yes
-NUMERIC/DECIMAL   yes                   yes                            yes      use NUMBER                         yes
-FLOAT             equivalent to REAL    equivalent to DOUBLE PRECISION yes      yes; but BINARY_DOUBLE recommended yes
-REAL              yes                   yes                            yes      yes; but BINARY_DOUBLE recommended yes
-DOUBLE PRECISION  equivalent to REAL    yes                            yes      yes; but BINARY_DOUBLE recommended use FLOAT
-================  ===================== ============================== ======== ================================== ================
-
 Character string types
 ----------------------
 
-There are three main data types for storing character data in SQL.  Officially, these are named **CHARACTER**, **CHARACTER VARYING**, and **CHARACTER LARGE OBJECT**.  In addition, the modifier **NATIONAL** may be used to indicate strings containing data from locale-dependent character sets.  These names are fairly long and clunky, so databases typically use abbreviations or even completely different names for the same concepts.
+There are several data types for storing character data in SQL; again, actual implementations vary.  See Appendix B, :ref:`appendix-b-string-types` for a full discussion of character string types.
 
-The type **CHARACTER**, usually abbreviated as **CHAR**, is used for fixed-length strings.  The type **CHAR** is followed by parentheses enclosing the length of the string.  All values in a column of type **CHAR(4)**, for example, must contain exactly 4 characters.  In practice, many databases relax the "exactly" part of the definition and allow for shorter strings to be stored, although they may "pad" the value with trailing space characters.  Attempting to store strings longer than *n* usually results in an error.
+The type **CHARACTER**, usually abbreviated as **CHAR**, is used for fixed-length strings.  The type **CHAR** is followed by parentheses enclosing the length of the string.  All values in a column of type **CHAR(4)**, for example, must contain exactly 4 characters.  In practice, many databases relax the "exactly" part of the definition and allow for shorter strings to be stored, although they may pad the value with trailing space characters.  Attempting to store strings longer than *n* usually results in an error.
 
-**CHARACTER VARYING** is usually abbreviated as **VARCHAR**, and is used for strings of varying length up to some maximum, which must be specified just as with the **CHAR** type.  It is usually an error to attempt to store strings longer than the maximum.
+**CHARACTER VARYING** is usually abbreviated as **VARCHAR**, and is used for strings of varying length up to some maximum, which must be specified just as with the **CHAR** type.  It is usually an error to attempt to store strings longer than the maximum.  (Note for Oracle users: Oracle strongly recommends using their **VARCHAR2** type rather than **VARCHAR**, although both types are recognized.)
 
-**CHARACTER LARGE OBJECT** goes by many names, and is used to store strings of arbitrary length, up to some implementation-defined maximum (for example, Oracle's **CLOB** type allows strings of up to 128TB in some cases).
+Examples:
 
-A summary of database support for character strings is shown below:
+- **CHAR(5)** can store the strings ``'apple'``, ``'1 2 3'``, or ``'x    '`` (with four trailing spaces), but not ``'x'`` or ``'this is too long'``.
+- **VARCHAR(5)** can store the strings ``'hello'``, ``'a b'`` or ``'y'``, but not ``'also too long'``.
 
-=======================  ===================== ========== ======== =============== ================
-Type                     SQLite                PostgreSQL MySQL    Oracle          SQL Server
-=======================  ===================== ========== ======== =============== ================
-CHARACTER(n)             equivalent to TEXT    yes        yes      yes             yes
-CHARACTER VARYING(n)     equivalent to TEXT    yes        yes      use VARCHAR2(n) yes
-CHARACTER LARGE OBJECT   equivalent to TEXT    use TEXT   use TEXT use CLOB        use VARCHAR(MAX)
-=======================  ===================== ========== ======== =============== ================
+One disadvantage to **VARCHAR** is the need to predict the maximum length of string that you might need to store.  Many databases now implement some type of arbitrary-length character string type, often named **TEXT**.  Some databases impose limitations on this type (such as not allowing its use for indexed columns).  Be sure to read your database implementation's documentation to understand these limitations before using **TEXT**; if you need portability between databases, it may be best to use **VARCHAR** with a generous size allocation.
 
 
 Date and time types
 -------------------
 
-Management of date and time data is a very complicated affair.  Calendars change and differ among cultures, time zones vary widely, and "leap" adjustments to the calendar and clock occur irregularly.  SQL provides very robust data and time types along with operations on these types that allow for very precise storage and management of these values.  However, here again, implementations vary, and you should read your database system's documentation to understand the fine points.
+Management of date and time data is a very complicated affair.  Calendars change over time and differ among cultures, time zones vary geographically, and "leap" adjustments to the calendar and clock occur irregularly.  SQL provides very robust date and time types along with operations on these types that allow for very precise storage and management of these values.  However, here again, implementations vary, and you should read your database system's documentation to understand the fine points.  See Appendix B, :ref:`appendix-b-datetime-types` for a full discussion.
 
-The SQL standard defines three or five principal types, depending on how you count.  The types are **DATE**, **TIME** (with or without time zone), and **TIMESTAMP** (with or without time zone).  If you specify simply **TIME** or **TIMESTAMP**, you get the version without time zones; append **WITH TIME ZONE** to additionally store time zone information.
+There is no standard syntax for date and time literals in SQL.  In most cases, strings in some implementation-defined format(s) are used to represent dates and times.  Internally, the values may be stored as decimal numbers - offsets from some fixed reference.  In this book we will simply use character strings conforming to the `ISO 8601`_ standard.  Using this format, dates can be usefully compared - ``'2001-04-10'`` is correctly less than ``'2014-01-22'`` - which also means we can put data in order by date columns.  Time values can be trickier due to the possible inclusion of time zone, but we will avoid these complications by simply ignoring them (there are no examples of time values in our database).
 
-- **DATE** values store dates in such a way that any particular day in history can be accurately recorded.  Typically the Gregorian calendar is supported, but some implementations will convert to and from Julian dates.
-- **TIME** represents a time of day, without reference to the date.  **TIME WITH TIME ZONE** includes information specifying the time zone relative to which the time should be evaluated.
-- **TIMESTAMP** represents a precise moment in time, incorporating both the date and the time of day (with or without time zone).
+.. _`ISO 8601`: https://en.wikipedia.org/wiki/ISO_8601
 
-A summary of database support for date and time types is shown below:
-
-========================  ========================== ========== ======== ================================ ================
-Type                      SQLite                     PostgreSQL MySQL    Oracle                           SQL Server
-========================  ========================== ========== ======== ================================ ================
-DATE                      use TEXT, REAL, or INTEGER yes        yes      yes                              yes
-TIME                      use TEXT, REAL, or INTEGER yes        yes      no, use TIMESTAMP                yes
-TIME WITH TIME ZONE       use TEXT, REAL, or INTEGER yes        no       no, use TIMESTAMP WITH TIME ZONE no
-TIMESTAMP                 use TEXT, REAL, or INTEGER yes        yes      yes                              use DATETIME2
-TIMESTAMP WITH TIME ZONE  use TEXT, REAL, or INTEGER yes        no       yes                              no
-========================  ========================== ========== ======== ================================ ================
-
-In addition to the date and time types, SQL defines a useful set of types known a *interval* types, where an interval represents a span of days or time between two date or time values.  These are not covered in this book.
 
 Additional data types
 ---------------------
 
-Below is a list of some other data types you might encounter or wish to use in a SQL setting.  These are not supported by all RDBMSes.
+Below is a list of some other data types you might encounter or wish to use in a SQL setting.  These are not supported by all database implementations.
 
-- SQL defines a Boolean data type (**BOOLEAN**) which can store the literal values **True** and **False**.
-- SQL also defines types designed to hold binary data.  This can sometimes be useful, although binary data such as images or music files take up a great deal of space; it is often preferable to store them externally, and only store in the database information about how to retrieve the files (e.g., a file path or URL).  The SQL standard includes the types **BINARY**, **BINARY VARYING**, and **BINARY LARGE OBJECT**; most implementations provide something analogous to **BINARY LARGE OBJECT**, usually under a different name.
+- SQL defines a Boolean data type (**BOOLEAN**) which can store the literal values **True** and **False**, however not all databases support this type.
+- SQL also defines types designed to hold binary data.  This can sometimes be useful, although binary data such as images or music files take up a great deal of space; it is often preferable to store them externally, and in the database only record the information needed to retrieve the files (e.g., a file path or URL).
 - SQL provides for user-defined types; that is, custom data types created by the database user for specific applications.
-- Many RBDMSes support types not defined in the SQL standard, or defined as optional extensions, such as types for storing and working with JSON and XML documents, geometric objects, geographical or spatial coordinates, arrays, and more.
+- Many databases support types not defined in the SQL standard, or defined as optional extensions, such as types for storing and working with JSON and XML documents, geometric objects, geographical or spatial coordinates, arrays, and more.
+
+
+Types in SQLite
+---------------
+
+As mentioned earlier, SQLite (used in the interactive examples in this book) allows the storage of arbitrary types of data into any column; no type checking is performed.  Essentially, a value in SQLite can be ``NULL``, an integer, a floating point number, or a character string.  However, SQLite supports standard SQL syntax for table creation, including specifying data types for columns; this type information can be viewed as a type of hint to the database user as to what kind of data should be stored.  We will consistently use types you might find in other databases, and store data appropriate to the type in our examples.
+
+
+Creating tables
+:::::::::::::::
+
+Once we have chosen the types for our columns, we can create a table using a **CREATE TABLE** statement.  For our first example, we will create something simple just for demonstration purposes.  As discussed in :numref:`Chapter {number} <basics-chapter>`, you do not need to worry that we are changing the database - we are only working with a copy of the database that is created each time you load the textbook into your browser.  You can reload this page anytime you want to start fresh!
+
+Creating a table from scratch
+-----------------------------
+
+Use the **CREATE TABLE** command to create a table.  For now, we will create a simple table by defining the columns in the table.  Later, we will add additional details to the table in the form of *constraints* and *defaults*.  The **CREATE TABLE** command looks like this:
+
+::
+
+    CREATE TABLE (
+      column1 type1,
+      column2 type2,
+      ...
+    );
+
+Where "column*n*" is the name of a column, and "type*n*" is a data type that your database supports.  Here is some code to try out:
+
+.. activecode:: table_creation_example_create
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
+
+    CREATE TABLE test (
+      id INTEGER,
+      x  VARCHAR(20),
+      y  DATE,
+      z  NUMERIC(10,2)
+    );
+
+    INSERT INTO test VALUES
+      (0, 'this is a test', '2021-06-14', 1234.56),
+      (1, 'apple', '2021-01-01', 10.10)
+    ;
+
+    SELECT * FROM test;
+
+All database tools provide some mechanism for seeing the definition of tables in the database.  In SQLite, you can see the definition of tables by querying the special table **sqlite_master**:
+
+::
+
+    SELECT sql FROM sqlite_master WHERE name = 'test';
+
+
+Dropping tables
+---------------
+
+We cannot **CREATE** a table when it already exists, so if you try to run the above example more than once (without reloading this page in your browser), you will get an error message.  We need to remove the object before re-creating it.  Removing an object from the database is called *dropping* the object, and is accomplished with a **DROP** statement:
+
+::
+
+    DROP TABLE test;
+
+This statement will cause an error if you do it when there is no table named **test**, however.  This can be inconvenient, because we might want to drop and recreate the table many times when we are developing a database-modifying program, or *script*, but we may not always know the current state of the database.  Fortunately, most databases implement an extension to **DROP** that lets us remove the table if and only if it exists, without an error if it does not exist:
+
+::
+
+    DROP TABLE IF EXISTS test;
+
+(Note for Oracle users: Oracle does not recognize this syntax.)
+
+Note that dropping a table also destroys all data stored in the table, and this action is irrevocable (there is no "undo" operation [#]_).  This is one reason that database-modifying programs are usually developed and thoroughly tested using a copy of a database, before ever using it on the "real" database.
+
+
+Creating a table from a query
+-----------------------------
+
+From the perspective of SQL, the result of a **SELECT** query is essentially the same thing as a table.  The difference is that the **SELECT** result is not named and exists only temporarily.  SQL provides a way for us to save the result of a query as a named table, with the table columns defined implicitly based on the result columns.  Any **SELECT** query can be used.  Here is an example making a table from our **books** and **authors** tables:
+
+.. activecode:: table_creation_example_create_as_select
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
+
+    DROP TABLE IF EXISTS recent_books;  -- good to always start with this
+
+    CREATE TABLE recent_books AS
+      SELECT
+        a.name AS author,
+        b.title,
+        b.publication_year
+      FROM
+        authors AS a
+        JOIN books AS b ON a.author_id = b.author_id
+      WHERE b.publication_year >= 2010
+    ;
+
+    SELECT sql FROM sqlite_master WHERE name = 'recent_books';
+
+    SELECT * FROM recent_books;
+
+(Note for SQL server users: SQL server does not support the above syntax.  The equivalent statement in SQL server looks like: ``SELECT ... INTO new_table FROM ... WHERE ...;``.)
+
+Self-check exercises
+::::::::::::::::::::
+
+This section contains exercises on table creation.  If you get stuck, click on the "Show answer" button below the exercise to see a correct answer.
+
+.. activecode:: table_creation_self_test_create
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
+
+    Write a statement to create a table named **my_table** with columns **a**, **b**, **c**, and **d**.  Column **a** will contain strings of at most 100 characters; **b** will contain dates; **c** will contain numbers with at most 15 digits, three of which come after the decimal point; and **d** will contain strings of exactly two characters.
+    ~~~~
+
+.. reveal:: table_creation_self_test_create_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        CREATE TABLE my_table (
+          a VARCHAR(100),
+          b DATE,
+          c NUMERIC(15,3),
+          d CHAR(2)
+        );
+
+.. activecode:: table_creation_self_test_drop
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
+
+    Write a statement to remove **my_table**.
+    ~~~~
+
+.. reveal:: table_creation_self_test_drop_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        DROP TABLE my_table;
+
+    or
+
+    ::
+
+        DROP TABLE IF EXISTS my_table;
+
+.. activecode:: table_creation_self_test_create_as_select
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
+
+    Write a statement to create a table named **a_authors** containing just authors whose names start with the letter 'A':
+    ~~~~
+
+.. reveal:: table_creation_self_test_create_as_select_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        CREATE TABLE a_authors AS
+          SELECT * FROM authors
+          WHERE name LIKE 'A%'
+        ;
+
+
+.. |chapter-end| unicode:: U+274F
+
+|chapter-end|
+
+----
+
+**Notes**
+
+.. [#] Relational databases allow operations to be wrapped in something called a *transaction*, which does provide a way to undo work.  We will study transactions more in chapter XXX.
