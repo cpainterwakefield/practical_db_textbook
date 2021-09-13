@@ -801,7 +801,7 @@ This section contains some exercises using the books data set (reminder: you can
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query giving a distinct list of book awards won by authors who have also won the Nobel Prize in Literature (an author award).
+    Write a query giving a distinct list of book awards won by authors who have also won the Nobel Prize in Literature (an author award):
     ~~~~
 
 .. reveal:: joins_self_test_challenge2_hint

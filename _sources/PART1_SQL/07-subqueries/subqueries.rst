@@ -1,3 +1,5 @@
+.. _subqueries-chapter:
+
 ==============================
 Subquery and tuple expressions
 ==============================
