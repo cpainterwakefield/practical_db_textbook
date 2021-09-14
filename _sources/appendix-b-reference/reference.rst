@@ -31,10 +31,35 @@ Data types
 Number types
 ------------
 
-Floating point number types allow for (possibly inexact) storage of real numbers, similar (or sometimes identical to) the `IEEE 754`_ specification.  The SQL standard defines the types **FLOAT**, **REAL**, and **DOUBLE PRECISION** (often abbreviated **DOUBLE**), but implementation of these types vary.  These types can support extremely large and extremely small numbers, and are most useful in scientific and mathematical applications.
+The SQL standard provides for both exact (integers and fixed-precision decimal) and inexact (floating point) numbers.  Details of these types (e.g., the number of bits used in the number representation) are left up to individual implementations, so consult your database's documentation to fully understand its capabilities.
+
+Integers
+########
+
+SQL defines three integer types: **INTEGER**, **SMALLINT**, and **BIGINT**.  Implementations of these types vary, but it is not uncommon for **INTEGER** (often abbreviated as **INT**) to store 32-bit integers, **SMALLINT** 16-bit integers, and **BIGINT** 64-bit integers.  Not all databases recognize all of these types, but **INTEGER** is recognized by all of the databases considered for this book.  Additional integer types may be available for your database system.
+
+Exact decimal numbers
+#####################
+
+Decimal number types allow for exact storage of numbers that have digits to the right of the decimal point, e.g., 1234.56789.  These numbers are exact (compare to the floating point types below), and permit exact mathematical operations where possible (addition, subtraction, and multiplication).  The two defined types for SQL are **NUMERIC** and **DECIMAL**, which are synonyms of each other.  These types may be defined with parameters representing *precision* and *scale*, where precision is the number of significant digits that can be stored, and scale is the number of digits following the decimal point.  If the precision is given, but not the scale, the scale defaults to zero.
+
+For example, in most implementations:
+
+- **NUMERIC(3, 2)** defines a type that can store the values between -999.99 and 999.99, with a maximum of 2 digits past the decimal point.
+- **NUMERIC(4)** defines a type that can store integers between -9999 and 9999.
+- **NUMERIC** defines a type that can exactly store decimal values with implementation-defined precision and scale.
+
+Different implementations behave differently when an attempt is made to store values with more digits than are allowed by the specified precision and scale.  This may result in an error, or (in the case of too many digits to the right of the decimal point), it may result in rounding or truncation of the value.
+
+Floating point numbers
+######################
+
+Floating point number types allow for (possibly inexact) storage of real numbers, similar (or sometimes identical to) the `IEEE 754`_ specification.  The SQL standard defines the types **FLOAT**, **REAL**, and **DOUBLE PRECISION** (often abbreviated **DOUBLE**), but implementation of these types vary.
 
 .. _`IEEE 754`: https://en.wikipedia.org/wiki/IEEE_754
 
+Database support for number types
+#################################
 
 A summary of database support for number types is shown below (for the five databases this textbook attempts to cover):
 
@@ -62,7 +87,7 @@ The type **CHARACTER**, usually abbreviated as **CHAR**, is used for fixed-lengt
 
 **CHARACTER VARYING** is usually abbreviated as **VARCHAR**, and is used for strings of varying length up to some maximum, which must be specified just as with the **CHAR** type.  It is usually an error to attempt to store strings longer than the maximum.
 
-**CHARACTER LARGE OBJECT** goes by many names, and is used to store strings of arbitrary length, up to some implementation-defined maximum (for example, Oracle's **CLOB** type allows strings of up to 128TB in some cases).
+**CHARACTER LARGE OBJECT** goes by many names, and is used to store strings of arbitrary length, up to some implementation-defined maximum (for example, Oracle's **CLOB** type allows strings of up to 128TB in some cases).  In many implementations, this type is limited in the operations or functions that may be used, and may not allow indexing.
 
 A summary of database support for character strings is shown below:
 
@@ -80,11 +105,9 @@ CHARACTER LARGE OBJECT   equivalent to TEXT    use TEXT   use TEXT use CLOB  
 Date and time types
 -------------------
 
-Management of date and time data is a very complicated affair.  Calendars change and differ among cultures, time zones vary widely, and "leap" adjustments to the calendar and clock occur irregularly.  SQL provides very robust data and time types along with operations on these types that allow for very precise storage and management of these values.  However, here again, implementations vary, and you should read your database system's documentation to understand the fine points.
-
 The SQL standard defines three or five principal types, depending on how you count.  The types are **DATE**, **TIME** (with or without time zone), and **TIMESTAMP** (with or without time zone).  If you specify simply **TIME** or **TIMESTAMP**, you get the version without time zones; append **WITH TIME ZONE** to additionally store time zone information.
 
-- **DATE** values store dates in such a way that any particular day in history can be accurately recorded.  Typically the Gregorian calendar is supported, but some implementations will convert to and from Julian dates.
+- **DATE** values store dates in such a way that any particular day in history can be accurately recorded.  Typically the Gregorian calendar is supported, but some implementations will convert to and from Julian dates or other calendars.
 - **TIME** represents a time of day, without reference to the date.  **TIME WITH TIME ZONE** includes information specifying the time zone relative to which the time should be evaluated.
 - **TIMESTAMP** represents a precise moment in time, incorporating both the date and the time of day (with or without time zone).
 
@@ -100,7 +123,8 @@ TIMESTAMP                 use TEXT, REAL, or INTEGER yes        yes      yes    
 TIMESTAMP WITH TIME ZONE  use TEXT, REAL, or INTEGER yes        no       yes                              no
 ========================  ========================== ========== ======== ================================ ================
 
-In addition to the date and time types, SQL defines a useful set of types known a *interval* types, where an interval represents a span of days or time between two date or time values.  These are not covered in this book.
+In addition to the date and time types, SQL defines a set of types known as *interval* types, where an interval represents a span of days or time between two date or time values.  Intervals are not covered in this book.
+
 
 Operators and functions
 :::::::::::::::::::::::
