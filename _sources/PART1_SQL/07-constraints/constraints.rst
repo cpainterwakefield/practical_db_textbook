@@ -1,9 +1,7 @@
 .. _constraints-chapter:
 
-==============================
-Constraints and related topics
-==============================
+====================
+Keys and constraints
+====================
 
-- keys/constraints
-- defaults
-- auto increments (GENERATED AS IDENTITY) (mention sequences - tools to manage - briefly)
+In this chapter, we explore the different ways in which data may be constrained in order to help preserve the correctness of the data.  
