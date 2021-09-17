@@ -206,7 +206,7 @@ Here is an example, showing the usage of the **DEFAULT** keyword:
 
     SELECT * FROM test2;
 
-As you can see, when we provided a value for the column **greeting**, the value we provided was used.  When we did not provide the value, the default ``'Hello``' was used.
+As you can see, when we provided a value (or ``NULL``) for the column **greeting**, what we provided was stored.  When we did not provide the value, the default ``'Hello``' was used.
 
 In the simplest case, as above, we can provide a literal value for a column.  More commonly, we will use an expression, typically calling a function of some sort.  A common usage for this is to record the date and time when a record is added to the database.  Here we will use the **CURRENT_TIMESTAMP** function for this purpose:
 
