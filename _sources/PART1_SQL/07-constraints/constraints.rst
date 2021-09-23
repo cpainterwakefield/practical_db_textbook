@@ -9,6 +9,8 @@ In this chapter, we explore the different ways in which data may be constrained 
 Tables used in this chapter
 :::::::::::::::::::::::::::
 
+Some examples in this chapter will come from the **books** and related tables dataset (see :ref:`Appendix A <appendix-a>` for a full description of these tables).  Other examples will use tables created just for the example, then discarded.
+
 Constraints
 :::::::::::
 
@@ -220,6 +222,85 @@ Here is an example to try, using **CASCADE** for both deletions and updates (mod
 Other constraints
 :::::::::::::::::
 
-- not null
-- unique
-- check
+SQL provides some additional constraints you may find useful, described in this section.
+
+UNIQUE
+------
+
+Occasionally you may need to ensure that a column or set of columns contains unique values, but you do not want to set the column or columns as a primary key (for example, when some other set of columns is already the primary key).  The **UNIQUE** constraint can be used for this purpose; simply add the **UNIQUE** keyword as part of the column definition.  One difference between a **UNIQUE** constraint and a primary key constraint is that the **UNIQUE** constraint does not prevent ``NULL`` values. However, databases deal with ``NULL`` values in a unique column in different ways; some allow multiple rows to contain ``NULL``, and others allow only a single ``NULL`` row (effectively treating ``NULL`` as a comparable value).
+
+.. activecode:: constraints_example_other
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
+
+    DROP TABLE IF EXISTS test4;
+    CREATE TABLE test4 (
+      x INTEGER UNIQUE
+    );
+
+    INSERT INTO test4 VALUES (1);
+    INSERT INTO test4 VALUES (2);
+    INSERT INTO test4 VALUES (1);
+
+You can also create a **UNIQUE** constraint as a separate entry in the table definition (this is required for a multi-column constraint):
+
+::
+
+      DROP TABLE IF EXISTS test5;
+      CREATE TABLE test5 (
+        x INTEGER,
+        y INTEGER,
+        UNIQUE (x, y)
+      );
+
+Note that a primary key constraint on a set of columns already implies something stronger than **UNIQUE**, thus there is no need to specify **UNIQUE** if **PRIMARY KEY** is already in place.
+
+NOT NULL
+--------
+
+``NULL`` values can be a source of many data errors.  If some bug in your software incorrectly inserts ``NULL`` values into your database, the data becomes corrupt, and queries against the data may produce wrong answers. Also, since ``NULL`` values are not comparable, they tend to be "invisible" when querying, unless looked for specifically using **IS NULL**.   This combination of factors can result in many lost hours of work trying to resolve differences between what you believe is true and what your queries are telling you.
+
+It can be valuable, then, to constrain columns to not allow ``NULL`` values at all, using the **NOT NULL** constraint.  In our database, one example is the **authors** table, which has a **NOT NULL** constraint on the **name** column - we always want a value in the **name** column [#]_.  You can find other examples in the books-related tables.
+
+Note that **NOT NULL** is implied on all columns in a primary key, so there is no need to specify **NOT NULL** for those columns.
+
+CHECK
+-----
+
+SQL provides a general constraint form that you can use to apply simple Boolean conditions on your data.  The **CHECK** constraint can be an expression involving a single column or multiple columns of the table.  This expression is typically limited in what else it can incorporate; for example subqueries are typically not allowed, and some databases do not allow function calls (implementations vary).
+
+Here is an example, showing both single column and table constraint forms:
+
+::
+
+    DROP TABLE IF EXISTS test6;
+    CREATE TABLE test6 (
+      a INTEGER CHECK (a BETWEEN 0 AND 100),
+      b INTEGER,
+      CHECK (b > a)
+    );
+
+    INSERT INTO test6 VALUES (42, 200);
+    INSERT INTO test6 VALUES (-1, 6);   -- error
+    INSERT INTO test6 VALUES (10, 5);   -- error
+
+
+Behind the scenes
+:::::::::::::::::
+
+While **NOT NULL** and **CHECK** constraints affect single rows of data and can easily be checked when an **INSERT** or **UPDATE** is performed, key constraints and **UNIQUE** constraints require checks against entire tables.  In these cases, the constraint test fails (primary keys and **UNIQUE**) or succeeds (foreign keys) if a set of values matches some row in some table.  You might wonder how these checks can be performed efficiently in situations where the table to be tested contains very many rows.
+
+A full answer will have to wait until chapter XXX, but the short answer is that the data we need to search to test our constraint are *indexed* - stored in a special data structure that allows us to find a particular value very fast, without having to examine every row.  Primary keys and columns constrained to be unique are indexed automatically indexed by the database.  Using the index, the database can quickly detect if a duplicate value is about to be created.  To test a foreign key constraint, the database has to determine whether the data we are putting into the referencing table exists in the referenced table.  Since the referenced columns must either form a primary key or be constrained with **UNIQUE**, again the data to be searched is indexed.
+
+Indexes are also very important in speeding up queries and statements of all kinds.  We can add additional indexes to the ones implied by our constraints in order to speed up specific searches or modifications.  We will discuss how to use indexes to improve the performance of queries and statements in chapter XXX.
+
+
+.. |chapter-end| unicode:: U+274F
+
+|chapter-end|
+
+----
+
+**Notes**
+
+.. [#] It is possible that we might wish to record some book for whom the author is unknown (or anonymous), which might seem like an instance in which we would want ``NULL``; after all, one possible meaning of ``NULL`` is "unknown".  However, what does it mean for an unknown author to have an entry in the **authors** table in the first place?   What meaning would we give, if any, to the birth and death date fields for the ``NULL`` author?  And what does it mean if multiple books relate to that author record?  Are they all by the same, unknown author, or by different authors, both of whom are unknown?  A slightly better choice for a book with no known author may be to allow ``NULL`` values in the **author_id** column in **books** - this is closer to the desired meaning.  However, this introduces problems of its own, such as the fact that an inner join of **books** and **authors** will now leave out any books with unknown authors; we would need to be very careful in writing our queries.  None of this is to say that ``NULL`` is never the right choice, only that it introduces complexity and therefore more opportunity for software bugs and data corruption.  Consider your options carefully.
