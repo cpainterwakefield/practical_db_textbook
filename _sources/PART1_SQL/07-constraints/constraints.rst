@@ -68,7 +68,7 @@ You can also create the primary key as a separate entry in the table definition;
       PRIMARY KEY (x, y)
     );
 
-Some database systems also allow the addition of a primary key to an existing table using the **ALTER TABLE** command, as long as the existing data would conform to the constraint.  (This method is not supported by SQLite.)
+Some database systems also allow the addition of a primary key to an existing table using the **ALTER TABLE** command, as long as the existing data would conform to the constraint.  **ALTER TABLE** can also be used to remove (drop) constraints from a table.  (SQLite does not support this usage.)
 
 Foreign keys
 ::::::::::::
@@ -171,7 +171,7 @@ Note that it is possible (and sometimes useful) to create a foreign key constrai
       supervisor_id INTEGER REFERENCES employees (id)
     );
 
-As with primary keys, some database systems allow the addition of foreign key constraints using the **ALTER TABLE** command, as long as the existing data would conform to the constraint.  (This method is not supported by SQLite.)
+As with primary keys, some database systems allow the addition or removal of foreign key constraints using the **ALTER TABLE** command.  (This usage is not supported by SQLite.)
 
 
 Enforcement mechanisms

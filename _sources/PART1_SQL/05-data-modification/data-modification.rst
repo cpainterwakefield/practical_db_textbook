@@ -62,9 +62,9 @@ While it is perfectly valid to do multiple **INSERT** statements to add multiple
 
     INSERT INTO bookstore_sales (stock_number, payment)
     VALUES
-      (1444, '2021-08-17', 'credit card'),
-      (1435, '2021-08-17', 'cash'),
-      (1453, '2021-08-17', 'credit card')
+      (1444, 'credit card'),
+      (1435, 'cash'),
+      (1453, 'credit card')
     ;
 
 (Note for Oracle users: Oracle does not permit multiple rows in an **INSERT**.)
@@ -100,7 +100,17 @@ Removing rows from a table is accomplished using **DELETE** statements.  **DELET
     DELETE FROM bookstore_sales
     WHERE date_sold < '2021-08-01';
 
-This is probably a bad idea unless we first delete the data from **bookstore_inventory** for the books we are deleting - otherwise we might think that we still have those sold books.  In :numref:`Chapter {number} <constraints-chapter>`) we will discuss techniques for keeping multiple tables consistent with each other.
+This is probably a bad idea unless we first delete the data from **bookstore_inventory** for the books we are deleting - otherwise we might think that we still have those sold books.  Since we cannot delete data from multiple tables in one query (e.g., using a join) it may be tricky to see how to get rid of the appropriate rows from **bookstore_inventory** - the information about what rows we want to delete is actually in **bookstore_sales** (in the **date_sold** column).  The technique we need will be covered in :numref:`Chapter {number} <subqueries-chapter>` - using a subquery.  Here is the necessary query, given without explanation for now:
+
+::
+
+    DELETE FROM bookstore_inventory
+    WHERE stock_number IN
+      (SELECT stock_number FROM bookstore_sales
+       WHERE date_sold < '2021-08-01')
+    ;
+
+In :numref:`Chapter {number} <constraints-chapter>`) we will discuss other techniques for keeping multiple tables consistent with each other.
 
 If the **WHERE** clause is omitted in a **DELETE** query, then all data from the table is removed.
 
