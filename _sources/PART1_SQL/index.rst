@@ -12,7 +12,7 @@ SQL
     05-data-modification/data-modification
     06-table-creation/table-creation
     07-constraints/constraints
-    07-subqueries/subqueries
-    08-grouping-and-aggregation/grouping-and-aggregation
-    09-set-operations/set-operations
-    10-miscellaneous-sql/miscellaneous-sql
+    08-subqueries/subqueries
+    09-grouping-and-aggregation/grouping-and-aggregation
+    10-set-operations/set-operations
+    11-miscellaneous-sql/miscellaneous-sql
