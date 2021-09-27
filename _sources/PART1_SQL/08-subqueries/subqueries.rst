@@ -529,7 +529,7 @@ This section contains some exercises using the books data set (reminder: you can
 
     ::
 
-        SELECT a.name AS author, b.title, aw.name AS award
+        SELECT au.name AS author, b.title, aw.name AS award
         FROM
           authors AS au
           JOIN books AS b ON b.author_id = au.author_id
