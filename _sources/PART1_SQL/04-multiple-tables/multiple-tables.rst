@@ -4,12 +4,6 @@
 Queries on multiple tables
 ==========================
 
-.. _`Part 2`: ../../PART2_DATA_MODELING/index.html
-.. _`Chapter 5`: ../05-table-creation/table-creation.html
-.. _`Chapter 8`: ../08-grouping-and-aggregation/grouping-and-aggregation.html
-.. _`Appendix A`: ../../appendix-a-datasets/datasets.html
-
-
 In past chapters, we saw how to retrieve data from individual tables, filter data on different criteria, order the data, and format the data with various expressions.  Now we turn to the question of how to retrieve data from more than one table in a single query.  For example, using the tables **simple_books** and **simple_authors**, we might like to see book titles together with author's name and birth date. The author's name is in both tables, but book titles are in **simple_books**, while author birth dates are in **simple_authors**.  How can we get these together in one result?  This chapter will explain how to retrieve data from multiple tables using joins, and explore various issues in working with multiple tables.
 
 
