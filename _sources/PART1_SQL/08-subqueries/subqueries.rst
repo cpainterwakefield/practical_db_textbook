@@ -516,38 +516,11 @@ This section contains some exercises using the books data set (reminder: you can
         ;
 
 
-.. activecode:: subqueries_self_test_correlated
-    :language: sql
-    :dburl: /_static/textbook.sqlite3
-
-    Write a query to list authors and books that have won more than one award, together with the award name. *Hint*: the **books_awards** table will have a record for the same book id but with a different award id.
-    ~~~~
-
-.. reveal:: subqueries_self_test_correlated_hint
-    :showtitle: Show answer
-    :hidetitle: Hide answer
-
-    ::
-
-        SELECT au.name AS author, b.title, aw.name AS award
-        FROM
-          authors AS au
-          JOIN books AS b ON b.author_id = au.author_id
-          JOIN books_awards AS ba1 ON ba1.book_id = b.book_id
-          JOIN awards AS aw ON aw.award_id = ba1.award_id
-        WHERE EXISTS
-          (SELECT 1
-           FROM books_awards AS ba2
-           WHERE ba1.book_id = ba2.book_id
-           AND ba1.award_id <> ba2.award_id)
-        ;
-
-
 .. activecode:: subqueries_self_test_challenge_1
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to list the authors who have won any kind of Pulitzer prize for their books:
+    Write a query to list the authors who have won any kind of Pulitzer prize (a book award starting with the string 'Pulitzer') for their books:
     ~~~~
 
 .. reveal:: subqueries_self_test_challenge_1_hint
