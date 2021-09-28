@@ -292,7 +292,7 @@ SELECT
 
 Used in a **SELECT** clause, subqueries can be used to retrieve values that are not easily obtained from the tables used in the outer query.  Used in this way, the subquery must return a scalar.  These subqueries are almost always correlated, as we want to return a value that is specific to each row.
 
-For example, we might want to include, in a listing of books, the total number of books written by the author.  For this we will use the aggregate expression **COUNT(\*)**, which simply counts the number of rows matching the **WHERE** clause in a **SELECT** query.  (Aggregates are discussed fully in :numref:`Chapter {number} <grouping-chapter>`.)  It is non-trivial to include a count of books together with individual book information, but we can do it with a subquery:
+For example, we might want to include, in a listing of books, the total number of books written by the author.  For this we will use the aggregate expression **COUNT(\*)**, which simply counts the number of rows matching the **WHERE** clause in a **SELECT** query [#]_.  (Aggregates are discussed fully in :numref:`Chapter {number} <grouping-chapter>`.)
 
 .. activecode:: subqueries_example_other_clauses
     :language: sql
@@ -615,3 +615,5 @@ This section contains some exercises using the books data set (reminder: you can
 ----
 
 **Notes**
+
+.. [#] For this particular problem, we could instead use something called a *window function*, which will be discussed briefly in chapter XXX.
