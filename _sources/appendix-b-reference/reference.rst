@@ -336,3 +336,9 @@ CASE
 CAST
 
 WIDTH_BUCKET
+
+
+.. _appendix-b-aggregate-functions:
+
+Aggregate functions
+:::::::::::::::::::

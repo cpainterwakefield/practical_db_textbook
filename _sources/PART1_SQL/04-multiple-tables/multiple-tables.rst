@@ -390,7 +390,7 @@ In most databases, we could instead write the query using one right outer join (
 
 Here, the **awards** and **books_awards** tables can use a regular join, as we only care about awards that are referenced in the **books_awards** table, and all rows in the **books_awards** table have a matching entry already in the **awards** table.  However, a right outer join would have worked equally well - an outer join is equivalent to an inner join if all rows match.
 
-The above queries do exhibit one behavior which may be unwanted, which is that we have multiple rows for books that have won multiple awards.  Some databases provide a way to produce a list of awards after each book, rather than multiple rows; however, that will have to wait until we explore grouping and aggregation in `Chapter 8`_.
+The above queries do exhibit one behavior which may be unwanted, which is that we have multiple rows for books that have won multiple awards.  Some databases provide a way to produce a list of awards after each book, rather than multiple rows; see the **LISTAGG** aggregate function in Appendix B, :ref:`appendix-b-aggregate-functions` (we discuss the use of aggregate functions in :numref:`Chapter {number} <grouping-chapter>`).
 
 One more example of the use of an outer join, this time using our bookstore tables - see if you can figure out what this query is doing:
 
