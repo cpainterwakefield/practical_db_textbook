@@ -222,10 +222,10 @@ The SQL standard defines several operators and functions making use of three dif
 .. _`Chapter 3`: ../03-expressions/expressions.html
 
 ================== ================================== ================================================== ===========================================
-operator/ function meaning                            usage                                              notes
+operator/function  meaning                            usage                                              notes
 ================== ================================== ================================================== ===========================================
 \||                concatenation                      *s* || *t*                                         in MySQL, use CONCAT(*s*, *t*); in SQL Server, use *s* + *t*
-LIKE               pattern comparison                 *s* LIKE *pattern*                                 see `Chapter 3`_
+LIKE               pattern comparison                 *s* LIKE *pattern*                                 see :numref:`Chapter {number} <expressions-chapter>`
 NOT LIKE           inverse of LIKE                    *s* NOT LIKE *pattern*                             equivalent to NOT (*s* LIKE *pattern*)
 CHAR_LENGTH        length of string                   CHARACTER_LENGTH(*s*) or CHAR_LENGTH(*s*)          in SQLite and Oracle, use LENGTH(*s*); in SQL Server, use LEN(*s*)
 POSITION           index of substring                 POSITION(*t* IN *s*)                               in SQLite and Oracle, use INSTR(*s*, *t*)
@@ -286,7 +286,7 @@ Date and time operators and functions
 
 The SQL standard defines several basic operations relating **DATE**, **TIME** (with and without timezone), **TIMESTAMP** (with and without timezone), and **INTERVAL** data types.  (For a description of these data types, consult the section on `Data types`_ above.)
 
-Comparison of like types is accomplished using the `Comparison operators`_ previously documented.  For example, **DATE** values can be compared with other **DATE** values, but not with **TIME**, **TIMESTAMP**, or **INTERVAL** values. (Behavior varies widely among the different database implementations - some do allow comparisons between types not allowed in the SQL standard.  However, it is generally inadvisable to compare different types, unless you know exactly how the comparison is being made!)
+Comparison of like types is accomplished using the `Comparison operators`_ previously documented.  For example, **DATE** values can be compared with other **DATE** values, but not with **TIME**, **TIMESTAMP**, or **INTERVAL** values. (Behavior varies widely among the different database implementations - some do allow comparisons between types not allowed in the SQL standard.  However, it is generally inadvisable to compare different types, unless you know exactly how the comparison is being made.)
 
 In addition, the mathematical operators *+*, *-*, *\**, and */* may be used as follows:
 
@@ -327,18 +327,36 @@ In actual practice, the databases considered for this book vary widely in their 
 Miscellaneous operators and functions
 -------------------------------------
 
-NULLIF
+This section collects some miscellaneous SQL functions that do not fit neatly into the above categories.
 
-COALESCE
-
-CASE
-
-CAST
-
-WIDTH_BUCKET
+================== ====================================== ==================================================== ===========================================
+function           meaning                                usage                                                notes
+================== ====================================== ==================================================== ===========================================
+NULLIF             ``NULL`` if *a* = *b*, else *a*        NULLIF(*a*, *b*)
+COALESCE           yield first non-``NULL`` argument      COALESCE(*a*, *b*, ...)
+CASE               general purpose conditional expression see :numref:`Chapter {number} <expressions-chapter>`
+CAST               explicit type conversion               CAST (*a* AS *type*)
+================== ====================================== ==================================================== ===========================================
 
 
 .. _appendix-b-aggregate-functions:
 
 Aggregate functions
 :::::::::::::::::::
+
+Below is a reference to some of the more commonly implemented aggregate functions defined by the SQL standard.  See :numref:`Chapter {number} <grouping-chapter>` for a basic guide to their use.  The SQL standard also defines a number of statistical functions on two variables; these are implemented in PostgreSQL and Oracle only.  Most database implementations provide additional non-standard aggregate functions.
+
+================== ====================================== ==================================================== ===========================================
+function           meaning                                usage                                                notes
+================== ====================================== ==================================================== ===========================================
+COUNT              count of rows or non-``NULL`` values   COUNT(\*) or COUNT([DISTINCT] *a*)
+AVG                average or mean                        AVG([DISTINCT] *a*)                                  *a* must be numeric
+MAX                maximum                                MAX([DISTINCT] *a*)
+MIN                minimum                                MIN([DISTINCT] *a*)
+SUM                sum                                    SUM([DISTINCT] *a*)                                  *a* must be numeric
+VAR_POP            population variance                    VAR_POP([DISTINCT] *a*)                              *a* must be numeric; not in SQLite; in SQL Server, use VARP(*a*)
+VAR_SAMP           sample variance                        VAR_SAMP([DISTINCT] *a*)                             *a* must be numeric; not in SQLite; in SQL Server, use VAR(*a*)
+STDDEV_POP         population standard deviation          STDDEV_POP([DISTINCT] *a*)                           *a* must be numeric; not in SQLite; in SQL Server, use STDEVP(*a*)
+STDDEV_SAMP        sample standard deviation              STDDEV_SAMP([DISTINCT] *a*)                          *a* must be numeric; not in SQLite; in SQL Server, use STDEV(*a*)
+LISTAGG            concatenate values into a string       LISTAGG(*a* [, *delim*])                             In SQLite and MySQL, use GROUP_CONCAT(*a*, *delim*); in PostgreSQL and SQL Server, use STRING_AGG(*a*, *delim*)
+================== ====================================== ==================================================== ===========================================

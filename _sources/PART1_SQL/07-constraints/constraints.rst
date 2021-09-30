@@ -304,3 +304,18 @@ Indexes are also very important in speeding up queries and statements of all kin
 **Notes**
 
 .. [#] It is possible that we might wish to record some book for whom the author is unknown (or anonymous), which might seem like an instance in which we would want ``NULL``; after all, one possible meaning of ``NULL`` is "unknown".  However, what does it mean for an unknown author to have an entry in the **authors** table in the first place?   What meaning would we give, if any, to the birth and death date fields for the ``NULL`` author?  And what does it mean if multiple books relate to that author record?  Are they all by the same, unknown author, or by different authors, both of whom are unknown?  A slightly better choice for a book with no known author may be to allow ``NULL`` values in the **author_id** column in **books** - this is closer to the desired meaning.  However, this introduces problems of its own, such as the fact that an inner join of **books** and **authors** will now leave out any books with unknown authors; we would need to be very careful in writing our queries.  None of this is to say that ``NULL`` is never the right choice, only that it introduces complexity and therefore more opportunity for software bugs and data corruption.  Consider your options carefully.
+
+
+
+.. raw:: html
+
+   <div style="width: 520px; margin-left: auto; margin-right: auto;">
+   <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+   <img alt="Creative Commons License" style="border-width:0; display:block; margin-left:
+   auto; margin-right:auto;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
+   <br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource"
+   property="dct:title" rel="dct:type"><i>A Practical Introduction to Databases</i></span> by
+   <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">
+   Christopher Painter-Wakefield</span> is licensed under a
+   <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+   Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</div>
