@@ -46,8 +46,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Runestone Interactive Overview'
-copyright = '2017 Christopher Painter-Wakefield'
+project = 'A Practical Introduction to Databases'
+copyright = '2021 Christopher Painter-Wakefield'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -87,7 +87,7 @@ exclude_patterns = []
 #show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'    
+pygments_style = 'sphinx'
 
 # Default highlight language
 highlight_language = 'sql'
@@ -299,3 +299,9 @@ htmlhelp_basename = 'PythonCoursewareProjectdoc'
 #shortanswer_optional_div_class = 'journal alert alert-success'
 #showeval_div_class = 'runestone explainer alert alert-warning'
 #tabbed_div_class = 'alert alert-warning'
+
+setup.custom_css_files = ['theme-overrides.css',]
+
+key_words = ''
+course_description = ''
+shelf_section = 'Advanced Topics'
