@@ -136,6 +136,8 @@ However, as with **UNION**, you can use **INTERSECT** to perform queries against
 
 The SQL standard allows the keyword **ALL** after **INTERSECT**, but most databases (including SQLite) do not support this usage.
 
+Note for MySQL users: MySQL does not implement **INTERSECT**.
+
 Set difference
 --------------
 
@@ -151,6 +153,7 @@ The SQL standard allows the keyword **ALL** after **EXCEPT**, but most databases
 
 One application of the **EXCEPT** operator is determining if two query results are identical; if you take the set difference in both directions, your result should be empty if the two queries return the same distinct rows (there could be a difference in the counts of duplicate rows).  An alternate approach is to see if the union and intersection of the two queries contain the same count of rows.
 
+Note for MySQL users: MySQL does not implement **INTERSECT**.  Note for Oracle users: Oracle uses the keyword **MINUS** rather than **EXCEPT**.
 
 Chaining operations
 -------------------
