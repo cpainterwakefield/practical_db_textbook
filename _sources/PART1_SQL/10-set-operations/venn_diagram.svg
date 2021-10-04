@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.2" width="62.27mm" height="40.67mm" viewBox="4935 3538 6227 4067" preserveAspectRatio="xMidYMid" fill-rule="evenodd" stroke-width="28.222" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" xmlns:ooo="http://xml.openoffice.org/svg/export" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:presentation="http://sun.com/xmlns/staroffice/presentation" xmlns:smil="http://www.w3.org/2001/SMIL20/" xmlns:anim="urn:oasis:names:tc:opendocument:xmlns:animation:1.0" xml:space="preserve">
+<svg version="1.2" width="62.27mm" height="41.92mm" viewBox="4935 3413 6227 4192" preserveAspectRatio="xMidYMid" fill-rule="evenodd" stroke-width="28.222" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" xmlns:ooo="http://xml.openoffice.org/svg/export" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:presentation="http://sun.com/xmlns/staroffice/presentation" xmlns:smil="http://www.w3.org/2001/SMIL20/" xmlns:anim="urn:oasis:names:tc:opendocument:xmlns:animation:1.0" xml:space="preserve">
  <defs>
   <font id="EmbeddedFont_1" horiz-adv-x="2048">
    <font-face font-family="Noto Sans CJK TC embedded" units-per-em="2048" font-weight="normal" font-style="normal" ascent="2355" descent="582"/>
@@ -65,54 +65,59 @@
   <g class="com.sun.star.drawing.TextShape">
    <g id="id5">
     <rect class="BoundingBox" stroke="none" fill="none" x="6423" y="3694" width="854" height="1171"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="634px" font-weight="400"><tspan class="TextPosition" x="6673" y="4556"><tspan fill="rgb(0,0,0)" stroke="none">2</tspan></tspan></tspan></text>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="635px" font-weight="400"><tspan class="TextPosition" x="6673" y="4556"><tspan fill="rgb(0,0,0)" stroke="none">2</tspan></tspan></tspan></text>
    </g>
   </g>
   <g class="com.sun.star.drawing.TextShape">
    <g id="id6">
     <rect class="BoundingBox" stroke="none" fill="none" x="6461" y="5879" width="854" height="1171"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="634px" font-weight="400"><tspan class="TextPosition" x="6711" y="6741"><tspan fill="rgb(0,0,0)" stroke="none">4</tspan></tspan></tspan></text>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="635px" font-weight="400"><tspan class="TextPosition" x="6711" y="6741"><tspan fill="rgb(0,0,0)" stroke="none">4</tspan></tspan></tspan></text>
    </g>
   </g>
   <g class="com.sun.star.drawing.TextShape">
    <g id="id7">
     <rect class="BoundingBox" stroke="none" fill="none" x="7720" y="5318" width="854" height="1171"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="634px" font-weight="400"><tspan class="TextPosition" x="7970" y="6180"><tspan fill="rgb(0,0,0)" stroke="none">0</tspan></tspan></tspan></text>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="635px" font-weight="400"><tspan class="TextPosition" x="7970" y="6180"><tspan fill="rgb(0,0,0)" stroke="none">0</tspan></tspan></tspan></text>
    </g>
   </g>
   <g class="com.sun.star.drawing.TextShape">
    <g id="id8">
     <rect class="BoundingBox" stroke="none" fill="none" x="6052" y="4736" width="1206" height="1171"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="634px" font-weight="400"><tspan class="TextPosition" x="6302" y="5598"><tspan fill="rgb(0,0,0)" stroke="none">10</tspan></tspan></tspan></text>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="635px" font-weight="400"><tspan class="TextPosition" x="6302" y="5598"><tspan fill="rgb(0,0,0)" stroke="none">10</tspan></tspan></tspan></text>
    </g>
   </g>
   <g class="com.sun.star.drawing.TextShape">
    <g id="id9">
     <rect class="BoundingBox" stroke="none" fill="none" x="5207" y="4556" width="854" height="1171"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="634px" font-weight="400"><tspan class="TextPosition" x="5457" y="5418"><tspan fill="rgb(0,0,0)" stroke="none">8</tspan></tspan></tspan></text>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="635px" font-weight="400"><tspan class="TextPosition" x="5457" y="5418"><tspan fill="rgb(0,0,0)" stroke="none">8</tspan></tspan></tspan></text>
    </g>
   </g>
   <g class="com.sun.star.drawing.TextShape">
    <g id="id10">
     <rect class="BoundingBox" stroke="none" fill="none" x="7545" y="4394" width="774" height="1171"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="634px" font-weight="400"><tspan class="TextPosition" x="7795" y="5256"><tspan fill="rgb(0,0,0)" stroke="none">6</tspan></tspan></tspan></text>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="635px" font-weight="400"><tspan class="TextPosition" x="7795" y="5256"><tspan fill="rgb(0,0,0)" stroke="none">6</tspan></tspan></tspan></text>
    </g>
   </g>
   <g class="com.sun.star.drawing.TextShape">
    <g id="id11">
     <rect class="BoundingBox" stroke="none" fill="none" x="9255" y="5445" width="854" height="1171"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="634px" font-weight="400"><tspan class="TextPosition" x="9505" y="6307"><tspan fill="rgb(0,0,0)" stroke="none">9</tspan></tspan></tspan></text>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="635px" font-weight="400"><tspan class="TextPosition" x="9505" y="6307"><tspan fill="rgb(0,0,0)" stroke="none">9</tspan></tspan></tspan></text>
    </g>
   </g>
   <g class="com.sun.star.drawing.TextShape">
    <g id="id12">
     <rect class="BoundingBox" stroke="none" fill="none" x="8747" y="3921" width="854" height="1171"/>
-    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="634px" font-weight="400"><tspan class="TextPosition" x="8997" y="4783"><tspan fill="rgb(0,0,0)" stroke="none">3</tspan></tspan></tspan></text>
+    <text class="TextShape"><tspan class="TextParagraph" font-family="Noto Sans CJK TC, sans-serif" font-size="635px" font-weight="400"><tspan class="TextPosition" x="8997" y="4783"><tspan fill="rgb(0,0,0)" stroke="none">3</tspan></tspan></tspan></text>
    </g>
   </g>
   <g class="com.sun.star.drawing.CustomShape">
    <g id="id13">
     <rect class="BoundingBox" stroke="none" fill="none" x="7731" y="7096" width="509" height="509"/>
+   </g>
+  </g>
+  <g class="com.sun.star.drawing.CustomShape">
+   <g id="id14">
+    <rect class="BoundingBox" stroke="none" fill="none" x="7858" y="3413" width="509" height="509"/>
    </g>
   </g>
  </g>
