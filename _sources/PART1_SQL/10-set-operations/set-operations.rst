@@ -43,7 +43,7 @@ Mathematically, sets are collections of distinct values.  In the original concep
 
     SELECT publication_year FROM books;
 
-we are certain to get some duplicates.
+we get some duplicate rows.
 
 The term used to describe tables and query results in SQL is *multiset*.  A multiset is a collection of values from the same domain of values, but values can appear more than once in the set.  This difference between relational databases in practice and in theory results in some complications, as we will see.
 
@@ -58,40 +58,62 @@ Set union in SQL is an operation on two **SELECT** queries.  The query is writte
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    SELECT * FROM books WHERE title LIKE 'The%'
+    SELECT * FROM books WHERE title LIKE 'A%'
     UNION
     SELECT * FROM books WHERE publication_year = 1986;
 
     SELECT *
     FROM books
-    WHERE title LIKE 'The%'
+    WHERE title LIKE 'A%'
     OR publication_year = 1986;
 
 In fact, these queries return the same results.  However, there is a subtle difference between them.  When we do **UNION**, SQL treats it as a true set operation and returns a set of distinct rows - any duplicates are removed.  To be completely equivalent, we should use the **DISTINCT** keyword in the second query.
 
-There is no particular reason to do the above query using **UNION** other than to illustrate its behavior.  **UNION** queries can also provide an alternative to complex conditional logic.  For example, consider the problem of providing an (approximate) age for each author in our database.  When birth and death dates are known, we wish to indicate that the author was a certain age at death; if the author is living, we want to provide their current age; and if we do not know the author's birth, we should indicated that the author's age is unknown.  You could provide this result using a somewhat complicated **CASE** expression, or you can do a **UNION** of three queries:
+There is no particular reason choose a union query over the **OR** expression in this case; it is merely used for illustration.  **UNION** may be a more preferable alternative in other scenarios, such as those involving complex conditional logic.  As a simple example, consider providing a column labeling authors as "living", "dead" (giving death date), or "unknown" (where birth and death date are unknown).  We could do this with a **CASE** expression, or with a **UNION** of three queries (think of a union of the first two queries, then a union of the result with the third query):
 
 ::
 
-    SELECT
-      name,
-      (substring(death, 1, 4) - substring(birth, 1, 4)) || ' at death' AS age
+    SELECT name, 'living' AS status
     FROM authors
-    WHERE death IS NOT NULL and birth IS NOT NULL
+    WHERE death IS NULL AND birth IS NOT NULL
     UNION
-    SELECT
-      name,
-      substring(current_date, 1, 4) - substring(birth, 1, 4)
+    SELECT name, 'died ' || death
     FROM authors
-    WHERE death IS NULL and birth IS NOT NULL
+    WHERE death IS NOT NULL AND birth IS NOT NULL
     UNION
-    SELECT name, 'age unknown'
+    SELECT name, 'unknown'
     FROM authors
     WHERE birth IS NULL;
 
-Note that this query gives an approximate age only, since we are only comparing years.  Also, this query is specific to SQLite - we are using SQLite's non-standard **substring** function, and taking advantage of SQLite's flexible typing.  It would be better to use standard SQL date handling operations, but SQLite's date handling functions are non-standard and somewhat complex.
+    SELECT
+      name,
+      CASE
+        WHEN death IS NULL AND birth IS NOT NULL
+          THEN 'living'
+        WHEN death IS NOT NULL AND birth IS NOT NULL
+          THEN 'died ' || death
+        WHEN birth IS NULL
+          THEN 'unknown'
+      END AS status
+    FROM authors;
 
-  UNION example - authors age (living, at death, unknown)
+Note from this query that column names for the result of the whole query come from the first **SELECT** query.
+
+In some cases, **UNION** may be your only choice - such as when you are combining results from different tables.  One example of this might occur when a company wishes to create an email list for everyone related to the company in some way; the company's database might contain one table for employees, another for customers, and a third for vendors, for example.  A union query would easily create one mailing list from these three tables, and eliminate duplicates (since, for example, employees might also be customers).
+
+Multiset complication
+#####################
+
+Used by itself, **UNION** results in the removal of all duplicates from the result set of the query.  There may be occasions when this is not the desired behavior; if you wish to retain duplicate records (either originating from one **SELECT** or coming from more than one), simply add the keyword **ALL** after **UNION**.  The query below will result in duplicate records:
+
+::
+
+    SELECT * FROM books WHERE title LIKE 'A%'
+    UNION ALL
+    SELECT * FROM books WHERE publication_year = 1986;
+
+Intersection
+------------
 
 - UNION [ALL]
 - INTERSECT [ALL]
