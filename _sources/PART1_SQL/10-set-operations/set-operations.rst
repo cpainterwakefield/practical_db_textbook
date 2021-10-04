@@ -47,27 +47,27 @@ we get some duplicate rows.
 
 The term used to describe tables and query results in SQL is *multiset*.  A multiset is a collection of values from the same domain of values, but values can appear more than once in the set.  This difference between relational databases in practice and in theory results in some complications, as we will see.
 
-The three set operations (with complications) that SQL supports are union, intersection, and set difference.
+The three basic set operations that SQL supports are union, intersection, and set difference.
 
 Union
 -----
 
-Set union in SQL is an operation on two **SELECT** queries.  The query is written as one **SELECT** query, followed by the keyword **UNION**, followed by another **SELECT** query.  The two query results must be compatible in the sense that they must both return the same number of columns, and the columns should have compatible types.  As a very simple example, we can use a **UNION** query in place of a Boolean **OR** condition.  Compare these two queries:
+Set union in SQL is an operation on two **SELECT** queries.  The query is written as one **SELECT** query, followed by the keyword **UNION**, followed by another **SELECT** query.  The two query results must be compatible in the sense that they must both return the same number of columns, and the columns should have compatible types.  The union of the queries contains every distinct row that is returned from either query.  As a very simple example, we can use a **UNION** query in place of a Boolean **OR** condition.  Compare these two queries:
 
 .. activecode:: sets_example_aggregate
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    SELECT * FROM books WHERE title LIKE 'A%'
+    SELECT * FROM books WHERE title LIKE 'W%'
     UNION
-    SELECT * FROM books WHERE publication_year = 1986;
+    SELECT * FROM books WHERE publication_year = 1995;
 
     SELECT *
     FROM books
-    WHERE title LIKE 'A%'
-    OR publication_year = 1986;
+    WHERE title LIKE 'W%'
+    OR publication_year = 1995;
 
-In fact, these queries return the same results.  However, there is a subtle difference between them.  When we do **UNION**, SQL treats it as a true set operation and returns a set of distinct rows - any duplicates are removed.  To be completely equivalent, we should use the **DISTINCT** keyword in the second query.
+In this case, the queries return the same results.  However, there is a subtle difference between them.  When we do **UNION**, SQL treats it as a true set operation and returns a set of distinct rows - any duplicates are removed.  To be completely equivalent, we should use the **DISTINCT** keyword in the second query.
 
 There is no particular reason choose a union query over the **OR** expression in this case; it is merely used for illustration.  **UNION** may be a more preferable alternative in other scenarios, such as those involving complex conditional logic.  As a simple example, consider providing a column labeling authors as "living", "dead" (giving death date), or "unknown" (where birth and death date are unknown).  We could do this with a **CASE** expression, or with a **UNION** of three queries (think of a union of the first two queries, then a union of the result with the third query):
 
@@ -97,32 +97,65 @@ There is no particular reason choose a union query over the **OR** expression in
       END AS status
     FROM authors;
 
-Note from this query that column names for the result of the whole query come from the first **SELECT** query.
+Note from the union query above that column names for the result of the whole query, when using a set operation, come from the first **SELECT** query.
 
 In some cases, **UNION** may be your only choice - such as when you are combining results from different tables.  One example of this might occur when a company wishes to create an email list for everyone related to the company in some way; the company's database might contain one table for employees, another for customers, and a third for vendors, for example.  A union query would easily create one mailing list from these three tables, and eliminate duplicates (since, for example, employees might also be customers).
 
 Multiset complication
 #####################
 
-Used by itself, **UNION** results in the removal of all duplicates from the result set of the query.  There may be occasions when this is not the desired behavior; if you wish to retain duplicate records (either originating from one **SELECT** or coming from more than one), simply add the keyword **ALL** after **UNION**.  The query below will result in duplicate records:
+Used by itself, **UNION** results in the removal of all duplicates from the result set of the query.  There may be occasions when this is not the desired behavior; if you wish to retain duplicate records (all rows returned by either query), simply add the keyword **ALL** after **UNION**.  The query below will result in duplicate records:
 
 ::
 
-    SELECT * FROM books WHERE title LIKE 'A%'
+    SELECT * FROM books WHERE title LIKE 'W%'
     UNION ALL
-    SELECT * FROM books WHERE publication_year = 1986;
+    SELECT * FROM books WHERE publication_year = 1995;
 
 Intersection
 ------------
 
-- UNION [ALL]
-- INTERSECT [ALL]
-- EXCEPT [ALL]
-- chaining of above
-- result column names
+Set intersection in SQL is accomplished by the keyword **INTERSECT**.  The rules for using **INTERSECT** are the same as for using **UNION**, but the result contains every distinct row that is contained in *both* queries:
+
+::
+
+    SELECT * FROM books WHERE title LIKE 'W%'
+    INTERSECT
+    SELECT * FROM books WHERE publication_year = 1995;
+
+This result is similar to that achieved by using an **AND** expression in the **WHERE** clause of a single query:
+
+::
+
+    SELECT DISTINCT *
+    FROM book
+    WHERE title LIKE 'W%'
+    AND publication_year = 1995;
+
+However, as with **UNION**, you can use **INTERSECT** to perform queries against multiple tables, which is not easily accomplished any other way.
+
+The SQL standard allows the keyword **ALL** after **INTERSECT**, but most databases (including SQLite) do not support this usage.
+
+Set difference
+--------------
+
+Set difference in SQL is accomplished by the keyword **EXCEPT**.  The rules for using **EXCEPT** are again the same as for **UNION** and **INTERSECT**, but note that **EXCEPT** is not commutative - the order of the queries matters.  Here is our same example again, using **EXCEPT**:
+
+::
+
+    SELECT * FROM books WHERE title LIKE 'W%'
+    EXCEPT
+    SELECT * FROM books WHERE publication_year = 1995;
+
+The SQL standard allows the keyword **ALL** after **EXCEPT**, but most databases (including SQLite) do not support this usage.
+
+One application of the **EXCEPT** operator is determining if two query results are identical; if you take the set difference in both directions, your result should be empty if the two queries return the same distinct rows (there could be a difference in the counts of duplicate rows).  An alternate approach is to see if the union and intersection of the two queries contain the same count of rows.
 
 
+Chaining operations
+-------------------
 
+As we saw with **UNION**, it is possible to do more than one set operation in a single query.  For queries just involving **UNION**, the order of queries does not matter, as **UNION** is both commutative and associative.  The same is true for a query just involving **INTERSECT**.  For queries involving **EXCEPT**, or queries mixing set operations, the situation is more complicated.  **EXCEPT** is neither commutative nor associative.  Queries that chain mixed operators do not behave the same in all databases, so be cautious when attempting this; some databases allow you to use parentheses to force the order in which you want operations to be performed.
 
 
 
