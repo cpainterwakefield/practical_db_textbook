@@ -128,11 +128,11 @@ This result is similar to that achieved by using an **AND** expression in the **
 ::
 
     SELECT DISTINCT *
-    FROM book
+    FROM books
     WHERE title LIKE 'W%'
     AND publication_year = 1995;
 
-However, as with **UNION**, you can use **INTERSECT** to perform queries against multiple tables, which is not easily accomplished any other way.
+However, as with **UNION**, you can use **INTERSECT** to perform queries against multiple tables.
 
 The SQL standard allows the keyword **ALL** after **INTERSECT**, but most databases (including SQLite) do not support this usage.
 
@@ -148,6 +148,17 @@ Set difference in SQL is accomplished by the keyword **EXCEPT**.  The rules for 
     SELECT * FROM books WHERE title LIKE 'W%'
     EXCEPT
     SELECT * FROM books WHERE publication_year = 1995;
+
+This result is similar to that achieved by requiring one condition **AND NOT** the other condition in the **WHERE** clause of a single query:
+
+::
+
+    SELECT DISTINCT *
+    FROM books
+    WHERE title LIKE 'W%'
+    AND NOT (publication_year = 1995);
+
+However, as with **UNION** and **INTERSECT**, you can use **EXCEPT** to perform queries against multiple tables.
 
 The SQL standard allows the keyword **ALL** after **EXCEPT**, but most databases (including SQLite) do not support this usage.
 
