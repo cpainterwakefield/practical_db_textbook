@@ -15,4 +15,4 @@ SQL
     08-subqueries/subqueries
     09-grouping-and-aggregation/grouping-and-aggregation
     10-set-operations/set-operations
-    11-miscellaneous-sql/miscellaneous-sql
+    11-advanced-topics/advanced-topics
