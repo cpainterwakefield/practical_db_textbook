@@ -162,6 +162,83 @@ As we saw with **UNION**, it is possible to do more than one set operation in a 
 
 
 
+Self-check exercises
+::::::::::::::::::::
+
+This section contains some exercises using the books data set (reminder: you can get full descriptions of all tables in :ref:`Appendix A <appendix-a>`).  If you get stuck, click on the "Show answer" button below the exercise to see a correct answer.  There are many ways to answer these questions; try to use a set operation to solve each.
+
+.. activecode:: sets_self_test_union
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
+
+    Write a query to find all of the awards won by poet Allen Ginsberg, either as an author or for a book.  Your output should have three columns: the name of the award, the year of the award, and what the award was won for - the book title for book awards, or "body of work" for author awards:
+    ~~~~
+
+.. reveal:: sets_self_test_union_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT aw.name, ba.year, bo.title AS "Awarded For"
+        FROM
+          awards AS aw
+          JOIN books_awards AS ba ON ba.award_id = aw.award_id
+          JOIN books AS bo ON bo.book_id = ba.book_id
+          JOIN authors AS au ON au.author_id = bo.author_id
+        WHERE au.name = 'Allen Ginsberg'
+        UNION
+        SELECT aw.name, aa.year, 'body of work'
+        FROM
+          awards AS aw
+          JOIN authors_awards AS aa ON aa.award_id = aw.award_id
+          JOIN authors AS au ON au.author_id = aa.author_id
+        WHERE au.name = 'Allen Ginsberg';
+
+
+.. activecode:: sets_self_test_intersection
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
+
+    Write a query to find a list of awards given for either books or an author's body of work (i.e., the award(s) should show up in both **authors_awards** and **books_awards**):
+    ~~~~
+
+.. reveal:: sets_self_test_intersection_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT * FROM awards WHERE award_id IN
+          (SELECT award_id FROM books_awards)
+        INTERSECT
+        SELECT * FROM awards WHERE award_id IN
+          (SELECT award_id FROM authors_awards)
+        ;
+
+
+.. activecode:: sets_self_test_difference
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
+
+    Write a query to find a list of authors who won author awards but no book awards:
+    ~~~~
+
+.. reveal:: sets_self_test_difference_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    ::
+
+        SELECT name FROM authors WHERE author_id IN
+          (SELECT author_id FROM authors_awards)
+        EXCEPT
+        SELECT name FROM authors WHERE author_id IN
+          (SELECT author_id FROM books WHERE book_id IN
+            (SELECT book_id FROM books_awards))
+        ;
+
+
 .. |chapter-end| unicode:: U+274F
 
 |chapter-end|
