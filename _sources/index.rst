@@ -2,13 +2,48 @@
    :description: A Practical Introduction to Databases, an open educational resource textbook.
    :keywords: sql, nosql, database, computer science
 
+.. raw:: html
+
+   <style type="text/css">
+
+      body {
+        background: rgba(255, 255, 255, 0.45);
+        background-blend-mode: lighten;
+        background-image: url("_static/library_small.jpg");
+        background-size: cover;
+      }
+
+      #main-content {
+        background-color: rgba(255, 255, 255, 0);
+      }
+
+      #main-content h1 {
+        border-top: solid 1px #21314D !important;
+        border-bottom: solid 1px #21314D !important;
+      }
+
+      #main-content a {
+        color: #032d72;
+        background-color: rgba(180, 180, 180, 0.2);
+        padding: 2px;
+        border-radius: 2px;
+      }
+
+      #main-content {
+        color: #21314D !important;
+      }
+   </style>
+
 =====================================
 A Practical Introduction to Databases
 =====================================
 
-Christopher Painter-Wakefield, Colorado School of Mines
+.. raw:: html
 
-Table of Contents
+    <h3>Christopher Painter-Wakefield, Colorado School of Mines</h3>
+
+
+Table of contents
 :::::::::::::::::
 
 .. toctree::
@@ -23,7 +58,8 @@ Table of Contents
    PART1_SQL/index
    PART2_DATA_MODELING/index
    PART3_RELATIONAL_DATABASE_THEORY/index
-   PART4_SELECTED_TOPICS/index
+   PART4_DATABASE_PROGRAMMING/index
+   PART5_SELECTED_TOPICS/index
 
 .. toctree::
    :maxdepth: 1
@@ -39,10 +75,16 @@ Table of Contents
 * :ref:`genindex`
 * :ref:`search`
 
+
 Acknowledgements
 ::::::::::::::::
 
 Coming soon
+
+Cover photo
+-----------
+
+Photo of the library of Trinity College by `Henry Be <https://unsplash.com/@henry_be?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText>`_ on `Unsplash <https://unsplash.com/s/photos/library?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText>`_.
 
 
 .. raw:: html
