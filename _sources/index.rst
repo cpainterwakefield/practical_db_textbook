@@ -5,32 +5,19 @@
 .. raw:: html
 
    <style type="text/css">
-
       body {
-        background: rgba(255, 255, 255, 0.45);
-        background-blend-mode: lighten;
         background-image: url("_static/library_small.jpg");
         background-size: cover;
       }
 
       #main-content {
-        background-color: rgba(255, 255, 255, 0);
+        background-color: rgba(248, 248, 235, 0.75);
+        border-radius: 4px;
       }
 
       #main-content h1 {
         border-top: solid 1px #21314D !important;
         border-bottom: solid 1px #21314D !important;
-      }
-
-      #main-content a {
-        color: #032d72;
-        background-color: rgba(180, 180, 180, 0.2);
-        padding: 2px;
-        border-radius: 2px;
-      }
-
-      #main-content {
-        color: #21314D !important;
       }
    </style>
 
@@ -80,6 +67,7 @@ Acknowledgements
 ::::::::::::::::
 
 Coming soon
+
 
 Cover photo
 -----------
