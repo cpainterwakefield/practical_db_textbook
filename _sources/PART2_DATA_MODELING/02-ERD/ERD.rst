@@ -8,7 +8,7 @@ This chapter introduces *entity-relationship diagrams*, or ERDs.  ERDs define a 
 
 ERDs were conceived of by Peter Chen and described in a 1976 paper.  While various approaches to data modeling existed before ERD, Chen's ERD has stood the test of time to become one of the preferred methods and is in wide use today.  Many authors have expanded upon Chen's basic model, extending the notation in different directions.  As a result, there are many different ERD notations in use.  For this book, we adopt the notation of Elmasri and Navathe (see :ref:`references`); some popular alternative notations are discussed in :numref:`Chapter {number} <alternative-notations-chapter>`.
 
-As we cover the various elements of the ERD notation, our examples will build pieces of a data model for a fictional computer manufacturer.  The complete model is given at the end of the chapter.  You can also find ERDs for some of the databases used in :numref:`Part {number} <sql-part>` in :ref:`appendix-a`.
+As we cover the various elements of the ERD notation, our examples will build pieces of a data model for a fictional computer manufacturer.  The complete model is given at the end of the chapter.  You can also find ERDs for some of the datasets used in :numref:`Part {number} <sql-part>` in :ref:`appendix-a`.
 
 Basic model
 :::::::::::
@@ -40,7 +40,7 @@ Every entity has at least one attribute that uniquely identifies instances of th
 
 .. image:: key_attribute.svg
 
-ERD allows for multiple key attributes; for example, we might wish to also store a government issued identification number (such as the SSN used in the United States) for each employee.  Note that this is not the same as a key attribute composed of multiple parts!  An employee can be uniquely identified by either their company ID or by their government issued identification number - both are not needed.  Composite keys will be discussed in a later section.
+ERD allows for multiple key attributes; for example, we might wish to also store a government issued identification number (such as the SSN used in the United States) for each employee.  In this case, we would have two attributes with underlined labels.  Note that this is not the same as a key attribute composed of multiple parts!  An employee can be uniquely identified by either their company ID or by their government issued identification number - you do not need to know both.  Composite keys will be discussed in a later section.
 
 Relationships
 -------------
@@ -56,7 +56,7 @@ Cardinality ratios and participation
 
 How many employees work at a factory, and how many factories can an employee work at?  This is important information for our model (and for the database we will create from it).
 
-*Cardinality ratios* let us indicate the general number of instances of an entity that map to an entity on the other side of the relationship, and vice versa.  The cardinalities defined by the basic model are 1 and N (or n).  A cardinality of 1 actually means "zero or one"; a cardinality of N means "zero, one, or many".  As most relationships are binary having only two participating entities, this gives rise to a small number of commonly occurring cardinality ratios:
+*Cardinality ratios* let us indicate the general number of instances of an entity that map to an entity on the other side of the relationship, and vice versa.  The cardinalities defined by the basic model are **1** and **N** (or **n**).  A cardinality of **1** actually means "zero or one"; a cardinality of **N** means "zero, one, or many".  As most relationships are binary (involving only two participating entities), there are a small number of commonly occurring cardinality ratios:
 
 - 1:1, read as "one-to-one"
 - 1:N, read as "one-to-many" (equivalently, N:1, or "many-to-one")
@@ -68,7 +68,7 @@ We show the cardinalities on our model next to the line connecting the relations
 
 This diagram's cardinality ratio implies two statements about the relationship between employees and factories.  First, "each employee works at zero or one factories".  Second, "each factory has zero or more employees working at it".
 
-*Participation* is a closely related topic.  An entity is said to have *total participation* in a relationship if every instance of the entity must be in relationship with instances of the other entity in the relationship.  In a sense, this provides a minimum cardinality for the entity on the other side of the relationship.  Here is an example - note this is a second relationship between **employee** and **factory**:
+*Participation* is a closely related topic.  An entity is said to have *total participation* in a relationship if every instance of the entity must be matched with instances of the other entity in the relationship.  In effect, this provides a minimum cardinality for the entity on the other side of the relationship.  Here is an example - note this is a second relationship between **employee** and **factory**:
 
 .. image:: relationship_with_participation.svg
 
@@ -81,29 +81,60 @@ While indicating total participation on an ERD provides useful information, it i
 Putting it together
 -------------------
 
-Below is a diagram incorporating the examples above, and with some additional attributes to fill out the **employee** entity:
+Below is a diagram incorporating the examples above, and with some additional attributes to fill out the entities:
 
 .. image:: subset_of_ERD.svg
 
-While this is only part of the complete model that we will ultimately develop, it is a valid ERD from which we can build a database.  All of the necessary detail is in place.
+Note that the **factory** entity does not use a generated key, but a "natural" one - the city in which the factory is located.  (This only works if our company has no more than one factory in a city!)
 
-There is also no unnecessary duplication of information in our model.
+While this is only part of the complete model that we will ultimately develop, it is a valid ERD from which we could build a database.  All of the necessary detail is in place.
+
+There is also no unnecessary duplication of information in our model.  It is tempting to add attributes or other features that anticipate the database to come; for example, we might think that a employees should have an attribute indicating at which factory they work.  However, the fact that (at least some) employees work at a factory is already implicit in the relationship* **works at**.  This relationship will give rise to the necessary database structures connecting employees to factories.
 
 
 More complex modeling options
 :::::::::::::::::::::::::::::
 
+This section will look at some cases not covered in the examples above, and also reveal some additional notation covering situations not addressed by the basic model above.
+
 Recursive relationships
 -----------------------
+
+Relationships can be between an entity and itself.  This is frequently useful, especially in modeling hierarchical relationships.  In our fictional computer company, each employee (except for the head of the company) has a supervisor, who is another employee.  This is easily modeled as a one-to-many relationship connecting **employee** to **employee**:
+
+.. image:: recursive_relationship.svg
+
+For added clarity, we have annotated the lines connecting the relationship with the roles that employees play in the relationship: one supervisor supervises many supervisees.
 
 Weak entities
 -------------
 
+In some situations, we may want to model an entity that we do not have a unique identifier for, but which can be uniquely identified in relationship with another entity.  As an example, each of the factories of our computer manufacturer will contain assembly lines.  We wish to track certain information about each assembly line in our database, such as the daily *throughput* of the assembly line (the number of computers it can produce in a day).  We wish to model these as an entity in our data model, but it is not immediately clear what property of an assembly line would make a good identifier.
 
-Composite, derived, and multivalued attributes
-----------------------------------------------
+We could, of course, give every assembly line a generated unique identifier, but there is a more natural way to identify assembly lines.  In each factory, assembly lines are simply numbered starting from 1, most likely in order by their position on the factory floor.  To identify a particular assembly line, we first state which factory it is in, and then its number within the factory.
+
+When an entity is dependent on another entity for full identification, the dependent entity is called a *weak entity*, and notate it using a rectangle with doubled outline.  The weak entity has only a partial, or weak, key - in our example, the number of the assembly line within the factory.  We note the weak key using a dashed underline.  We also call out the relationship that the weak entity depends on for its identity, to distinguish it from any other relationships the weak entity participates in.  We call this relationship the *identifying relationship*, and draw it as a diamond with doubled outline.  The key of the parent entity together with the weak key of the weak entity constitutes a unique identifier for instances of the weak entity.
+
+Here is the diagram of our assembly line example:
+
+.. image:: weak_entity.svg
+
+Composite attributes
+--------------------
+
+.. image:: composite_attribute.svg
 
 - composite keys
+
+Multivalued attributes
+----------------------
+
+.. image:: multivalued_attribute.svg
+
+Derived attributes
+------------------
+
+.. image:: derived_attribute.svg
 
 Relationship attributes
 -----------------------
