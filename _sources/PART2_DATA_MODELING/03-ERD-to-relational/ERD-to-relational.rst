@@ -4,6 +4,7 @@
 Converting ERD to a relational model
 ====================================
 
+some care must be taken in interpreting total participation - e.g., a factory must have a manager, but what if it doesn't - like it is "between managers"?  If you make manager_id not null, then you are unable to represent this situation.  Is this what the business rules of your application require?
 
 .. |chapter-end| unicode:: U+274F
 

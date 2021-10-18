@@ -1,6 +1,11 @@
+.. _references:
+
 ==========
 References
 ==========
+
+SQL
+::::
 
 International Organization for Standardization and International Electrotechnical
 Commission. (2016). *Information technology — Database languages — SQL — Part 2: Foundation (SQL/Foundation)* (ISO/IEC 9075-2, Fifth Edition).
@@ -14,3 +19,11 @@ MySQL 8.0 Reference Manual. Retrieved from https://dev.mysql.com/doc/refman/8.0/
 Oracle Database SQL Language Reference 18c. (April, 2020).  Retrieved from https://docs.oracle.com/en/database/oracle/oracle-database/18/sqlrf/.
 
 Transact-SQL Reference. (April 29, 2020).  Retrieved from https://docs.microsoft.com/en-us/sql/t-sql/language-reference?view=sql-server-ver15.
+
+
+Data modeling
+:::::::::::::
+
+Chen, Peter Pin-Shan. "The entity-relationship model—toward a unified view of data." *ACM transactions on database systems (TODS)* 1.1 (1976): 9-36.
+
+Elmasri, Ramez, and Sham Navathe. *Fundamentals of Database Systems.* 7th edition, Pearson, 2016.

@@ -126,3 +126,9 @@ We are now ready to describe the database we will be using for the rest of this 
     award_id           integer           award_id of the award given
     year               integer           year the award was given
     ================== ================= ===================================
+
+
+Data models
+:::::::::::
+
+ERD and other notations
