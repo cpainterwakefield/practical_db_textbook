@@ -8,7 +8,7 @@ This chapter introduces *entity-relationship diagrams*, or ERDs.  ERDs define a 
 
 ERDs were conceived of by Peter Chen and described in a 1976 paper.  While various approaches to data modeling existed before ERD, Chen's ERD has stood the test of time to become one of the preferred methods and is in wide use today.  Many authors have expanded upon Chen's basic model, extending the notation in different directions.  As a result, there are many different ERD notations in use.  For this book, we adopt the notation of Elmasri and Navathe (see :ref:`references`); some popular alternative notations are discussed in :numref:`Chapter {number} <alternative-notations-chapter>`.
 
-As we cover the various elements of the ERD notation, our examples will build pieces of a data model for a fictional computer manufacturer.  The complete model is given at the end of the chapter.  You can also find ERDs for some of the datasets used in :numref:`Part {number} <sql-part>` in :ref:`appendix-a`.
+As we cover the various elements of the ERD notation, our examples will build pieces of a data model for a fictional computer manufacturer.  The complete model is given in :numref:`Section {number} <complete-model-section>` below.  You can also find ERDs for some of the datasets used in :numref:`Part {number} <sql-part>` in :ref:`appendix-a`.
 
 Basic model
 :::::::::::
@@ -122,27 +122,61 @@ Here is the diagram of our assembly line example:
 Composite attributes
 --------------------
 
-.. image:: composite_attribute.svg
+We may sometimes wish to model an attribute that is naturally composed of multiple parts.  For example, the address of a person or company may be composed of a street address, city, postal code, and so forth.  To indicate that these attributes work together as part of a larger property of the entity, we can use a *composite attribute*, which is drawn as a regular attribute with its component attributes attached.
 
-- composite keys
+The use of a composite attribute is essential in cases where our key is itself composed of multiple attributes.  We cannot simply underline each component of the key, as this would indicate that each is a key by itself.  Instead, we must create a composite attribute; we underline the composite, but not the component attributes.
+
+In our computer manufacturer example, each type of computer (or "model") the company builds is identified by a name (indicating some line of computers), and a number (indicating the version of that line of computers).  For lack of a better name, we group these as a composite labeled "designation":
+
+.. image:: composite_attribute.svg
 
 Multivalued attributes
 ----------------------
 
+Some properties of entities are not simple values, but lists or sets of values.  As these will need special handling when we create a database from the data model, we differentiate these *multivalued attributes* from regular attributes using a doubled outline:
+
 .. image:: multivalued_attribute.svg
+
+In our example, computer models may be designed or marketed for particular applications, such as gaming, multimedia, or business.  As computers may fit into more than one of these categories, we model it above as a multivalued attribute.
+
+An alternative to making a multivalued attribute is modeling the possible attribute values as a separate entity, connected to the original entity with a many-to-many relationship.  The separate entity would have a single, key attribute.
 
 Derived attributes
 ------------------
+
+Entities may have important properties that we want to note on our data model, but which we would prefer to compute from other values in the data model, rather than store in our database.  For example, the age of a person is an important property for many applications, but storing this value in the database is generally a poor choice, as a person's age changes over time, necessitating regular updates to the data.  Instead, we might store the person's birth date, and calculate the person's age each time we need it.
+
+In our computer manufacturer example, we are very interested in the total throughput of each factory.  While we could make this as an attribute of **factory**, we note that this value can be calculated by summing up the throughputs of the factory's assembly lines.  We choose to model this as a *derived attribute*, using a dashed outline:
 
 .. image:: derived_attribute.svg
 
 Relationship attributes
 -----------------------
 
+While most attributes are attached to entities, we can also attach attributes to relationships.  We do this when an attribute properly applies to a combination of entities, rather than to a single entity.  This most frequently occurs with many-to-many relationships.
+
+Our fictional computer manufacturer buys computer parts from multiple vendors.  The manufacturer considers certain parts that have similar properties to be a single "part".  For example, the database might contain an entry for the part "8TB 7200RPM hard drive", regardless of brand.  However, at any given time, one vendor's price for a given part may be different from another vendor's price for the same part.  This price therefore cannot belong to the **part** entity - it depends on **vendor**, too.  Similarly, vendors supply many different parts, so the price cannot belong to the **vendor** entity.  Instead, it belongs to the relationship between these entitites:
+
+.. image:: relationship_attribute.svg
 
 Higher-arity relationships
 --------------------------
 
+We stated that two *or more* entities could participate in a relationship.  While most relationships are binary, you may run into cases where you need to relate three (or more) entities.  We do not have an example of this in our model.  However, a classic example arises in the context of large organizations or governments with many projects involving complex contracts with parts suppliers.  Projects use many parts, and parts may be used in multiple projects; additionally, the same part might be available from different vendors.  Normally this might be modeled using two many-to-many relationships (very much like what is in our complete example below).  However, if the company has legal agreements that, for a certain project, a certain type of part must come from a certain vendor, while for a different project, the same type of part must come from a different vendor, the situation is not easily modeled using binary relationships.  What we need is a relationship that connects parts, projects, and vendors.
+
+In this example, the relationship is many-to-many-to-many, which is sometimes notated as M:N:P, and others as N:N:N:
+
+.. image:: ternary_relationship.svg
+
+.. _complete-model-section:
+
+
+Complete example
+::::::::::::::::
+
+Below is our completed example; most parts of the diagram have been explained above.  Now that you know what the different elements mean, the rest of the diagram should be self-explanatory:
+
+.. image:: complete_ERD.svg
 
 Beyond notation
 :::::::::::::::
@@ -157,12 +191,6 @@ Using ERD to design a database
 Note the abstract nature of this model.  Although we will examine how to turn our ERD into a relational database in :numref:`Chapter {number} <erd-to-relational-chapter>`, the ERD contains no details specific to SQL or relational databases.  In fact, we could as easily create other types of database from it.
 
 
-Complete model
-::::::::::::::
-
-
-
-.. image:: complete_ERD.svg
 
 
 .. |chapter-end| unicode:: U+274F
