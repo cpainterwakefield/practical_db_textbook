@@ -4,7 +4,7 @@
 Entity-relationship diagrams
 ============================
 
-This chapter introduces *entity-relationship diagrams*, or ERDs.  ERDs define a graphical language for data modeling, at a high level of abstraction.  The level of abstraction facilitates communication between the database designers, project users, and data domain experts.
+This chapter introduces *entity-relationship diagrams*, or ERDs.  ERDs define a graphical language for data modeling, at a high level of abstraction.  ERDs map well to relational databases at a high level, but can also be used as a precursor to building non-relational databases.
 
 ERDs were conceived of by Peter Chen and described in a 1976 paper.  While various approaches to data modeling existed before ERD, Chen's ERD has stood the test of time to become one of the preferred methods and is in wide use today.  Many authors have expanded upon Chen's basic model, extending the notation in different directions.  As a result, there are many different ERD notations in use.  For this book, we adopt the notation of Elmasri and Navathe (see :ref:`references`); some popular alternative notations are discussed in :numref:`Chapter {number} <alternative-notations-chapter>`.
 
@@ -72,7 +72,7 @@ This diagram's cardinality ratio implies two statements about the relationship b
 
 .. image:: relationship_with_participation.svg
 
-The double line between **factory** and **manages** says that **factory** has total participation in the relationship.  This diagram's cardinality ratio and participation imply two subtly different statements: "each employee manages *zero or one* factories" and "each factory has *exactly one* employee managing it".  That is, every factory is expected to have a manager, but only some employees manage factories.
+The double line between **factory** and **manages** says that **factory** has total participation in the relationship.  This diagram's cardinality ratio and participation imply two subtly different statements: "each employee manages *zero or one* factories" and "each factory has *exactly one* employee managing it".  That is, every factory is expected to have a manager, but only some employees manage a factory.
 
 The opposite of total participation, denoted using a single line, is *partial participation*.
 
@@ -89,7 +89,7 @@ Note that the **factory** entity does not use a generated key, but a "natural" o
 
 While this is only part of the complete model that we will ultimately develop, it is a valid ERD from which we could build a database.  All of the necessary detail is in place.
 
-There is also no unnecessary duplication of information in our model.  It is tempting to add attributes or other features that anticipate the database to come; for example, we might think that a employees should have an attribute indicating at which factory they work.  However, the fact that (at least some) employees work at a factory is already implicit in the relationship* **works at**.  This relationship will give rise to the necessary database structures connecting employees to factories.
+There is also no unnecessary duplication of information in our model.  It is tempting to add attributes or other features that anticipate the database to come; for example, we might think that employees should have an attribute indicating at which factory they work.  However, the fact that (at least some) employees work at a factory is already implicit in the relationship **works at**.  This relationship will give rise to the necessary database structures connecting employees to factories.
 
 
 More complex modeling options
@@ -100,7 +100,7 @@ This section will look at some cases not covered in the examples above, and also
 Recursive relationships
 -----------------------
 
-Relationships can be between an entity and itself.  This is frequently useful, especially in modeling hierarchical relationships.  In our fictional computer company, each employee (except for the head of the company) has a supervisor, who is another employee.  This is easily modeled as a one-to-many relationship connecting **employee** to **employee**:
+Relationships can exist between an entity and itself.  This is frequently useful, especially in modeling hierarchical relationships.  In our fictional computer company, each employee (except for the head of the company) has a supervisor, who is another employee.  This is easily modeled as a one-to-many relationship connecting **employee** to **employee**:
 
 .. image:: recursive_relationship.svg
 
@@ -178,19 +178,40 @@ Below is our completed example; most parts of the diagram have been explained ab
 
 .. image:: complete_ERD.svg
 
-Beyond notation
-:::::::::::::::
-
-- other annotations
-- communication - don't get hung up on notation in early stages
-
 
 Using ERD to design a database
 :::::::::::::::::::::::::::::::
 
-Note the abstract nature of this model.  Although we will examine how to turn our ERD into a relational database in :numref:`Chapter {number} <erd-to-relational-chapter>`, the ERD contains no details specific to SQL or relational databases.  In fact, we could as easily create other types of database from it.
+While ERD has many applications, we emphasize its use as an analysis and design tool.  ERDs facilitate communication between database developers, programmers, domain experts, and database users.  An ERD produces an abstract model of *the data*.  Although we will examine how to turn our ERD into a relational database in :numref:`Chapter {number} <erd-to-relational-chapter>`, the ERD contains no details specific to SQL or relational databases.  Especially in the early stages of analysis, thinking ahead to such details can actually be counterproductive; your focus should be on creating a shared understanding of the data.
 
+In a similar vein, we encourage you to avoid spending effort on perfect conformance to the ERD notation.  In the interest of improved communication, you should feel free to adapt the notation to your needs.  You can (and perhaps should) also add text annotations and explanations wherever they are helpful.  Designing a large database is a complex endeavor, and it can be easy to forget the reasons for particular design decisions.  Notational details will become more important in the later stages of design, as you begin to test your design with actual database construction.
 
+The actual process you use to create a database for a project may be dictated by your group or organization, but some general advice is provided below.
+
+Analysis
+--------
+
+A crucial first step in the design of any software is understanding the requirements of your project.  In regards to your database, requirements may be dictated by:
+
+- the data domain, i.e., facts which impose structure and relationships on the data
+- user needs, e.g., the answers or insights they want to obtain from the data
+- data sources, e.g., the data values that are actually available to be stored
+- application requirements, e.g., how other software will view or manipulate the data
+
+You may therefore need to talk with domain experts (people who have deep knowledge about the area the data applies to), end users, data providers, and/or software developers.  Brainstorming entities, attributes, and relationships is a great starting point for these discussions.  List data elements on a whiteboard or piece of paper where everyone can see.  Some of these are potential entities, some attributes, and some may even be relationships.  Have people propose relationships between the data elements, and write these as simple "subject verb object" sentences.  It is not necessary to be exhaustive in your brainstorming; additional entities, attributes, and relationships will be discovered in later steps.
+
+Once you have a good set of data elements and relationships, you can begin working on an ERD.  Focus at first on basic model elements - entities, attributes, and relationships.  Identify potential key attributes for all of your entities.  Consider cardinality ratios; examine whether these make sense by the statements they imply about the entities involved, e.g., "each instance of this entity has this relationship with *x* number of instances of the other entity", where *x* is "zero", "one", or "many" - do this in every direction (e.g., if the relationship is binary, you should make two statements).  Question all assumptions!  For example, if you identify some attribute as a key for an entity, ask if every instance of the entity actually has that attribute.
+
+It may take significant time and multiple discussions to build an ERD that is satisfactory to everyone involved.  This process is messy and may seem chaotic at first.  Be patient, try different options, and make incremental improvements.  It is not necessary to solve every disagreement before moving on to next steps; you may need to revisit the ERD multiple times as you uncover questions and issues in later steps.
+
+Design, implementation, and beyond
+----------------------------------
+
+You can build a database as the next step once you have an ERD, or you can engage in further design activities.  You may wish to build a lower level data model, such as one of the ones discussed in :numref:`Chapter {number} <structural-models-chapter>` as an intermediate step.  Some of this will depend on interactions with other systems (e.g., software) being built.  As will be discussed in :numref:`Chapter {number} <erd-to-relational-chapter>`, the ERD does not fully dictate how your database will be built; for instance, you need to choose table and column names (for a relational database), as well as data types for the different values represented by attributes in your ERD.
+
+Regardless of next step, you are likely to run into problems of some sort: assumptions that do not hold, new questions, or other issues in translating the ERD into a more concrete form.  As part of your process, expect to revisit the design with your domain experts and project stakeholders to resolve these problems.  This will probably happen yet again when you start trying to put data into your new database, when software is written to interact with the database, and when users start testing the database and/or software.
+
+Whether you resolve issues at each stage with the ERD or at some lower level, it can be valuable to keep the ERD aligned with the database as implemented, as part of your documentation of the system.  Systems change over time; when it is time to modify your database, you will want some documentation of the design decisions that went into the earlier database, and the ERD may play a part in designing the updates to your system.  An up-to-date ERD will also help new database users or software developers become acquainted with the system more quickly.
 
 
 .. |chapter-end| unicode:: U+274F
