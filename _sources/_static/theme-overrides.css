@@ -68,6 +68,18 @@ table:not(.htCore) td {
     text-align: left !important;
 }
 
+table.lined-table thead tr th {
+    border-style: solid !important;
+    border-color: #ddd !important;
+    border-width: 1px 1px 2px 1px !important;
+    padding: 4px !important;
+}
+
+table.lined-table tbody tr td {
+    border: 1px solid #ddd !important;
+    padding: 4px !important;
+}
+
 a.footnote-reference {
     font-size: 1.33rem !important;
     vertical-align: text-top !important;
