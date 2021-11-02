@@ -232,7 +232,7 @@ Using a cross-reference table instead of the above scheme is a perfectly valid c
 One-to-one
 ----------
 
-One-to-one relationships can be considered a special case of one-to-many relationships.  As such, you can use either approach used for one-to-many relationships.  In most cases, it will be preferable to "borrow" the primary key from one table as a foreign key in the other table.  Using this approach, you could borrow from either side; however, one choice is often preferable to another.
+One-to-one relationships can be considered a special case of one-to-many relationships, so you can utilize either approach suitable for one-to-many relationships.  In most cases, it will be preferable to "borrow" the primary key from one table as a foreign key in the other table.  Using this approach, you could borrow from either side; however, one choice is often preferable to another.
 
 In our example, we have a one-to-one relationship, **manages**, between **employee** and **factory**.  We could therefore add another column to the **employee** table, this time for the city of the factory that the employee manages.  However, most employees do not manage factories, so the column will end up containing many ``NULL`` values.
 
@@ -272,27 +272,127 @@ Identifying relationships for weak entities are necessarily one-to-many or one-t
 Multivalued attributes
 ::::::::::::::::::::::
 
-- is it a lookup table?  Then perhaps cross-reference table
-- else, like weak entity
+Multivalued attributes can be used to model a few different scenarios.  As a result, there are multiple choices for how to store multivalued data in a relational database.
+
+In the simplest case, a multivalued attribute is used when a list of arbitrary values needs to be stored, but there is no particular expectation that the values will be examined in a search of the database.  In this case, an array-valued column may be an appropriate choice for databases that support such columns.
+.. table:: Table **vendor**
+    :class: lined-table
+
+    +---------------+----------+--------------+-----------------------------+
+    | Column name   | Type     | Constraints  | Notes                       |
+    +===============+==========+==============+=============================+
+    | name          | text     | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | email         | text     |              |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | phone         | text     |              |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | **Keys**                                                              |
+    |                                                                       |
+    | Primary key: name                                                     |
+    +---------------+----------+--------------+-----------------------------+
+
+.. table:: Table **part**
+    :class: lined-table
+
+    +---------------+----------+--------------+-----------------------------+
+    | Column name   | Type     | Constraints  | Notes                       |
+    +===============+==========+==============+=============================+
+    | part_number   | text     | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | description   | text     |              |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | **Keys**                                                              |
+    |                                                                       |
+    | Primary key: part_number                                              |
+    +---------------+----------+--------------+-----------------------------+
+
+.. table:: Table **vendor_part**
+    :class: lined-table
+
+    +---------------+----------+--------------+-----------------------------+
+    | Column name   | Type     | Constraints  | Notes                       |
+    +===============+==========+==============+=============================+
+    | vendor_name   | text     | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | part_number   | text     | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | price         | currency |              |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | **Keys**                                                              |
+    |                                                                       |
+    | Primary key: vendor_name, part_number                                 |
+    |                                                                       |
+    | Foreign key: vendor_name |right-arrow| vendor (name)                  |
+    |                                                                       |
+    | Foreign key: part_number |right-arrow| part (part_number)             |
+    +---------------+----------+--------------+-----------------------------+
 
 
-Example walkthrough
-:::::::::::::::::::
+When there is a need to query the values associated with a multivalued attribute, or for databases that do not support array-valued columns, the best choice may be to make a simple table with two columns, one for the primary key of the owning table, and one for the values themselves.  Each entry in the table associates one value with the instance of the entity.
+
+In our example, computer models can be marketed to customers for different applications, such as gaming, video editing, or business use.  This is represented in our data model with the multivalued **application** attribute:
+
+.. image:: multivalued.svg
+
+We might, then, implement the model entity and its attributes using the following two tables:
+
+.. table:: Table **model** (preliminary)
+    :class: lined-table
+
+    +---------------+----------+--------------+-----------------------------+
+    | Column name   | Type     | Constraints  | Notes                       |
+    +===============+==========+==============+=============================+
+    | name          | text     | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | number        | text     | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | type          | text     |              |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | **Keys**                                                              |
+    |                                                                       |
+    | Primary key: name, number                                             |
+    +---------------+----------+--------------+-----------------------------+
+
+.. table:: Table **model_application** (preliminary)
+    :class: lined-table; in this case
+
+    +---------------+----------+--------------+----------------------------------+
+    | Column name   | Type     | Constraints  | Notes                            |
+    +===============+==========+==============+==================================+
+    | model_name    | text     | not null     |                                  |
+    +---------------+----------+--------------+----------------------------------+
+    | model_number  | text     | not null     |                                  |
+    +---------------+----------+--------------+----------------------------------+
+    | application   | text     | not null     |                                  |
+    +---------------+----------+--------------+----------------------------------+
+    | **Keys**                                                                   |
+    |                                                                            |
+    | Primary key: model_name, model_number, application                         |
+    |                                                                            |
+    | Foreign key: (model_name, model_number) |right-arrow| model (name, number) |
+    +---------------+----------+--------------+----------------------------------+
+
+Many applications also require the values associated with a multivalued attribute to be restricted to a certain list of values.  In this case, an additional table is used.  The additional table exists just to contain the allowed values, allowing us to constrain the data to just those values.  For more complex values, a artificial identifier may be added as primary key, and the primary key used in the multivalued attribute table instead of the values themselves; this makes the multivalued attribute table a cross-reference table. For small lists of simple values (as in our example) this adds unnecessary complication.
+
+For our example, we might constrain the **application** column using a foreign key constraint referencing this simple table:
+
+.. table:: Table **application**
+    :class: lined-table
+
+    +---------------+----------+--------------+-----------------------------+
+    | Column name   | Type     | Constraints  | Notes                       |
+    +===============+==========+==============+=============================+
+    | application   | text     | not null     | gaming, business, etc.      |
+    +---------------+----------+--------------+-----------------------------+
+    | **Keys**                                                              |
+    |                                                                       |
+    | Primary key: application                                              |
+    +---------------+----------+--------------+-----------------------------+
 
 
-Practical considerations
-::::::::::::::::::::::::
-
-Maybe these should be in footnotes?
-
-- are primary/foreign keys strictly necessary?
-
-- some care must be taken in interpreting total participation - e.g., a factory must have a manager, but what if it doesn't - like it is "between managers"?  If you make manager_id not null, then you are unable to represent this situation.  Is this what the business rules of your application require?
-
-- be cautious with not null constraints
-
-- order of creation in SQL?
-
+Full model conversion
+:::::::::::::::::::::
 
 .. table:: Table **employee**
     :class: lined-table
@@ -308,7 +408,7 @@ Maybe these should be in footnotes?
     +---------------+----------+--------------+-----------------------------+
     | pay_rate      | currency |              |                             |
     +---------------+----------+--------------+-----------------------------+
-    | pay_type      | character|   's' or 'h' | s = salaried, h = hourly    |
+    | pay_type      | character| 's' or 'h'   | s = salaried, h = hourly    |
     +---------------+----------+--------------+-----------------------------+
     | factory       | text     |              |                             |
     +---------------+----------+--------------+-----------------------------+
@@ -322,6 +422,190 @@ Maybe these should be in footnotes?
     |                                                                       |
     | Foreign key: supervisor_id |right-arrow| employee (id)                |
     +---------------+----------+--------------+-----------------------------+
+
+.. table:: Table **factory**
+    :class: lined-table
+
+    +---------------+----------+--------------+-----------------------------+
+    | Column name   | Type     | Constraints  | Notes                       |
+    +===============+==========+==============+=============================+
+    | city          | text     | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | manager_id    | integer  |see note [#]_ |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | **Keys**                                                              |
+    |                                                                       |
+    | Primary key: city                                                     |
+    |                                                                       |
+    | Foreign key: manager_id |right-arrow| employee (id)                   |
+    +---------------+----------+--------------+-----------------------------+
+
+.. table:: Table **assembly_line**
+    :class: lined-table
+
+    +---------------+----------+--------------+-----------------------------+
+    | Column name   | Type     | Constraints  | Notes                       |
+    +===============+==========+==============+=============================+
+    | factory_city  | text     | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | number        | integer  | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | throughput    | real     |              |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | **Keys**                                                              |
+    |                                                                       |
+    | Primary key: factory_city, number                                     |
+    |                                                                       |
+    | Foreign key: factory_city |right-arrow| factory (city)                |
+    +---------------+----------+--------------+-----------------------------+
+
+.. table:: Table **model**
+    :class: lined-table
+
+    +---------------+----------+--------------+-----------------------------+
+    | Column name   | Type     | Constraints  | Notes                       |
+    +===============+==========+==============+=============================+
+    | name          | text     | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | number        | text     | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | type          | text     |              |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | factory_city  | text     |              |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | **Keys**                                                              |
+    |                                                                       |
+    | Primary key: name, number                                             |
+    |                                                                       |
+    | Foreign key: factory_city |right-arrow| factory (city)                |
+    +---------------+----------+--------------+-----------------------------+
+
+.. table:: Table **model_application**
+    :class: lined-table; in this case
+
+    +---------------+----------+--------------+----------------------------------+
+    | Column name   | Type     | Constraints  | Notes                            |
+    +===============+==========+==============+==================================+
+    | model_name    | text     | not null     |                                  |
+    +---------------+----------+--------------+----------------------------------+
+    | model_number  | text     | not null     |                                  |
+    +---------------+----------+--------------+----------------------------------+
+    | application   | text     | not null     |                                  |
+    +---------------+----------+--------------+----------------------------------+
+    | **Keys**                                                                   |
+    |                                                                            |
+    | Primary key: model_name, model_number, application                         |
+    |                                                                            |
+    | Foreign key: (model_name, model_number) |right-arrow| model (name, number) |
+    |                                                                            |
+    | Foreign key: application |right-arrow| application (application)           |
+    +---------------+----------+--------------+----------------------------------+
+
+.. table:: Table **application**
+    :class: lined-table
+
+    +---------------+----------+--------------+-----------------------------+
+    | Column name   | Type     | Constraints  | Notes                       |
+    +===============+==========+==============+=============================+
+    | application   | text     | not null     | gaming, business, etc.      |
+    +---------------+----------+--------------+-----------------------------+
+    | **Keys**                                                              |
+    |                                                                       |
+    | Primary key: application                                              |
+    +---------------+----------+--------------+-----------------------------+
+
+.. table:: Table **part**
+    :class: lined-table
+
+    +---------------+----------+--------------+-----------------------------+
+    | Column name   | Type     | Constraints  | Notes                       |
+    +===============+==========+==============+=============================+
+    | part_number   | text     | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | description   | text     |              |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | **Keys**                                                              |
+    |                                                                       |
+    | Primary key: part_number                                              |
+    +---------------+----------+--------------+-----------------------------+
+
+
+.. table:: Table **model_part**
+    :class: lined-table
+
+    +---------------+----------+--------------+----------------------------------+
+    | Column name   | Type     | Constraints  | Notes                            |
+    +===============+==========+==============+==================================+
+    | model_name    | text     | not null     |                                  |
+    +---------------+----------+--------------+----------------------------------+
+    | model_number  | text     | not null     |                                  |
+    +---------------+----------+--------------+----------------------------------+
+    | part_number   | text     | not null     |                                  |
+    +---------------+----------+--------------+----------------------------------+
+    | **Keys**                                                                   |
+    |                                                                            |
+    | Primary key: model_name, model_number, part_number                         |
+    |                                                                            |
+    | Foreign key: (model_name, model_number) |right-arrow| model (name, number) |
+    |                                                                            |
+    | Foreign key: part_number |right-arrow| part (part_number)                  |
+    +---------------+----------+--------------+----------------------------------+
+
+.. table:: Table **vendor**
+    :class: lined-table
+
+    +---------------+----------+--------------+-----------------------------+
+    | Column name   | Type     | Constraints  | Notes                       |
+    +===============+==========+==============+=============================+
+    | name          | text     | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | email         | text     |              |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | phone         | text     |              |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | **Keys**                                                              |
+    |                                                                       |
+    | Primary key: name                                                     |
+    +---------------+----------+--------------+-----------------------------+
+
+.. table:: Table **vendor_part**
+    :class: lined-table
+
+    +---------------+----------+--------------+-----------------------------+
+    | Column name   | Type     | Constraints  | Notes                       |
+    +===============+==========+==============+=============================+
+    | vendor_name   | text     | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | part_number   | text     | not null     |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | price         | currency |              |                             |
+    +---------------+----------+--------------+-----------------------------+
+    | **Keys**                                                              |
+    |                                                                       |
+    | Primary key: vendor_name, part_number                                 |
+    |                                                                       |
+    | Foreign key: vendor_name |right-arrow| vendor (name)                  |
+    |                                                                       |
+    | Foreign key: part_number |right-arrow| part (part_number)             |
+    +---------------+----------+--------------+-----------------------------+
+
+
+
+Practical considerations
+::::::::::::::::::::::::
+
+Maybe these should be in footnotes?
+
+- are primary/foreign keys strictly necessary?
+
+- some care must be taken in interpreting total participation - e.g., a factory must have a manager, but what if it doesn't - like it is "between managers"?  If you make manager_id not null, then you are unable to represent this situation.  Is this what the business rules of your application require?
+
+- be cautious with not null constraints
+
+- order of creation in SQL?  fks going both directions, as in employee/factory
+
+
+
 
 
 .. |chapter-end| unicode:: U+274F
