@@ -382,7 +382,7 @@ Table **employee** contains columns for the attributes of the **employee** entit
     +===============+==========+==============+=============================+
     | city          | text     | not null     |                             |
     +---------------+----------+--------------+-----------------------------+
-    | manager_id    | integer  |see note [#]_ |                             |
+    | manager_id    | integer  |              |                             |
     +---------------+----------+--------------+-----------------------------+
     | **Keys**                                                              |
     |                                                                       |
