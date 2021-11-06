@@ -80,13 +80,54 @@ If we choose, we can add even more detail to create a *physical* model.  The phy
 Each level of abstraction has value, but whether or not you create models at a particular level will depend on your needs.  As discussed in :numref:`Chapter {number} <erd-chapter>`, models at the highest levels of abstraction are particularly valuable in the early stages of developing a database, and in communicating with all of the various stakeholders in a project.  The conceptual model can be used to produce a database directly, or you may prefer to create a logical model as an intermediate stage.  On the other hand, for some projects you may skip the conceptual level and start with a logical model.  It can be very useful to maintain a logical model documenting a database; with large and complex databases, even regular users of the database can forget the names of tables and columns!  Physical models are mostly used by database administrators (DBAs) on very complex projects, and are usually created in software tools that can also generate the SQL code to create the database.
 
 
-Notational variations
-:::::::::::::::::::::
+Common variations
+::::::::::::::::::
 
-- alternate cardinality notations
-- alternate participation notations
-- key notations
-- other extensions (not covered) such as EER
+Most visual languages for data modeling derive in greater or lesser degree from Chen's notation or crow's foot notation, although alternatives exist.  One popular alternative is the *unified modeling language* (UML).  While UML is not specifically intended for database design, it has been adapted for the purpose.  UML is especially applicable in more advanced settings involving inheritance hierarchies for entities.  Chen's notation has also been extended for these settings.  We do not cover inheritance in this book.
+
+All data modeling languages share certain commonalities, such as entities, attributes, keys, relationships, and cardinality ratios.  Most have some notion of participation or minimum cardinality.  The basic concepts are the same, but the notations vary.  We give an overview of just the most common variations you are likely to encounter below.
+
+Cardinality ratios and participation
+------------------------------------
+
+Participation and minimum cardinality can be equated when working with binary relationships.  If an entity has total participation in a binary relationship, then the minimum cardinality of the other entity is one (or at least, not zero).  Conversely, partial participation of an entity implies a minimum cardinality of zero for the other entity.  Typically you will use either participation or minimum cardinality, but not both.
+
+.. table:: Participation
+
+    +-----------------------+----------------------------+----------------------------+
+    |                       | This book                  |  Alternative notation      |
+    +=======================+============================+============================+
+    | Partial participation | .. image:: single_line.svg | .. image:: dotted_line.svg |
+    +-----------------------+----------------------------+----------------------------+
+    | Total participation   | .. image:: double_line.svg | .. image:: single_line.svg |
+    +-----------------------+----------------------------+----------------------------+
+
+.. table:: Minimum and maximum cardinality
+
+    +-----------------------+----------------------------------------+---------------------------------------------------------------------------------+
+    |                       | Crow's foot notation                   |  Alternative notations                                                          |
+    +=======================+========================================+============================================+====================================+
+    | Zero or one           | .. image:: crows_foot_zero_or_one.svg  | .. image:: zero_or_one_parenthetical.svg   | .. image:: zero_or_one_range.svg   |
+    +-----------------------+----------------------------------------+--------------------------------------------+------------------------------------+
+    | Exactly one           | .. image:: crows_foot_one_exactly.svg  | .. image:: one_exactly_parenthetical.svg   | .. image:: one_exactly_range.svg   |
+    +-----------------------+----------------------------------------+--------------------------------------------+------------------------------------+
+    | Zero or more          | .. image:: crows_foot_zero_or_more.svg | .. image:: zero_or_more_parenthetical.svg  | .. image:: zero_or_more_range.svg  |
+    +-----------------------+----------------------------------------+--------------------------------------------+------------------------------------+
+    | One or more           | .. image:: crows_foot_one_or_more.svg  | .. image:: one_or_more_parenthetical.svg   | .. image:: one_or_more_range.svg   |
+    +-----------------------+----------------------------------------+--------------------------------------------+------------------------------------+
+    | Specified min/max     |                                        | .. image:: two_or_three_parenthetical.svg  | .. image:: two_or_three_range.svg  |
+    +-----------------------+----------------------------------------+--------------------------------------------+------------------------------------+
+
+
+Attributes
+----------
+
+In our presentation of crow's foot logical models above, we used text styling (boldface and underlining) to indicate primary keys.  We used italics to indicate foreign keys.  Many drawing and modeling tools similarly use text styling to indicate keys, although not necessarily the styling we used.  Tools may also or instead use background or foreground colors to indicate keys and other properties of columns.
+
+Many tools will also or instead indicate primary and foreign key columns with text indicators, usually "PK" and "FK".  Some will highlight primary keys by separating them from the other columns:
+
+.. image:: entity_alternative.svg
+
 
 
 
