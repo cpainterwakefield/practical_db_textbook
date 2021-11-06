@@ -20,6 +20,7 @@ Oracle Database SQL Language Reference 18c. (April, 2020).  Retrieved from https
 
 Transact-SQL Reference. (April 29, 2020).  Retrieved from https://docs.microsoft.com/en-us/sql/t-sql/language-reference?view=sql-server-ver15.
 
+.. _data-modeling-references:
 
 Data modeling
 :::::::::::::
@@ -27,3 +28,5 @@ Data modeling
 Chen, Peter Pin-Shan. "The entity-relationship model—toward a unified view of data." *ACM transactions on database systems (TODS)* 1.1 (1976): 9-36.
 
 Elmasri, Ramez, and Sham Navathe. *Fundamentals of Database Systems.* 7th edition, Pearson, 2016.
+
+Everest, Gordon C. "Basic data structure models explained with a common example." *Proc. Fifth Texas Conference on Computing Systems*. 1976.

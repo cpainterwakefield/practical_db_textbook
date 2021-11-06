@@ -10,5 +10,4 @@ DATA MODELING
     01-introduction/introduction
     02-ERD/ERD
     03-ERD-to-relational/ERD-to-relational
-    04-structural-models/structural-models
-    05-alternative-notations/alternative-notations
+    04-other-notations/other-notations
