@@ -24,13 +24,14 @@ Regular entities
 
 First, decide on a name for the table - this does not have to be the same as the entity name!  There are many naming schemes for tables.  If you are building a database for a company or organization that has naming standards, you will of course want to follow those.  Otherwise, choose a basic approach and be consistent.  For example, some databases use plural nouns for tables, while others use singular nouns.  In our data model from :numref:`Chapter {number} <erd-chapter>`, the entity **employee** might become a table named **employee** or **employees**.  Another naming issue arises with table names containing multiple words; some databases choose to run these together, while others employ underscore characters.  For example, the entity **assembly line** could become a table named **assemblyline** or **assembly_line**.  In our examples below, we will use singular nouns and underscores.
 
-Most attributes for the entity should be converted to columns in the new table.  Do not create columns for derived attributes, as these values are not intended to be stored.  Do not create columns for multivalued attributes; we will address these later.  For composite attributes, create columns only for the component attributes, not the composite itself.  Again, you will need to decide on the name for the new column, which does not have to be the same as the attribute.  You will also need to specify a type and any constraints for the column.  Determining appropriate types for some columns may require consultation with your data domain experts.  Constraints may be added as appropriate.  In the descriptions below, we will use simple type and constraint descriptions, rather than SQL syntax.
+Most attributes for the entity should be converted to columns in the new table.  Do not create columns for derived attributes, as these values are not intended to be stored.  Do not create columns for multivalued attributes; we will address these later.  For composite attributes, create columns only for the component attributes, not the composite itself.  As with entities, you will need to decide on a name for each new column, which does not have to be the same as the attribute name.  You will also need to specify a type and any constraints for the column.  Determining appropriate types for some columns may require consultation with your data domain experts.  Constraints may be added as appropriate.  In the descriptions below, we will use simple type and constraint descriptions, rather than SQL syntax.
 
-Choose a key attribute (every regular entity should have at least one) and use the column created from it as the primary key for the new table.  If the entity has multiple key attributes, you will need to decide which one makes most sense as a primary key.  Typically, simpler primary keys are preferred over more complex ones.
+Choose a key attribute (every regular entity should have at least one) and use the column created from it as the primary key for the new table.  If the entity has multiple key attributes, you will need to decide which one makes most sense as a primary key.  Simpler primary keys are usually preferred over more complex ones.
 
 Here is our ERD depiction of the **employee** entity:
 
 .. image:: employee.svg
+    :alt: The employee entity and its attributes
 
 Here is a preliminary conversion of the **employee** entity into a relational table named **employee**:
 
@@ -67,8 +68,9 @@ The table created from a weak entity must therefore incorporate the key from the
 Here is the ERD of **assembly line** and its parent entity, **factory**:
 
 .. image:: assembly_line.svg
+    :alt:  The assembly line and factory entities, their attributes, and the contains relationship connecting them
 
-Using the above guidelines, we should create tables **factory** and **assembly_line**, and include a column in **assembly_line** for values from the **city** column of **factory**.  A good choice of name for these "borrowed" columns is to concatenate the original table and column names together; in our case, this gives us the column **factory_city**.  (We will use the term "borrow" in reference to this process of inserting a column in one table to hold values from the primary key column of a related table, for lack of a better name.)  Here is the preliminary conversion of **factory** (we will make some additions below), and the final conversion of **assembly line**:
+Using the above guidelines, we should create tables **factory** and **assembly_line**, and include a column in **assembly_line** for values from the **city** column of **factory**.  A good choice of name for these "borrowed" columns is to concatenate the original table and column names together; in our case, this gives us the column **factory_city**.  (We will use the term "borrow" in reference to this process of inserting a column in one table to hold values from the primary key column of a related table.)  Here is the preliminary conversion of **factory** and the final conversion of **assembly line**:
 
 .. table:: Table **factory** (preliminary)
     :class: lined-table
@@ -111,17 +113,19 @@ Relationships can be handled using a few different approaches, depending on the 
 Many-to-many
 ------------
 
-Many-to-many relationships are the most general type of relationship; a database structure accommodating a many-to-many relationship can also accommodate one-to-many or one-to-one relationships, as "one" is just a special case of "many".  The challenge for many-to-many relationships is how to represent a connection from one record to multiple records in another table.  While modern SQL allows array valued columns in tables, not all databases support them.  The traditional solution is to create a cross-reference table.
+Many-to-many relationships are the most general type of relationship; a database structure accommodating a many-to-many relationship can also accommodate one-to-many or one-to-one relationships, as "one" is just a special case of "many".  The challenge for many-to-many relationships is how to represent a connection from a record in one table to multiple records in the other table.  While modern SQL allows array valued columns in tables, not all databases support them.  The traditional solution is to create a cross-reference table.
 
 Given a table **A** and a table **B**, we create a cross-reference table with columns corresponding to the primary keys of **A** and **B**.  Each row in the cross-reference table stores one unique pairing of a primary key value from **A** with a primary key value from **B**.  Each row thus represents a single connection between one row in **A** with one row in **B**.  If a row in **A** is related to multiple rows in **B**, then there will be multiple entries with the same **A** primary key value, paired with each related **B** primary key value.
 
 For example, our ERD indicates a many-to-many relationship between the entities **vendor** and **part**.  A computer part (such as an 8TB hard drive) can come from multiple sellers, while sellers can sell multiple different computer parts:
 
 .. image:: supplies.svg
+    :alt: The vendor and part entities, their attributes, and the supplies relationship connecting them
 
 We create tables **vendor** and **part** following the guidelines above, and then create the cross-reference table **vendor_part**.  (It is common to name a cross-reference table using the names of the two tables being related, although other schemes can of course be used.)  Note that the **supplies** relationship also has a relationship attribute, **price**, which we can incorporate into cross-reference table.  The result, with some fictional data, is pictured below:
 
 .. image:: vendor_part_xref.svg
+    :alt: The tables vendor, part, and vendor_part with sample data
 
 Data in the cross-reference table is constrained in several ways.  First, we only want to store the relationship between rows once, so we make the combination of primary keys from the related tables into a primary key for the cross-reference table.  In our example, the primary key is the combination of **vendor_name** and **part_number**.  Second, each of the borrowed primary key columns should be constrained to only hold values that are present in the original tables, using foreign key constraints.
 
@@ -189,6 +193,7 @@ As a special case of many-to-many relationships, one-to-many relationships can b
 In our ERD, the **employee** entity participates in one-to-many relationships with both **factory** and itself:
 
 .. image:: one_to_many.svg
+    :alt: The employee and factory entities and their attributes, and the supervises, manages, and works at relationships
 
 There is also a one-to-one relationship between **employee** and **factory**, which we will deal with in the next section.
 
@@ -281,6 +286,7 @@ When there is a need to query the values associated with a multivalued attribute
 In our example, computer models can be marketed to customers for different applications, such as gaming, video editing, or business use.  This is represented in our data model with the multivalued **application** attribute:
 
 .. image:: multivalued.svg
+    :alt: The model entity and its attributes
 
 We might, then, implement the model entity and its attributes using the following two tables:
 

@@ -17,21 +17,35 @@ Entity-relationship modeling
 In crow's foot notation, entities are represented with simple rectangles.  Entities can be labeled simply with a name for a higher level of abstraction, or they can contain a name and a list of attributes.  Key attributes can be indicated in various ways; we will style keys with bold type and underlining.  In our example data model, we have an entity modeling data regarding employees of our fictional computer manufacturer:
 
 .. image:: crows_foot_entity.svg
+    :alt: A rectangle with the header "employee" and a list of the attributes of the employee entity; the ID attribute is boldface and underlined
 
 Relationships are represented with lines connecting entities.  Cardinality ratios are specified with different line ending symbols.  The possible cardinalities are:
 
-======================================== ============
-.. image:: crows_foot_zero_or_one.svg    Zero or one
-.. image:: crows_foot_one_exactly.svg    One exactly
-.. image:: crows_foot_zero_or_more.svg   Zero or more
-.. image:: crows_foot_one_or_more.svg    One or more
-======================================== ============
+.. |cf_zero_or_one| image:: crows_foot_zero_or_one.svg
+    :alt: A horizontal line ending in a symbol composed of an open circle and a vertical line
+
+.. |cf_one_exactly| image:: crows_foot_one_exactly.svg
+    :alt: A horizontal line ending in a symbol composed of two vertical lines
+
+.. |cf_zero_or_more| image:: crows_foot_zero_or_more.svg
+    :alt: A horizontal line ending in a symbol composed of an open circle and three branching lines
+
+.. |cf_one_or_more| image:: crows_foot_one_or_more.svg
+    :alt: A horizontal line ending in a symbol composed of a vertical line and three branching lines
+
+=================== ============
+|cf_zero_or_one|    Zero or one
+|cf_one_exactly|    One exactly
+|cf_zero_or_more|   Zero or more
+|cf_one_or_more|    One or more
+=================== ============
 
 These cardinality symbols have two parts.  The symbol closest to the entity indicates the maximum cardinality - either *one* (represented by a vertical line) or *many* (represented by the branching "crow's foot").  The symbol further from the entity indicates minimum cardinality - either *zero* (represented by the open circle) or *one*.  A minimum cardinality of one is sometimes stated in terms of the entity being *mandatory*, while a minimum cardinality of zero indicates an *optional* entity.
 
 Consider the relationship pictured below:
 
 .. image:: crows_foot_cardinality_example.svg
+    :alt: A rectangle labeled "A" connected to a rectangle labeled "B"; the connector on the A side is the "one exactly" connector, while the connector on the "B" side is the "zero or more" connector
 
 This diagram tells us that an instance of the **A** entity can be associated with zero or more instances of **B**.  An instance of **B** must be associated with exactly one instance of **A**.
 
@@ -40,12 +54,14 @@ Relationships may be further annotated with text to name or describe the relatio
 In our example data model, the **employee** entity participates in several relationships with itself and the **factory** entity:
 
 .. image:: crows_foot_relationships.svg
+    :alt: Entities employee and factory and their relationships; the employee entity has attributes ID (key), name, position, pay rate, and pay type; the factory entity has the key attribute city; the relationships are the many-to-one (optional on both sides) relationship between employee and factory labeled "works at", the one-to-one (exactly one on the employee side) relationship between employee and factory labeled "manages", and the many-to-one (optional on both sides) relationship between employee and itself labeled "supervises".
 
 The basic crow's foot notation can be extended to encompass the same advanced elements as Chen's notation, such as composite, derived, and multivalued attributes, weak entities and partial keys, relationship attributes, and higher arity relationships.  Different drawing and modeling tools may or may not provide direct support for these, and notations vary widely.
 
 Some database designers prefer crow's foot notation over Chen's notation for entity-relationship modeling, in part due to its relatively compact form.  We can compare the above diagram side-by-side with its equivalent in Chen notation:
 
 .. image:: comparison.svg
+    :alt: Side-by-side diagrams in crow's foot and Chen's notation showing the employee and factory entities and their attributes and relationships
 
 Ultimately which notation you use will depend on your preferences and the preferences of the people you are working with on a given project.
 
@@ -92,30 +108,69 @@ Cardinality ratios and participation
 
 Participation and minimum cardinality can be equated when working with binary relationships.  If an entity has total participation in a binary relationship, then the minimum cardinality of the other entity is one (or at least, not zero).  Conversely, partial participation of an entity implies a minimum cardinality of zero for the other entity.  Typically you will use either participation or minimum cardinality, but not both.
 
+.. |single-line| image:: single_line.svg
+    :alt: A single line
+
+.. |double-line| image:: double_line.svg
+    :alt: A double line
+
+.. |dotted-line| image:: dotted_line.svg
+    :alt: A dashed line
+
 .. table:: Participation
 
     +-----------------------+----------------------------+----------------------------+
     |                       | This book                  |  Alternative notation      |
     +=======================+============================+============================+
-    | Partial participation | .. image:: single_line.svg | .. image:: dotted_line.svg |
+    | Partial participation | |single-line|              | |dotted-line|              |
     +-----------------------+----------------------------+----------------------------+
-    | Total participation   | .. image:: double_line.svg | .. image:: single_line.svg |
+    | Total participation   | |double-line|              | |single-line|              |
     +-----------------------+----------------------------+----------------------------+
+
+.. |zero_or_one_p| image:: zero_or_one_parenthetical.svg
+    :alt: A line annotated with "(0,1)" at one end
+
+.. |one_exactly_p| image:: one_exactly_parenthetical.svg
+    :alt: A line annotated with "(1,1)" at one end
+
+.. |zero_or_more_p| image:: zero_or_more_parenthetical.svg
+    :alt: A line annotated with "(0,N)" at one end
+
+.. |one_or_more_p| image:: one_or_more_parenthetical.svg
+    :alt: A line annotated with "(1,N)" at one end
+
+.. |two_or_three_p| image:: two_or_three_parenthetical.svg
+    :alt: A line annotated with "(2,3)" at one end
+
+.. |zero_or_one_r| image:: zero_or_one_range.svg
+    :alt: A line annotated with "0..1" at one end
+
+.. |one_exactly_r| image:: one_exactly_range.svg
+    :alt: A line annotated with "1..1" at one end
+
+.. |zero_or_more_r| image:: zero_or_more_range.svg
+    :alt: A line annotated with "0..N" at one end
+
+.. |one_or_more_r| image:: one_or_more_range.svg
+    :alt: A line annotated with "1..N" at one end
+
+.. |two_or_three_r| image:: two_or_three_range.svg
+    :alt: A line annotated with "2..3" at one end
 
 .. table:: Minimum and maximum cardinality
 
     +-----------------------+----------------------------------------+---------------------------------------------------------------------------------+
     |                       | Crow's foot notation                   |  Alternative notations                                                          |
     +=======================+========================================+============================================+====================================+
-    | Zero or one           | .. image:: crows_foot_zero_or_one.svg  | .. image:: zero_or_one_parenthetical.svg   | .. image:: zero_or_one_range.svg   |
+    | Zero or one           | |cf_zero_or_one|                       | |zero_or_one_p|                            | |zero_or_one_r|                    |
     +-----------------------+----------------------------------------+--------------------------------------------+------------------------------------+
-    | Exactly one           | .. image:: crows_foot_one_exactly.svg  | .. image:: one_exactly_parenthetical.svg   | .. image:: one_exactly_range.svg   |
+    | Exactly one           | |cf_one_exactly|                       | |one_exactly_p|                            | |one_exactly_r|                    |
     +-----------------------+----------------------------------------+--------------------------------------------+------------------------------------+
-    | Zero or more          | .. image:: crows_foot_zero_or_more.svg | .. image:: zero_or_more_parenthetical.svg  | .. image:: zero_or_more_range.svg  |
+    | Zero or more          | |cf_zero_or_more|                      | |zero_or_more_p|                           | |zero_or_more_r|                   |
     +-----------------------+----------------------------------------+--------------------------------------------+------------------------------------+
-    | One or more           | .. image:: crows_foot_one_or_more.svg  | .. image:: one_or_more_parenthetical.svg   | .. image:: one_or_more_range.svg   |
+    | One or more           | |cf_one_or_more|                       | |one_or_more_p|                            | |one_or_more_r|                    |
     +-----------------------+----------------------------------------+--------------------------------------------+------------------------------------+
-    | Specified min/max     |                                        | .. image:: two_or_three_parenthetical.svg  | .. image:: two_or_three_range.svg  |
+    | Specified min/max     |                                        | |two_or_three_p|                           | |two_or_three_r|                   |
     +-----------------------+----------------------------------------+--------------------------------------------+------------------------------------+
 
 
@@ -127,7 +182,7 @@ In our presentation of crow's foot logical models above, we used text styling (b
 Many tools will also or instead indicate primary and foreign key columns with text indicators, usually "PK" and "FK".  Some will highlight primary keys by separating them from the other columns:
 
 .. image:: entity_alternative.svg
-
+    :alt: The entity employee with the primary key attribute labeled with "PK" and with the foreign key attributes labeled with "FK"
 
 
 
