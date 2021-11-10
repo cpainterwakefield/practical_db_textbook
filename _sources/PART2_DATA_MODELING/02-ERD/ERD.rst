@@ -191,7 +191,7 @@ Complete example
 Below is our completed example; most parts of the diagram have been explained above.  Now that you know what the different elements mean, the rest of the diagram should be self-explanatory:
 
 .. image:: complete_ERD.svg
-    :alt: The complete ERD; in addition to pieces shown above, the diagram includes a many-to-many relationship can use between model and part, and a one-to-many relationship builds between factory and model 
+    :alt: The complete ERD; in addition to pieces shown above, the diagram includes a many-to-many relationship can use between model and part, and a one-to-many relationship builds between factory and model
 
 Using ERD to design a database
 :::::::::::::::::::::::::::::::
@@ -226,6 +226,158 @@ You can build a database as the next step once you have an ERD, or you can engag
 Regardless of next step, you are likely to run into problems of some sort: assumptions that do not hold, new questions, or other issues in translating the ERD into a more concrete form.  As part of your process, expect to revisit the design with your domain experts and project stakeholders to resolve these problems.  This will probably happen yet again when you start trying to put data into your new database, when software is written to interact with the database, and when users start testing the database and/or software.
 
 Whether you resolve issues at each stage with the ERD or at some lower level, it can be valuable to keep the ERD aligned with the database as implemented, as part of your documentation of the system.  Systems change over time; when it is time to modify your database, you will want some documentation of the design decisions that went into the earlier database, and the ERD may play a part in designing the updates to your system.  An up-to-date ERD will also help new database users or software developers become acquainted with the system more quickly.
+
+
+Self-check exercises
+::::::::::::::::::::
+
+This section has some questions you can use to check your understanding of the material above.
+
+.. fillintheblank:: erd_self_test_elements_1
+
+   Which data element models a thing or object with independent existence, such as a person, product, or company?
+
+   - :entity: Correct.  Entities act as the "nouns" of our data model.
+     :.*: Try again.  Be sure your answer is in all lowercase.
+
+.. reveal:: erd_self_test_elements_1_hint
+     :showtitle: Show answer
+     :hidetitle: Hide answer
+
+     The answer is "entity".
+
+.. fillintheblank:: erd_self_test_elements_2
+
+    An |blank| describes a property of an entity.
+
+    - :attribute:   Correct.
+      :.*: Try again.  Be sure your answer is in all lowercase.
+
+.. reveal:: erd_self_test_elements_2_hint
+    :showtitle: Show answer
+    :hidetitle: Hide answer
+
+    The answer is "attribute".
+
+.. fillintheblank:: erd_self_test_elements_3
+
+   Which data element connects two or more entities and acts as a "verb" in our data model?
+
+   - :relationship:   Correct.
+     :.*: Try again.  Be sure your answer is in all lowercase.
+
+.. reveal:: erd_self_test_elements_3_hint
+     :showtitle: Show answer
+     :hidetitle: Hide answer
+
+     The answer is "relationship".
+
+.. dragndrop:: erd_self_test_shapes
+    :match_1: rectangle|||entity
+    :match_2: oval|||attribute
+    :match_3: diamond|||relationship
+
+    Drag the shape to the corresponding model element.
+
+
+.. mchoice:: erd_self_test_keys
+
+    Suppose you are designing a database to store information about movies.  What might be a good key attribute for your **movie** entity?
+
+    -   Lead actor
+
+        - Many actors, especially lead actors, have worked on many movies.  Lead actor is unlikely to be a unique identifier.
+
+    -   Title
+
+        - Many movies have been remade under the same title (and some movies share a title with unrelated films), so this is not a good unique identifier.
+
+    -   First line of dialogue
+
+        - Probably not.  It might be unique for most films, but probably not all films, and it is a fairly large piece of data to use as key.
+
+    -   Title and year of release (composite)
+
+        + This is the best of the choices given here.  Alternately, you might use an artificially generated id value.
+
+
+.. mchoice:: erd_self_test_cardinality_1
+
+    Consider the entities and relationship shown here:
+
+    .. image:: self_test_relationship_1.svg
+        :alt: Entities A and B connected to an unnamed relationship by single lines, labeled N and M
+
+    Which statement most accurately describes the relationship?
+
+    -   Each instance of A is associated with zero or one instance of B; each instance of B is associated with zero or one instance of A.
+
+        - Incorrect.  What does the label "N" imply about maximum cardinality?
+
+    -   Each instance of A is associated with zero or more instances of B; ecanach instance of B is associated with zero or more instances of A.
+
+        + Correct.  The relationship is many-to-many, with partial participation on both sides.
+
+    -   Each instance of A is associated with one or more instances of B; each instance of B is associated with one or more instances of A.
+
+        - Incorrect.  What is the participation of A and B in the relationship?  What does that imply about the minimum cardinality?
+
+.. mchoice:: erd_self_test_cardinality_2
+
+    Consider the entities and relationship shown here:
+
+    .. image:: self_test_relationship_2.svg
+        :alt: Entities C and D connected to an unnamed relationship.  C is connected by a single line labeled 1.  D is connected by a double line labeled N.
+
+    Which statement most accurately describes the relationship?
+
+    -   Each instance of C is associated with zero or one instance of D; each instance of D is associated with one or more instances of C.
+
+        - Incorrect.  Each cardinality label describes the entity on the same side of the relationship.
+
+    -   Each instance of C is associated with zero or more instances of D; each instance of D is associated with exactly one instance of C.
+
+        - Incorrect.  Reconsider the participation on each side of the relationship, and what that implies about minimum cardinality.
+
+    -   Each instance of C is associated with one or more instances of D; each instance of D is associated with zero or one instance of C.
+
+        + Correct.
+
+
+.. fillintheblank:: erd_self_test_elements_4
+
+   Some entities have instances that cannot be uniquely identified based solely on their attributes, but must be associated with a parent entity instance for full identification.  We call these |blank| entities.
+
+   - :weak:   Correct.
+     :.*: Try again.  Be sure your answer is in all lowercase.
+
+.. reveal:: erd_self_test_elements_4_hint
+     :showtitle: Show answer
+     :hidetitle: Hide answer
+
+     The answer is "weak".
+
+
+.. mchoice:: erd_self_test_elements_5
+
+     Suppose we are modeling a simple database about books.  For each book we want to include information about the genres the book belongs to.  Many books can belong to more than one genre.  What kind of attribute should we use for genre?
+
+     -  Multivalued
+
+        + Correct.
+
+     -  Derived
+
+        - Probably not, unless genre information can be deduced from some other information stored in the database.
+
+     -  Composite
+
+        - Probably not, although you could make a case for storing a general genre category and a more specific sub-genre.
+
+     -  Key
+
+        - Definitely not.  Many books belong to the same genre, so genre is not a unique identifier for a book.
+
 
 
 
