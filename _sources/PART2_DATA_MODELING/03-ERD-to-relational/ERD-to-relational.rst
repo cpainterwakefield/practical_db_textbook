@@ -26,7 +26,7 @@ First, decide on a name for the table - this does not have to be the same as the
 
 Most attributes for the entity should be converted to columns in the new table.  Do not create columns for derived attributes, as these values are not intended to be stored.  Do not create columns for multivalued attributes; we will address these later.  For composite attributes, create columns only for the component attributes, not the composite itself.  As with entities, you will need to decide on a name for each new column, which does not have to be the same as the attribute name.  You will also need to specify a type and any constraints for the column.  Determining appropriate types for some columns may require consultation with your data domain experts.  Constraints may be added as appropriate.  In the descriptions below, we will use simple type and constraint descriptions, rather than SQL syntax.
 
-Choose a key attribute (every regular entity should have at least one) and use the column created from it as the primary key for the new table.  If the entity has multiple key attributes, you will need to decide which one makes most sense as a primary key.  Simpler primary keys are usually preferred over more complex ones.
+Choose a key attribute (every regular entity should have at least one) and use the column created from it as the primary key for the new table.  If the entity has multiple key attributes, you will need to decide which one makes most sense as a primary key.  Simpler primary keys are usually preferred over more complex ones.  If desired, you can constrain the columns resulting from other keys to be not null and unique similar to primary key columns.  For example, an employee table might use a company generated ID number as its primary key, and also include a column for a government issued ID number which we would want to constrain to prevent duplicates.
 
 Here is our ERD depiction of the **employee** entity:
 
@@ -564,6 +564,132 @@ Table **vendor** contains columns for the attributes of the **vendor** entity.  
 Table **vendor_part** is a cross-reference table implementing the **supplies** relationship.  In addition to the foreign keys for the tables it relates, it contains a column for the **price** attribute of the relationship.
 
 
+Self-check exercises
+::::::::::::::::::::
+
+This section has some questions you can use to check your understanding of how to convert ERDs to a relational database.
+
+.. mchoice:: erd_to_relational_self_test_1
+
+    Entities in our ERD become tables in our relational database.  What do relationships become?
+
+    -   Tables
+
+        - Any relationship can be converted into a cross-reference table.  Is that the only possibility?
+
+    -   Foreign keys
+
+        - One-to-one and one-to-many relationships can be converted into foreign keys in our database.  Are those the only cardinality ratios?
+
+    -   Merging of tables
+
+        - One-to-one relationships can result in merging tables, although this is rare.
+
+    -   All of the above
+
+        + Each of the methods above can be applied, depending on the cardinality ratio of the relationship and other factors.
+
+.. mchoice:: erd_to_relational_self_test_2
+
+    Consider the ERD below.  We create tables **a** and **b**, each of which have a primary key column named "id".  (Assume there are additional columns from attributes not shown.)  What is the simplest way to convert the relationship between **A** and **B**?
+
+    .. image:: self_test_many_to_one.svg
+        :alt: Entities A and B each with key attribute ID.  The relationship between A and B is many-to-one (many on the A side).
+
+    -   Create a column named "a_id" in table **b**, and make it a foreign key referencing table **a**.
+
+        - Since a row in **b** could be related to multiple rows in **a**, we would need to store multiple ID values in column **a_id**.
+          Some databases would permit this, but it would complicate queries and updates on the database.
+
+    -   Create a column named "b_id" in table **a**, and make it a foreign key referencing table **b**.
+
+        + This is the simplest solution, assuming we do not expect the relationship to change to many-to-many in the future.
+
+    -   Create a cross-reference table, **a_b**, containing columns **a_id** and **b_id** as foreign keys referencing **a** and **b** respectively.
+
+        - This is an allowable conversion.  Is it the simplest?
+
+    -   Merge tables **a** and **b** into a new table.
+
+        - This is not a good choice; while such a structure can be made to work, it is not considered good database design and is prone to errors.
+          We would say that this table is not properly *normalized*.  We explore normalization in :numref:`Part {number} <relational-theory-part>`.
+
+.. mchoice:: erd_to_relational_self_test_3
+
+    Consider the ERD below.  We create table **r** with primary key column **id**.  What should table **w** look like?
+
+    .. image:: self_test_weak.svg
+        :alt: Entity R with key ID, and weak entity W with partial key partial.  The identifying relationship between R and W is one-to-many.
+
+    -   The table should have a column **partial** as primary key.  Additionally, create a cross-reference table **r_w**.
+
+        - Partial keys cannot become primary keys.  They do not represent unique identifiers for the instances of the weak entity.
+
+    -   The table should have columns **partial** and **r_id**.  The primary key is **partial**.
+        Add a foreign key constraint on **r_id** referencing **r**.
+
+        - Partial keys cannot become primary keys.  They do not represent unique identifiers for the instances of the weak entity.
+
+    -   The table should have columns **partial** and **r_id**.  The primary key is a composite of **r_id** and **partial**.
+        Add a foreign key constraint on **r_id** referencing **r**.
+
+        + Correct.
+
+    -   The table should have columns **partial** and **r_id**.  The primary key is **r_id**.  Add a foreign key constraint on **r_id** referencing **r**.
+
+        - The parent key is not a sufficient key for the weak entity; there will be multiple rows in **w** with the same values for **r_id**.
+          Therefore it cannot be a primary key.
+
+.. mchoice:: erd_to_relational_self_test_4
+
+    Consider the ERD below.  We create tables **c** and **d**, each of which have a primary key column named "id".  How should we handle the relationship between **C** and **D**?
+
+    .. image:: self_test_relationship_attribute.svg
+        :alt: Entities C and D each with key attribute ID.  The relationship between C and D is many-to-many and has an attribute named "x".
+
+    -   Borrow the primary key from one table as a foreign key into the other table (either direction is fine).  Add a column named "x" into the table with the foreign key column.
+
+        - This is not a good choice; while such a structure can be made to work, it is not considered good database design and is prone to errors.
+          We would say that this table is not properly *normalized*.  We explore normalization in :numref:`Part {number} <relational-theory-part>`.
+
+    -   Create a cross reference table **c_d** with columns **c_id**, **d_id**, and **x**.  Make a composite primary key using **c_id** and **d_id**.
+        Add foreign key constraints on **c_id** and **d_id** referencing **c** and **d**, respectively.
+
+        + Correct.
+
+    -   Create a cross reference table **c_d** with columns **c_id**, **d_id**.  Make a composite primary key using **c_id** and **d_id**.
+        Add foreign key constraints on **c_id** and **d_id** referencing **c** and **d**, respectively.  Create another table, **c_d_x**,
+        with columns **c_id**, **d_id**, and **x**.  Table **c_d_x** has primary key **x**, and a foreign key constraint on **c_id** and **d_id** referencing table **c_d**.
+
+        - This could almost work (you would need a different primary key for **c_d_x**), but it is unnecessarily complicated.
+
+    -   Create a cross reference table **c_d** with columns **c_id**, **d_id**.  Make a composite primary key using **c_id** and **d_id**.
+        Add foreign key constraints on **c_id** and **d_id** referencing **c** and **d**, respectively.  Add column **x** to either **c** or **d**.
+
+        - The values for **x** will differ for different combinations of **c** and **d**.
+          There is no good way to capture the dependence of **x** on **d**, for example, if we put the column in **c**.
+
+.. mchoice:: erd_to_relational_self_test_5
+
+    Which of the following statements is *false*?
+
+    -   Composite attributes result in columns for each component as well as the composite.
+
+        + We do not create a column for the composite, just the components.
+
+    -   Multivalued attributes usually require an additional table in the database.
+
+        - This is true.  In some cases it may be possible to use array-valued columns to handle a multivalued attribute,
+          but otherwise we need an additional table or tables.
+
+    -   No column is created for derived attributes.
+
+        - This is true.  Derived attributes are not intended to be stored, as they can be computed from other values in the database.
+
+    -   If an entity has a composite key attribute, the resulting table will have a composite primary key.
+
+        - This is true.
+        
 
 .. |chapter-end| unicode:: U+274F
 

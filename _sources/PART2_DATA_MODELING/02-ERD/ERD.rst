@@ -231,7 +231,7 @@ Whether you resolve issues at each stage with the ERD or at some lower level, it
 Self-check exercises
 ::::::::::::::::::::
 
-This section has some questions you can use to check your understanding of the material above.
+This section has some questions you can use to check your understanding of entity-relationship diagrams and data modeling.
 
 .. fillintheblank:: erd_self_test_elements_1
 
@@ -248,7 +248,7 @@ This section has some questions you can use to check your understanding of the m
 
 .. fillintheblank:: erd_self_test_elements_2
 
-    An |blank| describes a property of an entity.
+    An |blank| describes a property of an entitthe material in this chaptery.
 
     - :attribute:   Correct.
       :.*: Try again.  Be sure your answer is in all lowercase.
