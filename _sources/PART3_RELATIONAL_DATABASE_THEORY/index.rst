@@ -4,6 +4,11 @@
 RELATIONAL DATABASE THEORY
 ==========================
 
+- relational model of the database
+- relational algebra
+- relational calculus
+- normalization
+
 .. toctree::
     :maxdepth: 3
 
