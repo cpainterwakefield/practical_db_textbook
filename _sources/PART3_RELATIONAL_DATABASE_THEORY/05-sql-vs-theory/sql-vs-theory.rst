@@ -1,4 +1,4 @@
-.. _normalization-chapter:
+.. _sql-vs-theory-chapter:
 
 ================================================
 Differences between SQL and the relational model

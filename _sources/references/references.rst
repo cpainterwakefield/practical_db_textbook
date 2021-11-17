@@ -30,3 +30,12 @@ Chen, Peter Pin-Shan. "The entity-relationship model—toward a unified view of 
 Elmasri, Ramez, and Sham Navathe. *Fundamentals of Database Systems.* 7th edition, Pearson, 2016.
 
 Everest, Gordon C. "Basic data structure models explained with a common example." *Proc. Fifth Texas Conference on Computing Systems*. 1976.
+
+.. _relational-theory-references:
+
+Relational database theory
+::::::::::::::::::::::::::
+
+Childs, David L. "Feasibility of a set-theoretic data structure: a general structure based on a reconstituted definition of relation." *Proc. IFIP Cong.* (1968).
+
+Codd, Edgar Frank. "A relational model of data for large shared data banks." *Communications of the ACM* 26.1 (1983): 64-69.
