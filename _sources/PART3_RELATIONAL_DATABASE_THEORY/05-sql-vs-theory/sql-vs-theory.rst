@@ -4,7 +4,7 @@
 Differences between SQL and the relational model
 ================================================
 
-
+x = x is a problem
 
 .. |chapter-end| unicode:: U+274F
 
