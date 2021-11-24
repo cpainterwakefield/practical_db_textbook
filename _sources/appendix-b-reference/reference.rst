@@ -138,7 +138,7 @@ Generally speaking, two non-NULL values of the same type can be compared, result
 
 Character string comparison is somewhat complex, as the comparison done depends on the *collation* rules in effect for the values; collation may depend on many factors including: the DBMS implementation, DBMS configuration parameters (such as the *locale*), operating system parameters, and any explicit collation settings for a given database table.  Collations may be used to implement proper sorting, for example, in a particular language context.  In general, if string *s* would appear in sorted (ascending) order prior to string *t*, then *s* \< *t*.
 
-A comparison of any value with ``NULL`` results in ``NULL`` when using any of the operators in the table below.
+A comparison of any value with ``NULL`` results in ``NULL`` [#]_ when using any of the operators in the table below.
 
 =========== ========================= =========================== =============================================
 operator    meaning                   usage                       notes
@@ -248,7 +248,7 @@ Boolean operators
 
 The principal Boolean operators in SQL are **AND**, **OR**, and **NOT**.  Given operands that are strictly truth valued, i.e., not ``NULL``, these operators result in the logic operations they are named for.  That is, ``a AND b`` evaluates to ``True`` if and only if ``a`` and ``b`` are both ``True``, ``c OR d`` evaluates to ``True`` if either ``c`` or ``d`` are ``True``, and ``NOT e`` inverts the value ``e``.
 
-However, since expressions resulting in Boolean values may also result in NULL (e.g., ``4 > NULL``), ``NULL`` is also a valid operand for the Boolean operators, and we can think of SQL as therefore having a 3-valued (rather than truly Boolean) logic.  The truth tables for **AND**, **OR**, and **NOT** are given below.  Treating ``NULL`` as meaning "unknown" in Boolean expressions, we can generally infer the result of a Boolean expression involving ``NULL``.  For example, ``True AND NULL`` must evaluate to ``NULL`` (meaning unknown), because the truth of the second operand is unknown.  On the other hand, ``True OR NULL`` must evaluate to ``True``, as it doesn't matter whether the second operand represents a true or a false value.
+However, since expressions resulting in Boolean values may also result in NULL (e.g., ``4 > NULL``), ``NULL`` is also a valid operand for the Boolean operators, and we can think of SQL as therefore having a 3-valued (rather than truly Boolean) logic [#]_.  The truth tables for **AND**, **OR**, and **NOT** are given below.  Treating ``NULL`` as meaning "unknown" in Boolean expressions, we can generally infer the result of a Boolean expression involving ``NULL``.  For example, ``True AND NULL`` must evaluate to ``NULL`` (meaning unknown), because the truth of the second operand is unknown.  On the other hand, ``True OR NULL`` must evaluate to ``True``, as it doesn't matter whether the second operand represents a true or a false value.
 
 ===== ===== =========== ==========
 *a*   *b*   *a* AND *b* *a* OR *b*
@@ -360,3 +360,11 @@ STDDEV_POP         population standard deviation          STDDEV_POP([DISTINCT] 
 STDDEV_SAMP        sample standard deviation              STDDEV_SAMP([DISTINCT] *a*)                          *a* must be numeric; not in SQLite; in SQL Server, use STDEV(*a*)
 LISTAGG            concatenate values into a string       LISTAGG(*a* [, *delim*])                             In SQLite and MySQL, use GROUP_CONCAT(*a*, *delim*); in PostgreSQL and SQL Server, use STRING_AGG(*a*, *delim*)
 ================== ====================================== ==================================================== ===========================================
+
+----
+
+**Notes**
+
+.. [#] Technically, a comparison with NULL results in the value "unknown".  However, in all databases that we are aware of, NULL is indistinguishable from "unknown" except when using the operator **IS [NOT] UNKNOWN**.
+
+.. [#] See above note.  The truth table technically should use "unknown" everywhere "NULL" appears.

@@ -85,7 +85,7 @@ Keys play an important part in relational theory, as we will see.  One implicati
 
 It is important to emphasize that the key property is a fact we are stating about the world, not a transitory property of the data in a relation.  For example, our current **simple_books** illustration shows no duplicate values for **year**.  For **year** to be a key, though, requires that **year** never contain duplicates *for any collection of books* we might store in the **simple_books** relation.  Since many books are published every year, we should expect **year** to accumulate duplicate values if we add books to the relation.
 
-Relations may have more than one key.  A common example is that of a table of employees for a company.  In many countries, workers must have a government issued identification (ID) number.  These numbers can beWe constrain all keys to be unique used to uniquely identify an employee.  However, these numbers are often considered sensitive employee data, which should only be shared with certain trusted individuals in the company.  In these cases, companies will generate an internal employee ID number, which is completely independent of the government issued ID.  The company's database will contain both of these unique identifiers.
+Relations may have more than one key.  A common example is that of a table of employees for a company.  In many countries, workers must have a government issued identification (ID) number.  These numbers can be used to uniquely identify an employee.  However, these numbers are often considered sensitive employee data, which should only be shared with certain trusted individuals in the company.  In these cases, companies will generate an internal employee ID number, which is completely independent of the government issued ID.  The company's database will contain both of these unique identifiers.
 
 The keys of a relation are also known as *candidate keys*.  One candidate key is chosen as the *primary key* for the relation.  The remaining keys are sometimes called *unique keys*.
 
@@ -123,10 +123,13 @@ Insertion operations can violate primary and unique key constraints on a relatio
 
     (*A Wizard of Earthsea*, Ursula K. Le Guin, 1968, fantasy)
 
+In the first case, this author and title already exists in the **simple_books** relation.  In the second case, the author is not present in the **simple_authors** relation.
 
 Deletions, on the other hand, can never violate primary or unique key constraints.  A deletion in one relation can violate a foreign key constraint, however, if a foreign key value in another relation references the deleted key being deleted.  For example, we may not delete from **simple_authors** the tuple:
 
     (Ralph Ellison, 1914-03-01, 1994-04-16)
+
+This author has a book in the **simple_books** table.
 
 Updates can create any of the constraint violations described above.  For example, an update which changes the value of a primary key must not change the value such that it would duplicate another tuple's primary key.  Similarly, if a foreign key value in another relation depends on the primary key value being updated, then the update cannot proceed.  Finally, an update may not change a foreign key value to something which is not in the referenced table.
 
@@ -138,7 +141,7 @@ In the **simple_authors** relation shown earlier, two of the entries show no val
 
 The nature of NULL, and in fact, its very presence in the relational model, is controversial.  Some database scholars treat NULL as a special value that is included with every domain.  So we can say that we have put a NULL value in our table for the death attribute for each living author.  However, NULL exhibits special properties that make it problematic as a value, such as the fact that it cannot be compared with other values, including other NULLs - more on this in a bit.  For this reason, other scholars prefer to treat NULL as a special *state* of the attribute; we can say that **death** is in a null state when the author is living.  Finally, some scholars reject NULL entirely as fundamentally incompatible with relational theory.
 
-The problem NULL was created to solve is the problem of missing information.  Information may be unknown for many reasons: it may be that nobody knows the true value, or it may have been simply overlooked when entering data into the database, or any number of other causes.  Data may be irrelevant or inapplicable, as in the example of the **death** date for living authors.  Researchers have identified quite a few different meanings that can be ascribed to NULL, which has led some scholars to propose additional placeholders instead of just one (although some of those proposals were intended to highlight the problems with NULL, rather than improve the model).  The problem is, the definition of a tuple requires there to be *something* associated with every attribute defined in the relation schema; even if nothing from the domain is appropriate, the tuple cannot simply be incomplete.
+The problem NULL was created to solve is the problem of missing information.  Information may be unknown for many reasons: it may be that nobody knows the true value, or it may have been simply overlooked when entering data into the database, or any number of other causes.  Data may be irrelevant or inapplicable, as in the example of the **death** date for living authors.  Researchers have identified many different meanings that can be ascribed to NULL, which has led some scholars to propose additional placeholders instead of just one (although some of those proposals were intended to highlight the problems with NULL, rather than improve the model).  The problem is, the definition of a tuple requires there to be *something* associated with every attribute defined in the relation schema; even if nothing from the domain is appropriate, the tuple cannot simply be incomplete.
 
 While there are alternatives to the use of NULL, the alternatives are problematic in their own ways.  Most database systems based on the relational model implement support for NULL.  For these reasons, NULL is an important part of our discussion of the relational model.
 
@@ -163,7 +166,7 @@ false    unknown  false       unknown
 unknown  true     unknown     true
 unknown  false    false       unknown
 unknown  unknown  unknown     unknown
-======== ===== ============== ==========
+======== ======== =========== ==========
 
 ======== =======
 *a*      NOT *a*
@@ -180,8 +183,202 @@ Constraints and NULL
 
 With NULL in our model, we must make some small adjustments to our rules regarding constraints.  First, we must further constrain primary key attributes to never be NULL.  Remember that a primary key should be an identifier for tuples in a relation, and every tuple must have a unique primary key value.  However, if NULL is present in any primary key attribute for some tuple, it is impossible to search for and find the tuple - any attempt to compare the primary key with a lookup value gives an unknown result.  We likewise cannot properly enforce uniqueness, because we cannot compare a tuple with NULL in the primary key with other tuples to determine if they are distinct from one another.
 
-Second, we modify the rule for a foreign key.  The new rule is that a foreign key may be NULL, otherwise it must match a value in the referenced table.  Allowing NULL in a foreign key may seem surprising, but considering our example relations, how might we handle a book for whom the author is unknown (anonymous)?  If NULL is not allowed for the author, then we cannot add the book to **simple_books** without some matching record in the **simple_authors** table.  However, what is the meaning of a record in the **simple_authors** table for an unknown author?  (Note also we cannot have a NULL name for the author in **simple_authors** due to the primary key - how should we handle this?)  While there are multiple ways to approach this problem, allowing NULL for the author is one possible solution.
+Second, we modify the rule for a foreign key.  The new rule is that a foreign key may be NULL, otherwise it must match a value in the referenced table.  Allowing NULL in a foreign key may seem surprising, but considering our example relations, how might we handle a book for whom the author is unknown (anonymous)?  If NULL is not allowed for the author, then we cannot add the book to **simple_books** without some matching record in the **simple_authors** table.  However, what is the meaning of a record in the **simple_authors** table for an unknown author?  (Note also we cannot have a NULL name for the author in **simple_authors** due to the primary key.)  While there are multiple ways to approach this problem, allowing NULL for the author is one possible solution.
 
+
+Self-check exercises
+::::::::::::::::::::
+
+This section has some questions you can use to check your understanding of the relational model of the database.
+
+.. dragndrop:: relational_model_self_test_definitions
+    :match_1: set|||A collection of distinct values
+    :match_2: relation|||A set of tuples from the same domain
+    :match_3: attribute|||A named property of a tuple
+    :match_4: domain|||A set of values which attribute values belong to
+    :match_5: relation schema|||A definition of the attributes and domains of a relation
+
+    Drag the term to its matching definition.
+
+.. mchoice:: relational_model_self_test_tuples
+
+    What is the definition of *tuple* as used in the relational model?
+
+    -   An ordered collection of values; each position in the tuple is associated with a domain.
+
+        - This is one definition.
+
+    -   A set of values associated with a named attribute; each attribute is associated with a domain.
+
+        - This is one definition.
+
+    -   Either or both of the above definitions may be used, depending on the context.
+
+        + Correct.
+
+.. mchoice:: relational_model_self_test_relation_properties
+
+    Which of these best describes a relation?
+
+    -   A collection of tuples in order by primary key value.  Each tuple must be unique and have the same number and types of attributes.
+
+        - Relations have no intrinsic ordering.
+
+    -   A collection of tuples in no particular order.  Each tuple must be unique and have the same number and types of attributes.
+
+        + Correct.
+
+    -   A collection of tuples in no particular order, possibly with duplicates.  Each tuple must have the same number and types of attributes.
+
+        - Tuples in a relation must be distinct, that is, there cannot be duplicate tuples.
+
+    -   A collection of tuples in no particular order.  Each tuple must be unique.  Each tuple has its own attributes, which may differ from tuple to tuple.
+
+        - Tuples in a relation must come from the same domain of tuples; that is, each tuple shares the same definition in terms of attributes and associated domains.
+
+The next four questions concern the two relations pictured below, which map ISO (International Organization for Standardization) country codes to country names and ISO currency codes, and currency codes to the name of the currency.  The primary key for **countries** is **country_code**, and the primary key for **currencies** is **currency_code**.  The **principal_currency_code** column in **countries** is a foreign referencing **currency_code** in **currencies**.  Obviously this represents a subset of available data, for space reasons.
+
+.. image:: countries.svg
+    :alt: A table showing tuples for the countries relation.  The countries listed are Australia (AU), Somalia (SO), Thailand (TH), Mexico (MX), Kiribati (KI), and Denmark (DK).
+
+.. image:: currencies.svg
+    :alt: A table showing tuples for the currencies relation.  The currencies listed are the Mexican Peso (MXN), Australian Dollar (AUD, used by Australia and Kiribati), the Danish Krone (DKK), the Thai Baht (THB), and the Somali Shilling (SOS).
+
+
+.. mchoice:: relational_model_self_test_constraints_1
+
+    What constraint or constraints would be violated if we insert the tuple (DK, Danmark, DKK) into the **countries** relation?
+
+    -   Primary key on the **countries** relation.
+
+        + Correct.
+
+    -   Primary key on the **countries** relation and the foreign key constraint on **principal_currency_code**.
+
+        - DKK is a currency code in the **currencies** relation.
+
+    -   Foreign key constraint on **principal_currency_code**.
+
+        - DKK is a currency code in the **currencies** relation.
+
+    -   No constraints would be violated.
+
+        - Incorrect.
+
+.. mchoice:: relational_model_self_test_constraints_2
+
+    What constraint or constraints would be violated if we delete the tuple (AU, Australia, AUD) from the **countries** relation?
+
+    -   Primary key on the **countries** relation.
+
+        - No, the **country_code** column will still contain unique, non-null entries.
+
+    -   Primary key on the **countries** relation and the foreign key constraint on **principal_currency_code**.
+
+        - No, the **country_code** column will still contain unique, non-null entries, and all **principal_currency_code** values still match values in the **currencies** relation.
+
+    -   Foreign key constraint on **principal_currency_code**.
+
+        - No, all **principal_currency_code** values still match values in the **currencies** relation.
+
+    -   No constraints would be violated.
+
+        + Correct.
+
+.. mchoice:: relational_model_self_test_constraints_3
+
+    What constraint or constraints would be violated if we delete the tuple (THB, Baht) from the **currencies** relation?
+
+    -   Primary key on the **currencies** relation.
+
+        - No, the **currency_code** column will still contain unique, non-null entries.
+
+    -   Primary key on the **currencies** relation and the foreign key constraint on **principal_currency_code**.
+
+        - No, the **currency_code** column will still contain unique, non-null entries.
+
+    -   Foreign key constraint on **principal_currency_code**.
+
+        + Correct.  The entry for Thailand in **countries** will have a **principal_currency_code** that is not matched by anything in the **currencies** relation.
+
+    -   No constraints would be violated.
+
+        - Incorrect.
+
+.. mchoice:: relational_model_self_test_constraints_4
+
+    What constraint or constraints would be violated if we insert the tuple (ARS, Argentine Peso) into the **currencies** relation?
+
+    -   Primary key on the **currencies** relation.
+
+        - No, ARS is distinct from the currency codes previously in the table.
+
+    -   Primary key on the **currencies** relation and the foreign key constraint on **principal_currency_code**.
+
+        - No, ARS is distinct from the currency codes previously in the table, and the foreign key constrains **principal_currency_code** values to be in the **currency_code** column of **currencies**, but not vice-versa.
+
+    -   Foreign key constraint on **principal_currency_code**.
+
+        - No, the foreign key constrains **principal_currency_code** values to be in the **currency_code** column of **currencies**, but not vice-versa.
+
+    -   No constraints would be violated.
+
+        + Correct.
+
+
+.. mchoice:: relational_model_self_test_constraints_5
+
+    What constraint or constraints would be violated if we insert the tuple (AQ, Antarctica, NULL) into the **countries** relation?  (Yes, Antarctica is technically not a country, but they do have an ISO country code.)
+
+    -   Primary key on the **countries** relation.
+
+        - No, AQ is distinct from the country codes previously in the table.
+
+    -   Primary key on the **countries** relation and the foreign key constraint on **principal_currency_code**.
+
+        - No, AQ is distinct from the country codes previously in the table.  The **principal_currency_code** value is NULL, which is allowed under the definition of a foreign key.
+
+    -   Foreign key constraint on **principal_currency_code**.
+
+        - No, the **principal_currency_code** value is NULL, which is allowed under the definition of a foreign key.
+
+    -   No constraints would be violated.
+
+        + Correct.
+
+.. mchoice:: relational_model_self_test_constraints_6
+
+    What constraint or constraints would be violated if we modify the tuple (AUD, Australian Dollar) in **currencies** to be (DKK, Australian Dollar)?
+
+    -   Primary key on the **currencies** relation.
+
+        - True, but might another constraint be violated?
+
+    -   Primary key on the **currencies** relation and the foreign key constraint on **principal_currency_code**.
+
+        + Correct.  DKK duplicates an existing currency code in **currencies**, and the change would also remove AUD from the list of currencies, which is referenced by two rows in **countries**.
+
+    -   Foreign key constraint on **principal_currency_code**.
+
+        - True, but might another constraint be violated?
+
+    -   No constraints would be violated.
+
+        - Incorrect.
+
+.. dragndrop:: relational_model_self_test_three_value_logic_2
+    :match_1: true AND unknown|||unknown
+    :match_2: true OR unknown|||true
+    :match_3: false AND true|||false
+
+    Drag the expression to the outcome of its evaluation.
+
+.. dragndrop:: relational_model_self_test_three_value_logic_1
+    :match_1: NOT false|||true
+    :match_2: unknown AND false|||false
+    :match_3: false OR unknown|||unknown
+
+    Drag the expression to the outcome of its evaluation.
 
 
 .. |chapter-end| unicode:: U+274F
