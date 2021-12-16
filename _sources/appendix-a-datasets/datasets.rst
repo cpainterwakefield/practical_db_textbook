@@ -132,3 +132,22 @@ Data models
 :::::::::::
 
 ERD and other notations
+
+
+----
+
+.. raw:: html
+
+   <div style="font-size: 80%" typeof="cc:Work" xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/">
+    <a style="float: left; padding-right: 10px;" rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+      <img alt="Creative Commons License" style="display: block;" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/>
+    </a>
+   <span href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">
+    <i>A Practical Introduction to Databases</i>
+   </span>
+   by
+   <span property="cc:attributionName">Christopher Painter&#8209;Wakefield</span>
+   is licensed under a
+   <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+  </div>
+  <hr/>

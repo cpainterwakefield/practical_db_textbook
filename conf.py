@@ -114,6 +114,30 @@ rst_prolog = (
 # For literate programming files, provide a convenient way to refer to a source file's name. See `runestone.lp.lp._docname_role`.
 """.. |docname| replace:: :docname:`name`
 """
+
+"""
+.. |chapter-end| unicode:: U+274F
+"""
+
+'''
+.. |license-notice| raw:: html
+
+   <div
+      style="background-color: lightgrey; font-size: 80%; padding: 10px; margin-top: 20px; border-radius: 4px;"
+      typeof="cc:Work" xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"
+   >
+    <a style="float: left; padding-right: 10px;" rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+      <img alt="Creative Commons License" style="display: block;" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/>
+    </a>
+   <span href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">
+    <i>A Practical Introduction to Databases</i>
+   </span>
+   by
+   <span property="cc:attributionName">Christopher Painter&#8209;Wakefield</span>
+   is licensed under a
+   <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+  </div>
+'''
 )
 
 # Select whether to use server-side grading where possible. Server-side grading

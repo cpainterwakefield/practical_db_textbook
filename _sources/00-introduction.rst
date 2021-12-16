@@ -17,7 +17,7 @@ What is data? What is a database?
 Data
 ----
 
-What is data?  A dictionary may tell you that *data* is the plural of *datum*, and that a datum is a piece of information or a fact.  Okay, so data is pieces of information.  Living in the "information age", we hear a lot about the importance of data.  Companies like Google and Facebook collect lots and lots of data.  Data must be very useful!  
+What is data?  A dictionary may tell you that *data* is the plural of *datum*, and that a datum is a piece of information or a fact.  Okay, so data is pieces of information.  Living in the "information age", we hear a lot about the importance of data.  Companies like Google and Facebook collect lots and lots of data.  Data must be very useful!
 
 Here are some data:
 
@@ -34,9 +34,9 @@ Another important consideration is the accuracy of the data.  To the best of the
 
 Completeness is a quality that is dependent on the task at hand.  Perhaps it is helpful to know that elephants are proboscideans, but what we really wanted was a complete list of proboscideans, living or extinct; in that case, the data is woefully incomplete.  Or perhaps we want to know many more facts about Isaac Newton than simply his birth date.  Again, incomplete data is not necessarily useless, but missing data can be troublesome if not handled carefully.
 
-Ultimately, data can be useful to us only if we have access to it, and that is where the database comes in. 
+Ultimately, data can be useful to us only if we have access to it, and that is where the database comes in.
 
-.. index:: 
+.. index::
     single: database; defined
     single: database management system
     see: DBMS; database management system
@@ -92,7 +92,7 @@ Note that `Appendix A`_ provides SQL scripts to create each of the databases use
     see: DQL; data query language
     single: data query language
     see: DML; data manipulation language
-    single: data manipulation language 
+    single: data manipulation language
     see: DDL; data definition language
     single: data definition language
     see: DCL; data control language
@@ -121,7 +121,13 @@ As you work through this textbook, there will be frequent interactive examples b
 
 - displaying table information --> select name, sql from sqlite_master
 
+|chapter-end|
 
+----
+
+**Notes**
 
 
 .. [#] `"database, n" <http://www.oed.com/view/Entry/47411>`_. OED Online. Oxford University Press. June 2013. Retrieved July 12, 2013.
+
+|license-notice|

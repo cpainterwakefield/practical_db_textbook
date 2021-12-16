@@ -368,3 +368,5 @@ LISTAGG            concatenate values into a string       LISTAGG(*a* [, *delim*
 .. [#] Technically, a comparison with NULL results in the value "unknown".  However, in all databases that we are aware of, NULL is indistinguishable from "unknown" except when using the operator **IS [NOT] UNKNOWN**.
 
 .. [#] See above note.  The truth table technically should use "unknown" everywhere "NULL" appears.
+
+|license-notice|

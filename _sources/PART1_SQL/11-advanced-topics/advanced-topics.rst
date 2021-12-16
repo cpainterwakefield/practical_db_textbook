@@ -129,7 +129,6 @@ Note that windowing occurs *after* application of any **WHERE** conditions, and 
 Window functions have a number of additional options allowing for fairly complex processing, which we do not cover here.
 
 
-.. |chapter-end| unicode:: U+274F
 
 |chapter-end|
 
@@ -139,15 +138,4 @@ Window functions have a number of additional options allowing for fairly complex
 
 .. [#] Some databases also provide *materialized views*, which store actual data; these are used when executing the query for the view would take too long.  These views do become out of date and must be refreshed periodically.
 
-.. raw:: html
-
-   <div style="width: 520px; margin-left: auto; margin-right: auto;">
-   <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
-   <img alt="Creative Commons License" style="border-width:0; display:block; margin-left:
-   auto; margin-right:auto;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
-   <br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource"
-   property="dct:title" rel="dct:type"><i>A Practical Introduction to Databases</i></span> by
-   <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">
-   Christopher Painter-Wakefield</span> is licensed under a
-   <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
-   Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</div>
+|license-notice|

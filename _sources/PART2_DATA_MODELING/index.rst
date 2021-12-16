@@ -19,3 +19,5 @@ Part 2 of this book concerns graphical modeling in general, and entity-relations
     02-ERD/ERD
     03-ERD-to-relational/ERD-to-relational
     04-other-notations/other-notations
+
+|license-notice|

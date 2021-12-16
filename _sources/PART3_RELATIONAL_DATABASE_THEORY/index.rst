@@ -12,3 +12,6 @@ RELATIONAL DATABASE THEORY
     03-relational-calculus/relational-calculus
     04-normalization/normalization
     05-sql-vs-theory/sql-vs-theory
+
+
+|license-notice|

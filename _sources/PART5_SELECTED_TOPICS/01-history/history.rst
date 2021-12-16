@@ -33,6 +33,8 @@ Codd shared his relational model internally at IBM, and then publicly in :ref:`a
 
 For more on the history of database systems, see :numref:`Chapter {number} <history-chapter>`.
 
+|chapter-end|
+
 ----
 
 **Notes**
@@ -40,3 +42,5 @@ For more on the history of database systems, see :numref:`Chapter {number} <hist
 .. [#] :ref:`An earlier paper by David L. Childs <relational-theory-references>` in 1968 on the application of set theory to data systems is a precursor cited by Codd.  However, it was Codd's 1970 paper that became widely circulated and influential in later work on the relational model, and in the creation of early relational database systems such as System R from IBM and the INGRES database developed at the University of California, Berkeley.
 
 .. [#] :ref:`An earlier paper by David L. Childs <relational-theory-references>` in 1968 on the application of set theory to data systems is a precursor cited by Codd.  However, it was Codd's 1970 paper that became widely circulated and influential in later work on the relational model, and in the creation of early relational database systems such as System R from IBM and the INGRES database developed at the University of California, Berkeley.
+
+|license-notice|

@@ -15,20 +15,8 @@ Use data models to reason about data, abstracted from the details of SQL or a pr
 This part of the book examines graphical data models at varying levels of abstraction.  In :numref:`Chapter {number} <erd-chapter>`, we discuss the *entity-relationship diagram* (ERD), a high-level model of data.  ERDs are particularly useful at the intersection of analysis and design, facilitating discussion with users and domain experts.  :numref:`Chapter {number} <erd-to-relational-chapter>` explains how to transition from an ERD into a relational database.  This transition may be mediated by less abstract models which have closer correspondence with the relational database, discussed in :numref:`Chapter {number} <other-notations-chapter>`.  :numref:`Chapter {number} <other-notations-chapter>` also discusses some of the many variations in notation in common usage.
 
 
-.. |chapter-end| unicode:: U+274F
 
 |chapter-end|
 
 
-.. raw:: html
-
-   <div style="width: 520px; margin-left: auto; margin-right: auto;">
-   <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
-   <img alt="Creative Commons License" style="border-width:0; display:block; margin-left:
-   auto; margin-right:auto;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
-   <br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource"
-   property="dct:title" rel="dct:type"><i>A Practical Introduction to Databases</i></span> by
-   <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">
-   Christopher Painter-Wakefield</span> is licensed under a
-   <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
-   Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</div>
+|license-notice|

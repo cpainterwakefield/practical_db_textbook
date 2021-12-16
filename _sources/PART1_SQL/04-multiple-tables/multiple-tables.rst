@@ -826,7 +826,6 @@ This section contains some exercises using the books data set (reminder: you can
         AND   aw2.award_id = aa.award_id
         AND   aw2.name = 'Nobel Prize in Literature';
 
-.. |chapter-end| unicode:: U+274F
 
 |chapter-end|
 
@@ -841,16 +840,4 @@ This section contains some exercises using the books data set (reminder: you can
 .. [#] Because a cross product has a number of rows equal to the number of rows in one table times the number of rows in the other table, the product is very large when the tables involved are large.  Even though databases typically convert explicit joins to their implicit equivalents internally, when database systems process joins, they generally do not create the cross product and then apply the **WHERE** clause conditions, as that would require a lot of memory or temporary storage and be very slow.  However, the conceptual model is helpful in understanding the end result.  We will discuss some strategies databases use to implement joins in part 4, chapter XXX.
 
 
-
-.. raw:: html
-
-   <div style="width: 520px; margin-left: auto; margin-right: auto;">
-   <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
-   <img alt="Creative Commons License" style="border-width:0; display:block; margin-left:
-   auto; margin-right:auto;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
-   <br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource"
-   property="dct:title" rel="dct:type"><i>A Practical Introduction to Databases</i></span> by
-   <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">
-   Christopher Painter-Wakefield</span> is licensed under a
-   <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
-   Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</div>
+|license-notice|

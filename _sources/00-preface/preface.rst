@@ -22,3 +22,7 @@ Interactive textbook features
 
 - interactive examples
 - interactive questions
+
+|chapter-end|
+
+|license-notice|

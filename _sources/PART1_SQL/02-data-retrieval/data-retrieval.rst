@@ -248,8 +248,6 @@ This section contains some simple exercises using the simple books and authors t
         ORDER BY publication_year DESC;
 
 
-.. |chapter-end| unicode:: U+274F
-
 |chapter-end|
 
 ----
@@ -261,15 +259,4 @@ This section contains some simple exercises using the simple books and authors t
 .. [#] You can change the sort order for strings by applying the **COLLATE** operator. **COLLATE** is out of scope for this textbook, and varies with the dialect of SQL.  Please see the documentation for your particular DBMS.
 
 
-.. raw:: html
-
-   <div style="width: 520px; margin-left: auto; margin-right: auto;">
-   <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
-   <img alt="Creative Commons License" style="border-width:0; display:block; margin-left:
-   auto; margin-right:auto;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
-   <br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource"
-   property="dct:title" rel="dct:type"><i>A Practical Introduction to Databases</i></span> by
-   <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">
-   Christopher Painter-Wakefield</span> is licensed under a
-   <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
-   Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</div>
+|license-notice|

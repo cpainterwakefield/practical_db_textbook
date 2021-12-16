@@ -26,3 +26,6 @@ Part 1 of this book is all about SQL, the most popular language used for interac
     09-grouping-and-aggregation/grouping-and-aggregation
     10-set-operations/set-operations
     11-advanced-topics/advanced-topics
+
+
+|license-notice|

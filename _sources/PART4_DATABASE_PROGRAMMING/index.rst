@@ -15,3 +15,5 @@ PROGRAMMING WITH DATABASES
     :maxdepth: 3
 
 ..    01-introduction/introduction
+
+|license-notice|

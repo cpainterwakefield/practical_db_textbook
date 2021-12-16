@@ -689,9 +689,8 @@ This section has some questions you can use to check your understanding of how t
     -   If an entity has a composite key attribute, the resulting table will have a composite primary key.
 
         - This is true.
-        
 
-.. |chapter-end| unicode:: U+274F
+
 
 |chapter-end|
 
@@ -701,15 +700,4 @@ This section has some questions you can use to check your understanding of how t
 
 .. [#] Due to the total participation of **factory** in the **manages** relationship, it might seem we should constrain the **manager_id** column to never contain ``NULL``.  Some care should be taken in adding such constraints.  While a factory "must" have a manager, there may be times when a factory has no manager, e.g., when a manager leaves the company and a new manager has not yet been identified.  If the **manager_id** column is constrained to never hold ``NULL``, it will be difficult to correctly reflect the true situation in the database.  In general, use caution and examine all of your edge cases before choosing to constrain a column.
 
-.. raw:: html
-
-   <div style="width: 520px; margin-left: auto; margin-right: auto;">
-   <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
-   <img alt="Creative Commons License" style="border-width:0; display:block; margin-left:
-   auto; margin-right:auto;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
-   <br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource"
-   property="dct:title" rel="dct:type"><i>A Practical Introduction to Databases</i></span> by
-   <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">
-   Christopher Painter-Wakefield</span> is licensed under a
-   <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
-   Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</div>
+|license-notice|

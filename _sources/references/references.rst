@@ -39,3 +39,6 @@ Relational database theory
 Childs, David L. "Feasibility of a set-theoretic data structure: a general structure based on a reconstituted definition of relation." *Proc. IFIP Cong.* (1968).
 
 Codd, Edgar Frank. "A relational model of data for large shared data banks." *Communications of the ACM* 26.1 (1983): 64-69.
+
+
+|license-notice|
