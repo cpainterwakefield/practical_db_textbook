@@ -176,7 +176,7 @@ false    true
 unknown  unknown
 ======== =======
 
-It is not necessary to memorize these tables, if some common sense is applied.  Consider the expression "a OR b", and let b be unknown.  To determine the result of "a OR b", we simply need to consider whether or not we have enough information without knowing the value of *b*.  In fact, if *a* is true, it does not matter if *b* is true or false - the result "a OR b" is true.  Thus "true OR unknown" equals true.  On the other hand, if *a* is false, then it really does matter whether *b* is true or false; since we don't know, the result "a OR b" is unknown.  A similar thought process can be applied to the other operations.
+It is not necessary to memorize these tables, if some common sense is applied.  Consider the expression "a OR b", and let *b* be unknown.  To determine the result of "a OR b", we simply need to consider whether or not we have enough information without knowing the value of *b*.  In fact, if *a* is true, it does not matter if *b* is true or false - the result "a OR b" is true.  Thus "true OR unknown" equals true.  On the other hand, if *a* is false, then it really does matter whether *b* is true or false; since we don't know, the result "a OR b" is unknown.  A similar thought process can be applied to the other operations.
 
 Constraints and NULL
 --------------------
