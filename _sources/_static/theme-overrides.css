@@ -68,6 +68,10 @@ table:not(.htCore) td {
     text-align: left !important;
 }
 
+table.lined-table {
+    width: auto !important;
+}
+
 table.lined-table thead tr th {
     border-style: solid !important;
     border-color: #ddd !important;

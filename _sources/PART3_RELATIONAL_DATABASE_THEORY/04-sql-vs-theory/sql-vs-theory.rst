@@ -1,11 +1,12 @@
-.. _relational-calculus-chapter:
+.. _sql-vs-theory-chapter:
 
-===================
-Relational calculus
-===================
+================================================
+Differences between SQL and the relational model
+================================================
 
+x = x is a problem
 
-
+- comparison of SQL with algebra operations
 
 .. |chapter-end| unicode:: U+274F
 
