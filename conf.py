@@ -47,7 +47,16 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'A Practical Introduction to Databases'
-copyright = '2021 Christopher Painter-Wakefield'
+copyright = '''
+2021 Christopher Painter-Wakefield.
+<a style="" rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+    <img style="padding-left: 4px; padding-bottom: 3px; border-width: 0;" alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"/>
+</a>
+Licensed under a
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+    Creative Commons Attribution-ShareAlike 4.0 International License
+</a>
+'''
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -119,25 +128,30 @@ rst_prolog = (
 .. |chapter-end| unicode:: U+274F
 """
 
-'''
-.. |license-notice| raw:: html
+# replace this with a space for now
+"""
+.. |license-notice| unicode:: U+0020
+"""
 
-   <div
-      style="background-color: lightgrey; font-size: 80%; padding: 10px; margin-top: 20px; border-radius: 4px;"
-      typeof="cc:Work" xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"
-   >
-    <a style="float: left; padding-right: 10px;" rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
-      <img alt="Creative Commons License" style="display: block;" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/>
-    </a>
-   <span href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">
-    <i>A Practical Introduction to Databases</i>
-   </span>
-   by
-   <span property="cc:attributionName">Christopher Painter&#8209;Wakefield</span>
-   is licensed under a
-   <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
-  </div>
-'''
+#'''
+#.. |license-notice| raw:: html
+#
+#   <div
+#      style="background-color: lightgrey; font-size: 80%; padding: 10px; margin-top: 20px; border-radius: 4px;"
+#      typeof="cc:Work" xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"
+#   >
+#    <a style="float: left; padding-right: 10px;" rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+#      <img alt="Creative Commons License" style="display: block;" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/>
+#    </a>
+#   <span href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">
+#    <i>A Practical Introduction to Databases</i>
+#   </span>
+#   by
+#   <span property="cc:attributionName">Christopher Painter&#8209;Wakefield</span>
+#   is licensed under a
+#   <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+#  </div>
+#'''
 )
 
 # Select whether to use server-side grading where possible. Server-side grading
