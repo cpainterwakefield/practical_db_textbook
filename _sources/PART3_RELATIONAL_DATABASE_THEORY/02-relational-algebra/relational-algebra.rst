@@ -405,6 +405,70 @@ which yields the simplified relation:
 Set operations
 ::::::::::::::
 
+Unsurprisingly, given that relations are sets, the relational algebra includes the usual set operations *union*, *intersection*, and *set difference*, with some restrictions.  These binary operations are denoted by:
+
+- :math:`\cup`: union
+- :math:`\cap`: intersection
+- :math:`-`: set difference
+
+Given two relations **A** and **B**, the union :math:`\text{A} \cup \text{B}` is the set of all tuples that exist in **A**, or exist in **B**, or both.  The intersection :math:`\text{A} \cap \text{B}` is the set of all tuples that exist in both **A** and **B**.  Finally, the set difference :math:`\text{A} - \text{B}` is the set of all tuples that exist in **A** but do not exist in **B**.
+
+For example, let **A** and **B** be the relations below:
+
+.. table:: **A**
+    :class: lined-table
+    ======= ===
+    x       y
+    apple   42
+    orange  19
+    cherry  77
+
+.. table:: **B**
+    :class: lined-table
+    ======== ===
+    x        y
+    banana   8
+    apple    42
+    coconut  17
+
+Then we have:
+
+.. table:: :math:`\text{A} \cup \text{B}`
+    :class: lined-table
+    ======== ===
+    x        y
+    apple    42
+    orange   19
+    cherry   77
+    banana   8
+    coconut  17
+
+.. table:: :math:`\text{A} \cap \text{B}`
+    :class: lined-table
+    ======== ===
+    x        y
+    apple    42
+
+.. table:: :math:`\text{A} - \text{B}`
+    :class: lined-table
+    ======== ===
+    x        y
+    orange   19
+    cherry   77
+
+.. table:: :math:`\text{B} - \text{A}`
+    :class: lined-table
+    ======== ===
+    x        y
+    banana   8
+    coconut  17
+
+Note that union and intersection are commutative, but set difference is not.
+
+The one important restriction on set operations in the relational algebra is that the relations must be compatible in terms of their schemas.  The meaning of "compatible" varies, but for our purposes, assume we view the tuples in a relation as ordered lists, where each position in the list is associated with a particular attribute and type domain.  Then, if we have two relations, we require that, for a given position in the tuples in either relation, the attribute and type domain are the same.  For **A** and **B** shown above, we might assert that the first position corresponds to attribute **x** and contains character strings, while the second position (**y**) contains integers.
+
+A looser requirement might allow attribute names (but not type domains) to differ between relations.  This requirement would be less compatible with the second definition of tuple given in the previous chapter, while eliminating the occasional need for renaming operations prior to applying set operations. If the attribute names do not match in the two relations, we would adopt the attribute names from the left-hand operand for the result.
+
 
 Other operations and extensions
 :::::::::::::::::::::::::::::::
