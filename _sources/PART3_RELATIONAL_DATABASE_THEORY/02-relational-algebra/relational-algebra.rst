@@ -4,7 +4,7 @@
 Relational algebra
 ==================
 
-In the last chapter, we introduced the relational model of the database, and defined the fundamental mathematical object in the model, the *relation*.  In this chapter, we discuss the *relational algebra*, which is the set of algebraic operations that can be performed on relations.  The relational algebra can be viewed as one mechanism for expressing queries on data stored in relations, and an understanding of relational algebra is important in understanding how relational databases represent and optimize queries.
+In the last chapter, we introduced the relational model of the database, and defined the fundamental mathematical object in the model, the *relation*.  In this chapter, we discuss the *relational algebra*, which is the set of algebraic operations that can be performed on relations.  The relational algebra can be viewed as one mechanism for expressing queries on data stored in relations, and an understanding of relational algebra is important in understanding how relational databases represent and optimize queries.  We will cover only the basic relational algebra, ignoring later extensions such as those for group and aggregate operations and those for outer joins.
 
 A related topic, which we do not cover in this book, is the *relational calculus*.  The relational calculus provides another mathematical expression of queries on relations, and is equivalent in expressiveness to the relational algebra.
 
@@ -33,6 +33,8 @@ We will explore each of these unary operators in application to the relation **b
     6       4         *House Made of Dawn*         1968
     7       5         *A Wizard of Earthsea*       1968
     ======= ========= ============================ ====
+
+The **books** relation has primary key **book_id**; **author_id** is a foreign key to another table we will use later in this chapter.
 
 Selection
 ---------
@@ -227,7 +229,7 @@ Cross product and joins
 
 We now turn our attention to operations which extend tuples in one relation with tuples from another relation.  For this section, we will be using **books** and a second relation, **authors**:
 
-.. table:: **books**
+.. table:: **authors**
     :class: lined-table
 
     ========== ================== =========== ============
@@ -241,6 +243,8 @@ We now turn our attention to operations which extend tuples in one relation with
     6          J.R.R. Tolkien     1892-01-03  1973-09-02
     7          Kazuo Ishiguro     1954-11-08
     ========== ================== =========== ============
+
+Relation **authors** has primary key **author_id**.  Relation **books** is related to **authors** via a foreign key on **author_id**.
 
 Cross product
 -------------
@@ -321,7 +325,7 @@ The full set of tuples in this relation is large (the number of books multiplied
 
 The author of *The House of the Spirits* is Isabel Allende.  What meaning, then, can we make of a tuple that pairs *The House of the Spirits* with the author Ralph Ellison (the author of *Invisible Man*)?
 
-We are typically interested in pairing only certain tuples of a relation with certain tuples of another.  In the above example, we are interested in tuples where the **author_id** attribute from **books** agrees with the **author_id** attribute from **authors**.  This is easily accomplished by applying the appropriate selection operation to the result of our cross product:
+We are typically interested in pairing only certain tuples of a relation with certain tuples of another.  In the above example, we are interested in tuples where the **author_id** attribute from **books** agrees with the **author_id** attribute from **authors**.  This relationship is indicated not only by the names we have used for attributes, but also by the foreign key constraint on **books** and **authors**.  To retain only the tuples with matching **author_id** values, we apply a selection operation to the result of our cross product:
 
 .. math::
 
@@ -356,6 +360,7 @@ or, you can instead format the expression as:
 
     \text{books} \underset{\text{books.author_id}=\text{authors.author_id}}\Join \text{authors}
 
+Note that one tuple from **authors** does not contribute to the join.  This tuple's **author_id** matches none of the tuples in **books**, and thus no combined tuple using it can appear in the join result.  We call this tuple a *dangling tuple*.  Dangling tuples may be an indication of a problem in the data; in this example, it may suggest that we are missing information about books by one author.
 
 Theta-join and equijoin
 -----------------------
@@ -378,13 +383,13 @@ Natural join
 
 When we join **books** with **authors** we run into the issue that both relations contain an attribute named **author_id**.  Since a relation cannot have more than one attribute with the same name, joining (or taking a cross product of) these two relations requires us to rename the attributes in some fashion, either by an explicit renaming operation prior to joining, or by prepending the original relation name as we did in our example.  Because our join condition was equality on the **author_id** attributes, both the **books.author_id** and **authors.author_id** in the resulting relation always agree.  This unnecessary redundancy can be removed using projection and renaming.
 
-In this special situation in which we wish to join specifically by equating the attributes with the same names in both relations, and subsequently remove the "duplicate" attributes, we can instead do a *natural join*.  We can indicate a natural join using the join operator with no conditions [#]_ as follows:
+In this special situation in which we wish to join specifically by equating the attributes with the same names in both relations, and subsequently remove the "duplicate" attributes, we can instead do a *natural join*.  We can indicate a natural join using the join operator with no conditions [#]_:
 
 .. math::
 
     \text{books} \Join \text{authors}
 
-which yields the simplified relation:
+yields the simplified relation:
 
 .. table::
     :class: lined-table
@@ -487,23 +492,161 @@ The important restriction on set operations in the relational algebra is that th
 
 A looser requirement allows attribute names (but not type domains) to differ between relations.  This requirement is less compatible with the second definition of tuple given in the previous chapter, while eliminating the occasional need for renaming operations prior to applying set operations. If the attribute names do not match in the two relations, we adopt the attribute names from the left-hand operand for the result relation.
 
-While intersection is a useful operation, it is not strictly needed for the algebra, as the same result can be obtained using only union and difference:
+While intersection is a useful operation, it is not strictly needed for the algebra, as the same result can be obtained using set difference:
 
 .. math::
 
     \text{A} \cap \text{B} \equiv \text{A} - (\text{A} - \text{B})
 
-Other operations and extensions
-:::::::::::::::::::::::::::::::
 
 Division
---------
+::::::::
 
-Grouping and aggregation
-------------------------
+The operations described above are sufficient for most query needs.  One other binary operation, *division*, is typically included in the basic relational algebra.
 
-Outer joins
------------
+Division is the most difficult operation to describe; in a very loose sense it acts as a kind of inverse to a cross product.  That is, if **P**, **Q**, and **R** are relations and
+
+.. math::
+
+    \text{P} = \text{Q} \times \text{R}
+
+then it is true that
+
+.. math::
+
+    \text{P} \div \text{R} = \text{Q}
+
+However, the reverse is not necessarily true.  Rather, let **P** be some relation, with attributes **x** and **y** [#]_.  We require that **R** has attribute **y**.  Then :math:`\text{P} \div \text{R}` will contain the values of **x** which are paired (in **P**) with *every* value of **y** listed in **R**.
+
+We will start with an abstract example.  Let **P** be the relation pictured below:
+
+.. table::  **P**
+    :class: lined-table
+
+    === =========
+    x   y
+    === =========
+    1   blue
+    1   green
+    1   yellow
+    2   blue
+    2   yellow
+    3   blue
+    3   green
+    3   yellow
+    3   red
+    === =========
+
+Let **R** be
+
+.. table:: **R**
+    :class: lined-table
+
+    +---------+
+    | y       |
+    +=========+
+    | blue    |
+    +---------+
+    | green   |
+    +---------+
+    | yellow  |
+    +---------+
+
+Then :math:`\text{Q} = \text{P} \div \text{R}` is
+
+.. table:: **Q**
+    :class: lined-table
+
+    +----+
+    | x  |
+    +====+
+    | 1  |
+    +----+
+    | 3  |
+    +----+
+
+because only the values 1 and 3 are paired with blue, green, and yellow in **P**.  The value 2 is not paired with green, so it does not appear in the quotient.  The value 3 is paired with red, but red is not in **R** and thus does not affect the result.
+
+For a more tangible example, consider the following relation, named **authors_awards**:
+
+.. table:: **authors_awards**
+    :class: lined-table
+
+    ================== ===========================
+    author             award
+    ================== ===========================
+    Ralph Ellison      National Book Award
+    Jhumpa Lahiri	     Pulitzer Prize for Fiction
+    N\. Scott Momaday	 Pulitzer Prize for Fiction
+    Ursula K. Le Guin	 Hugo Award
+    Ursula K. Le Guin	 Nebula Award
+    C\. J\. Cherryh	   Hugo Award
+    Kazuo Ishiguro	   Booker Prize
+    Kazuo Ishiguro	   Nobel Prize in Literature
+    Michael Chabon	   Hugo Award
+    Michael Chabon	   Nebula Award
+    Michael Chabon	   Pulitzer Prize for Fiction
+    ================== ===========================
+
+and the relation **science_fiction_awards**:
+
+.. table:: **science_fiction_awards**
+    :class: lined-table
+
+    +--------------+
+    | award        |
+    +==============+
+    | Hugo Award   |
+    +--------------+
+    | Nebula Award |
+    +--------------+
+
+We might ask the question, "Which authors have received all of the science fiction book awards?"  The answer is given by
+
+
+.. table:: :math:`\text{authors_awards} \div \text{science_fiction_awards}`
+    :class: lined-table
+
+    +-------------------+
+    | author            |
+    +===================+
+    | Ursula K. Le Guin |
+    +-------------------+
+    | Michael Chabon    |
+    +-------------------+
+
+Like the join and set intersection operations, division can be accomplished using other relational algebra operations; however, the construction is fairly complex.  If we have relation **P** with attributes **x** and **y**, and relation **R** with attribute **y**, then
+
+.. math::
+
+    \text{P} \div \text{R} \equiv \pi_{\text{x}}(\text{P}) - \pi_{\text{x}}((\pi_{\text{x}}(\text{P}) \times \text{R}) - \text{P})
+
+By carefully applying the right-hand side expression above to one of our examples, you can verify that the desired result is obtained, but the basic intuition is that we must first find the values of **x** in **P** which are not paired (in **P**) with one or more **y** values listed in **R**, and then subtract that list of **x** values from the list of all **x** values in **P**:
+
+1. Create a relation containing every **x** value in **P** paired with every **y** value in **R**:
+
+.. math::
+
+    \pi_{\text{x}}(\text{P}) \times \text{R}
+
+2. Subtract (using set difference) **P** from the cross product result above.  These are the possible pairings of **x** (in **P**) and **y** (in **R**) that do *not* exist in **P**:
+
+.. math::
+
+    (\pi_{\text{x}}(\text{P}) \times \text{R}) - \text{P}
+
+3. Project the last result onto attribute **x**. These are the **x** values that are not paired with some value from **R**:
+
+.. math::
+
+    \pi_{\text{x}}((\pi_{\text{x}}(\text{P}) \times \text{R}) - \text{P})
+
+4. Subtract the last result from the set of all **x** values in **P** for the final solution:
+
+.. math::
+
+    \pi_{\text{x}}(\text{P}) - \pi_{\text{x}}((\pi_{\text{x}}(\text{P}) \times \text{R}) - \text{P})
+
 
 Operation sequences
 :::::::::::::::::::
@@ -511,12 +654,6 @@ Operation sequences
 
 Expression trees
 ::::::::::::::::
-
-
-  - division
-- completeness of operators?
-- mention of group/aggregation operations, outer joins
-- expression trees
 
 
 |chapter-end|
@@ -530,5 +667,7 @@ Expression trees
 .. [#] In fact, Codd's original relational model paper discusses joins and not cross products.  However, the cross product is now recognized as a more fundamental operation in the relational algebra.
 
 .. [#] Some authors use * instead of the join operator without conditions.
+
+.. [#] More generally, **x** and **y** can stand in for a list of attributes, that is, **x** might be some list of attributes **x1**, **x2**, ... and similarly for **y**.  We only require that **x** and **y** together represent all attributes of **P**, and **x** and **y** do not overlap.
 
 |license-notice|
