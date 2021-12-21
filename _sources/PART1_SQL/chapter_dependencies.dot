@@ -1,16 +1,21 @@
-digraph {
+// To build:
+// 1. install graphviz
+// 2. run 'dot -Tsvg chapter_dependencies.dot > chapter_dependencies.svg' in this directory
 
-  c1 [ label="Chapter 1.1\nBasics" fontname="sans-serif"]
-  c2 [ label="Chapter 1.2\nData retrieval" fontname="sans-serif"]
-  c3 [ label="Chapter 1.3\nExpressions" fontname="sans-serif"]
-  c4 [ label="Chapter 1.4\nQueries on multiple tables"  fontname="sans-serif"]
-  c5 [ label="Chapter 1.5\nModifying data"  fontname="sans-serif"]
-  c6 [ label="Chapter 1.6\nData types and table creation" fontname="sans-serif"]
-  c7 [ label="Chapter 1.7\nKeys and constraints"  fontname="sans-serif"]
-  c8 [ label="Chapter 1.8\nSubqueries"  fontname="sans-serif"]
-  c9 [ label="Chapter 1.9\nGrouping and aggregation" fontname="sans-serif"]
-  c10 [ label="Chapter 1.10\nSet operations" fontname="sans-serif"]
-  c11 [ label="Chapter 1.11\nAdvanced topics" fontname="sans-serif"]
+digraph {
+  node [ fontname="sans-serif" ]
+
+  c1 [ label="Chapter 1.1\nBasics" ]
+  c2 [ label="Chapter 1.2\nData retrieval" ]
+  c3 [ label="Chapter 1.3\nExpressions" ]
+  c4 [ label="Chapter 1.4\nQueries on multiple tables" ]
+  c5 [ label="Chapter 1.5\nModifying data" ]
+  c6 [ label="Chapter 1.6\nData types and table creation" ]
+  c7 [ label="Chapter 1.7\nKeys and constraints" ]
+  c8 [ label="Chapter 1.8\nSubqueries" ]
+  c9 [ label="Chapter 1.9\nGrouping and aggregation" ]
+  c10 [ label="Chapter 1.10\nSet operations" ]
+  c11 [ label="Chapter 1.11\nAdvanced topics" ]
 
   c1 -> c2
   c2 -> c3

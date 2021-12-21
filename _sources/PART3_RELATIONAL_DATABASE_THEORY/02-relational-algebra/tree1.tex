@@ -1,0 +1,27 @@
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsbsy}
+\usepackage{tikz}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+
+\begin{document}
+
+\Large
+
+\begin{tikzpicture}
+\node {$\pi_{\text{author, title, year}}$}
+  child {
+    node {$\sigma_{\text{year} > 1950}$}
+    child {
+      node {$\Join_{\text{authors.author\_id} = \text{books.author\_id}}$} [sibling distance = 2cm]
+      child {node {$\text{authors}$}}
+      child {node {$\text{books}$}}
+    }
+  };
+\end{tikzpicture}
+
+\end{document}

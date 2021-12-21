@@ -1,0 +1,44 @@
+% To build svgs:
+% Install:
+%   - the TeXLive system (may need some extra packages)
+%   - pdf2svg
+%   - librsvg2-bin (for rsvg-convert)
+%   - Python 'scour' package
+% If you have Gnu Make installed, just run 'make' in this directory, followed
+% by 'make mostlyclean' (optional, to clean up unneeded files)
+%
+% 1. Run 'pdflatex <this-filename>' in this directory
+% 2. Run 'pdf2svg <this-filename> temp.svg'
+% 3. Run 'rsvg-convert temp.svg -o temp2.svg -z 2 -f svg'
+% 4. Run 'scour -i temp2.svg -o <this-filename-base>.svg' (this just makes a
+%    smaller svg file)
+% 5. (Optional) clean up unneeded files:
+%       'rm -f *.log *.aux <this-filename-base>.pdf temp1.svg temp2.svg'
+
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsbsy}
+\usepackage{tikz}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+
+\begin{document}
+
+\Large
+
+\begin{tikzpicture}
+\node {$\pi_{\text{author, title, year}}$}
+  child {
+    node {$\sigma_{\text{year} > 1950}$}
+    child {
+      node {$\Join_{\text{authors.author\_id} = \text{books.author\_id}}$} [sibling distance = 2cm]
+      child {node {$\text{authors}$}}
+      child {node {$\text{books}$}}
+    }
+  };
+\end{tikzpicture}
+
+\end{document}

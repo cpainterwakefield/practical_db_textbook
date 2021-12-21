@@ -371,7 +371,7 @@ While an equality condition is typically used in joins, more generally any condi
 
     \text{A.x } \Theta \text{ B.y}
 
-where **A.x** is an attribute from one relation, **B.y** is an attribute from the other relation, and :math:`\Theta` is a comparison operator (such as =, <, etc.) can be used.  A condition of this form is known as a *theta condition*, and a join using such a condition or a conjunction (AND) of such conditions is known as a *theta-join*.
+where **A.x** is an attribute from one relation, **B.y** is an attribute from the other relation, and :math:`\Theta` is a comparison operator (such as =, <, etc.), can be used.  A condition of this form is known as a *theta condition*, and a join using such a condition or a conjunction (AND) of such conditions is known as a *theta-join*.
 
 A theta-join using only equality comparisons (as in our example above) is further known as an *equijoin*.
 
@@ -603,7 +603,6 @@ and the relation **science_fiction_awards**:
 
 We might ask the question, "Which authors have received all of the science fiction book awards?"  The answer is given by
 
-
 .. table:: :math:`\text{authors_awards} \div \text{science_fiction_awards}`
     :class: lined-table
 
@@ -648,12 +647,83 @@ By carefully applying the right-hand side expression above to one of our example
     \pi_{\text{x}}(\text{P}) - \pi_{\text{x}}((\pi_{\text{x}}(\text{P}) \times \text{R}) - \text{P})
 
 
-Operation sequences
-:::::::::::::::::::
+Queries
+:::::::
 
+As we have seen, the operations of the relational algebra act on relations and result in relations, and thus we can apply relational operations sequentially to obtain a final desired result.  With the operations we have discussed, we can express a very wide array of *queries* (questions to be answered by the data).  We have seen examples of simple queries throughout this chapter, mostly involving one or two basic operations.
+
+Even simple questions, however, can require the application of multiple operations.  Consider the question, "What books by J.R.R. Tolkien were published after 1950?".  This is similar to a question we asked earlier, using the author ID value rather than the author's name.  With only the author's name, we have to do a bit more work.
+
+There are many ways to get to our desired result.  One possible approach might begin with the conditions presented: the author is J.R.R. Tolkien, and the publication year is greater than 1950.  Author names are in the **authors** relation, while publication years are in the **books** relation.  So we might guess we need two selection operations, one on each relation:
+
+.. math::
+
+    \sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors})
+
+and
+
+.. math::
+
+    \sigma_{\text{year} > 1950}(\text{books})
+
+This gives us two relations which are related by the **author_id** attribute present in both.  So a natural join might be our next step:
+
+.. math::
+
+    \sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors}) \Join \sigma_{\text{year} > 1950}(\text{books})
+
+Finally, we are only interested in the book titles (or possibly titles and publication years), so we finish with a projection operation:
+
+.. math::
+
+    \pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors}) \Join \sigma_{\text{year} > 1950}(\text{books}))
+
+This is only one of many possible expressions that yield identical results.  In chapter XXX, we will look at some of the algebraic identities that can be applied to transform an expression into a different but equivalent expression, and explore how these identities can be used by database software to speed up execution of queries.  For now, we provide the following equivalent expressions without discussion:
+
+.. math::
+
+    \pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien AND year} > 1950}(\text{authors} \Join \text{books}))
+
+.. math::
+
+    \pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\sigma_{\text{year} > 1950}(\text{books}) \Join \text{authors}))
+
+.. math::
+
+    \pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors} \Join \text{books}) \cap \sigma_{\text{year} > 1950}(\text{authors} \Join \text{books}))
+
+
+Operation sequences
+-------------------
+
+As queries become more complex, expressions like the ones shown above can become quite long and difficult to understand.  An alternative approach is to use intermediate variables to decompose and label the parts of our expression.  The result is a more sequential view of the operations.
+
+We will demonstrate this approach with one of the queries from the last section:
+
+.. math::
+
+    \pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors}) \Join \sigma_{\text{year} > 1950}(\text{books}))
+
+Using variables, we can write this as a sequence of operations:
+
+.. math::
+
+    \begin{eqnarray*}
+    \text{A} &=& \sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors}) \\
+    \text{B} &=& \sigma_{\text{year} > 1950}(\text{books}) \\
+    \text{C} &=& \text{A} \Join \text{B} \\
+    \text{R} &=& \pi_{\text{title}}(C) \\
+    \end{eqnarray*}
+
+with **R** holding our final result.
 
 Expression trees
-::::::::::::::::
+----------------
+
+test
+
+.. image:: tree1.svg
+
 
 
 |chapter-end|

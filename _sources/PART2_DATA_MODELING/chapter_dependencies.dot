@@ -1,12 +1,18 @@
+// To build:
+// 1. install graphviz
+// 2. run 'dot -Tsvg chapter_dependencies.dot > chapter_dependencies.svg' in this directory
+
 digraph {
 
-  c1 [ label="Chapter 2.1\nIntroduction to data modeling" fontname="sans-serif"]
-  c2 [ label="Chapter 2.2\nEntity-relationship diagrams" fontname="sans-serif"]
-  c3 [ label="Chapter 2.3\nConverting ERD to a relational model" fontname="sans-serif"]
-  c4 [ label="Chapter 2.4\nERD alternatives and variations"  fontname="sans-serif"]
-  c1_7 [ label="Chapter 1.7\nKeys and constraints" fontname="sans-serif" style=dotted]
-  c3_1 [ label="Chapter 3.1\nThe relational model of the database"  fontname="sans-serif" style=dotted]
-  c_OR [ label="-or-" fontname="sans-serif" shape=none]
+  node [ fontname="sans-serif" ]
+
+  c1 [ label="Chapter 2.1\nIntroduction to data modeling" ]
+  c2 [ label="Chapter 2.2\nEntity-relationship diagrams" ]
+  c3 [ label="Chapter 2.3\nConverting ERD to a relational model" ]
+  c4 [ label="Chapter 2.4\nERD alternatives and variations"  ]
+  c1_7 [ label="Chapter 1.7\nKeys and constraints" style=dotted]
+  c3_1 [ label="Chapter 3.1\nThe relational model of the database" style=dotted]
+  c_OR [ label="-or-" shape=none]
   c1 -> c2
   c2 -> c3
   c2 -> c4
