@@ -1,4 +1,4 @@
-SOURCES=tree1.tex
+SOURCES=tree1.tex tree2.tex
 
 all: $(SOURCES:.tex=.svg)
 

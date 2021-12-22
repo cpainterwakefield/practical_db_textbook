@@ -15,15 +15,17 @@
 \begin{tikzpicture}
 \node {$\pi_{\text{title}}$}
   child {
-    node {$\Join$} [sibling distance = 3.5cm]
+    node {$\sigma_{\text{name} = \text{J.R.R. Tolkien}}$}
     child {
-      node {$\sigma_{\text{name} = \text{J.R.R. Tolkien}}$}
-      child {node {$\text{authors}$}}
-    }
-    child {
-      node {$\sigma_{\text{year} > 1950}$}
+      node {$\Join$} [sibling distance=3cm]
       child {
-        node (last) {$\text{books}$}
+        node {$\sigma_{\text{year} > 1950}$}
+        child {
+          node (last) {$\text{books}$}
+        }
+      }
+      child {
+        node {$\text{authors}$}
       }
     }
   }

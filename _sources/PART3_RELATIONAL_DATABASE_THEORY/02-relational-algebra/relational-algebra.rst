@@ -720,10 +720,29 @@ with **R** holding our final result.
 Expression trees
 ----------------
 
-test
+Another representation of relational algebra expressions is in the form of a tree.  Expression trees are a useful visual representation of a query.  We will make use of them again in Chapter XXX, which is concerned with how database software considers different action plans for executin a query.
+
+We will again demonstrate using the query:
+
+.. math::
+
+    \pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors}) \Join \sigma_{\text{year} > 1950}(\text{books}))
+
+The tree representation of this query looks like:
 
 .. image:: tree1.svg
 
+Operations start at the bottom of the tree, with the relations **authors** and **books**, and proceed upwards.  We can apply either selection operation first, then the other; both must be applied before we can perform the join, and we finish with the projection.
+
+Here is another example, corresponding to the expression:
+
+.. math::
+
+    \pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\sigma_{\text{year} > 1950}(\text{books}) \Join \text{authors}))
+
+The tree is:
+
+.. image:: tree2.svg
 
 
 |chapter-end|
