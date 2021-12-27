@@ -10,6 +10,8 @@ What this book is about
 - what is covered / why
 - information about interactive textbook
 
+paths through the book - can you skip the theory part, etc (should do at least first part of 3.3 on normalization to get some intuition)
+
 Technical considerations
 ::::::::::::::::::::::::
 
