@@ -19,6 +19,10 @@ Sets
 
 A set is a mathematical object that represents a collection of distinct values.  Sets can be defined by some property that values have in common, or simply by listing all of the values in the set.  For some arbitrary value and some set, we can ask whether the value is a *member* of the set, that is, whether it is one of the values in the set.  For example, 2 is a member of the set of all numbers (an infinite set) and also a member of the set {1, 2, 3, 4} (a finite set containing four values).  On the other hand, 2 is not a member of the set of odd integers or the set of words describing colors (i.e., {blue, yellow, ...}).
 
+A *subset* of a set is a set containing zero or more elements from the set and only from the set.  For the set {1, 2, 3, 4}, subsets include {2, 4}, {1, 2, 3, 4}, and {} (the *empty set*).  Note that any set is a subset of itself; a subset which is not equal to the whole set is termed a *proper subset* of the set.
+
+A *superset* of a set is a set containing all elements from the set, and may contain elements not from the set.  For the set {1, 2, 3, 4}, supersets include {1, 2, 3, 4}, {1, 2, 3, 4, 5}, and {0, 1, 2, 3, 4, 5, 7}.  Note that any set is a superset of itself; a superset which contains elements not in the set is termed a *proper superset* of the set.
+
 Relations
 ---------
 

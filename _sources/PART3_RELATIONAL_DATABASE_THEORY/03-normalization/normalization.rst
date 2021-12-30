@@ -4,10 +4,10 @@
 Normalization
 =============
 
-In this chapter we discuss some aspects of how a database is structured - what relation schemas should we use to store our data?  While the material in this chapter is deeply rooted in relational database theory, the basic concepts can be understood without the theoretical foundation, and are important for all database practitioners.  The first part of this chapter, through :numref:`section {number} <normalization-by-example>`, will therefore discuss normalization from an informal perspective that should be accessible without having read the previous chapters on the relational model of the database.  The remainder of the chapter will introduce the mathematical formalism of normalization.  If you are reading the first part of this chapter without having read earlier chapters on the relational model of the database, note we use the terms relation, attribute, and tuple in discussing the objects in our database; these terms closely correspond to table, column, and row in relational database systems.
+In this chapter we discuss some aspects of how a database is structured - what relation schemas should we use to store our data?  While the material in this chapter is deeply rooted in relational database theory, the basic concepts can be understood without the theoretical foundation, and are important for all database practitioners.  If you are reading this chapter without having read earlier chapters on the relational model of the database, note we use the terms relation, attribute, and tuple in discussing the objects in our database; these terms closely correspond to the terms table, column, and row in relational database systems.
 
-Motivation
-::::::::::
+Introduction
+::::::::::::
 
 Normalization is the process of modifying a database structure to meet certain requirements. These requirements are defined by a series of *normal forms*, which we will define shortly.
 
@@ -23,22 +23,24 @@ There are three common types of errors that we can consider to better understand
 .. table:: **classes**
     :class: lined-table
 
-    ======== ==================== ===== =========== ====== ==========
-    class_id class_name           time  instructor  office department
-    ======== ==================== ===== =========== ====== ==========
-    1        Algebra I            8:00  Mr. Reyes   124    Math
-    2        Geometry             10:00 Mr. Reyes   124    Math
-    3        World History        9:00  Ms. Tan     111    Humanities
-    4        English Literature   10:00 Ms. Larsen  105    Humanities
-    5        Physics              11:00 Ms. Musa    122    Science
-    6        Chemistry            13:00 Ms. Musa    122    Science
-    7        Music                9:00  Mr. Pal     103    Humanities
-    ======== ==================== ===== =========== ====== ==========
+    ==================== ===== ========= =========== ====== ==========
+    class_name           time  classroom instructor  office department
+    ==================== ===== ========= =========== ====== ==========
+    Algebra I            8:00  C01       Mr. Reyes   B24    Math
+    Geometry             10:00 C01       Mr. Reyes   B24    Math
+    World History        9:00  C15       Ms. Tan     A11    Humanities
+    English Literature   10:00 C09       Ms. Larsen  A05    Humanities
+    Physics              11:00 C06       Ms. Musa    B22    Science
+    Chemistry            13:00 C17       Ms. Musa    B22    Science
+    Music                9:00  C25       Mr. Pal     A03    Humanities
+    ==================== ===== ========= =========== ====== ==========
+
+This relation also exhibits redundancy.  We are given the facts that Mr. Reyes is in the Math department and his office is in room 124 multiple times, for example.  Note that Mr. Reyes appearing multiple times is not itself redundancy, as each appearance is a new fact: Mr. Reyes teaches Algebra I, and Mr. Reyes teaches Geometry.  We do not have any NULLs in this example, but we will see shortly how they might appear when we add or remove data.
 
 Insert anomaly
 ##############
 
-Consider what happens when a new instructor joins the faculty at the school.  Mr. Hassan is a new faculty member in the department of Math, but he has not yet been assigned any classes to teach.  How should we add Mr. Hassan to the database?  There are a few options, but none of them are good - whatever we do, we must provide values for **class_id**, **class_name**, and **time** in our new tuple.  We might think that NULL is the best choice for each of these attributes, as otherwise we must create fake class information.  Either way, we are making trouble for ourselves later on - our database now contains a tuple that must be handled in a special fashion, different from the other tuples in the relation.
+Consider what happens when a new instructor joins the faculty at the school.  Mr. Hassan is a new faculty member in the department of Math, but he has not yet been assigned any classes to teach.  How should we add Mr. Hassan to the database?  There are a few options, but none of them are good - whatever we do, we must provide values for **class_name**, **classroom**, and **time** in our new tuple.  We might think that NULL is the best choice for each of these attributes, as otherwise we must create fake class information.  Either way, we are making trouble for ourselves later on - our database now contains a tuple that must be handled in a special fashion, different from the other tuples in the relation.
 
 Delete anomaly
 ##############
@@ -50,47 +52,130 @@ Update anomaly
 
 Update anomalies are a direct consequence of the redundancy in our database.  Consider what happens when Mr. Reyes changes offices.  If we are incautious, we will update the tuple listing Mr. Reyes as the teacher of Algebra I, but forget to update the tuple for Geometry, leaving our data internally consistent.  Mr. Reyes will be listed as having two different offices, without any indication which is correct.  To avoid trouble, we must remember to always update *all* classes for which Mr. Reyes is the instructor.
 
-Solution
---------
+Example solution
+----------------
 
-Normalizing the **classes** relation will prevent each of the situations above.
+Normalizing the **classes** relation will prevent each of the situations above.  In effect, normalization requires us to structure relations such that the data is expressed in a very simple and consistent form.  We typically achieve normalization by *decomposing* a relation into multiple smaller relations.
 
-A primary goal is structuring relations such that the data is expressed in a very simple and consistent form.  In a given relation, some thing or concept is uniquely identified by a primary key composed of one or more attributes; every other attribute should represent a *single-valued* fact about the thing or concept.  For example, a relation about persons might associate each person with a unique identifier, and include attributes for the person's name and other relevant facts about the person (this assumes all persons have one name - not always a correct assumption!).  The relation should *not* contain multi-valued facts about the person, such as employment history or the names of the person's children.  The relation should *not* contain extended facts about some related thing or concept; the person relation might include the name of the country the person resides in (or some key representing the country), but no other facts about the country.  Extended facts belong in another relation.
+Informally, in a normalized relation, some thing or concept is uniquely identified by a primary key composed of one or more attributes and every other attribute represents a *single-valued* fact about the thing or concept only. For our example, the **classes** relation describes classes; it has **class_name** as a primary key, and **classroom**, **time**, and **instructor** as single-valued attributes.  (An example of an attribute that is not single-valued would be a list of students in the class.  We call such an attribute *multi-valued*.)  However, **office** and **department** are not really facts about a class; instead, they are facts about instructors.  These extended facts need to be removed to another relation through decomposition of the **classes** relation:
+
+.. table:: **classes**
+    :class: lined-table
+
+    ==================== ===== ========= ===========
+    class_name           time  classroom instructor
+    ==================== ===== ========= ===========
+    Algebra I            8:00  C01       Mr. Reyes
+    Geometry             10:00 C01       Mr. Reyes
+    World History        9:00  C15       Ms. Tan
+    English Literature   10:00 C09       Ms. Larsen
+    Physics              11:00 C06       Ms. Musa
+    Chemistry            13:00 C17       Ms. Musa
+    Music                9:00  C25       Mr. Pal
+    ==================== ===== ========= ===========
+
+.. table:: **instructors**
+    :class: lined-table
+
+    =========== ====== ==========
+    name        office department
+    =========== ====== ==========
+    Mr. Reyes   B24    Math
+    Ms. Tan     A11    Humanities
+    Ms. Larsen  A05    Humanities
+    Ms. Musa    B22    Science
+    Mr. Pal     A03    Humanities
+    =========== ====== ==========
+
+Note how we have eliminated redundancy through this decomposition.  If we need to update office information for an instructor, there is exactly one tuple to update.  We also no longer need to worry about modification anomalies.  Adding or removing an instructor is completely independent of adding or removing classes; this also removes any need for excessive NULLs in the **classes** relation [#]_.
+
+Normal forms
+::::::::::::
+
+The concept of normalization originates with the relational model itself.  Additional refinements have been added over time, leading to a series of normal forms, which mostly build on earlier normal forms.  We will not study every normal form that has been proposed, but focus on the forms which are most useful and most likely to be of value in most applications.  The first form we consider is appropriately named the *first normal form*, abbreviated 1NF.  We proceed with the second, third, and fourth normal forms (2NF, 3NF, 4NF) as well as Boyce-Codd normal form (BCNF), which fits in between 3NF and 4NF.  We briefly mention fifth normal form.
+
+When a database meets the requirement for a normal form, we say that the database is *in* the form.  As commonly defined, most normal forms include a requirement that earlier normal forms are also met.  Therefore, any database that is in 4NF is necessarily also in 1NF, 2NF, 3NF, and BCNF; a database in BCNF is also in 3NF and below; and so forth.  However, it is also true that higher forms address less frequently occurring situations, so, for example, a database that has been restructured to be in 3NF is very likely to also be in BCNF or even 4NF or 5NF.  3NF is generally considered the minimum requirement a database must meet to be considered "normalized".
+
+To explain most of the normal forms, we first need to provide some additional foundation.  However, we can explain 1NF immediately.  1NF requires that the domain of an attribute of a relation contains *atomic* values only.  Atomic here simply means that we cannot usefully break the value down into smaller parts.  Non-atomic elements include compound values, arrays of values, and relations.  For example, a character string containing an author's name may be atomic [#]_, but a string identifying a book by author and title is probably compound; a list of authors would be an array; and a table of values giving a book's publication history (including publisher, year, ISBN, etc. for each publication) would be a relation.  To meet the 1NF requirements, compound values should be broken into separate attributes, while arrays and relations should be broken out into their own relations (with a foreign key referencing the original relation).
+
+1NF is often described as simply part of the definition of a relational database, and early relational database systems indeed provided no capabilities that would permit violations of 1NF.  Some modern database systems now provide support for compound values, in the form of user-defined types, and array values.  While 1NF technically remains a requirement for all higher normal forms, for certain applications these violations of 1NF may be highly useful.  Some authors have argued for permitting relation-valued attributes as well.
+
+Keys and superkeys
+::::::::::::::::::
+
+This section reiterates some material from :numref:`Chapter {number} <relational-model-chapter>` in which we defined the term *key*, but in a bit more detail.  We start by defining a more general term, *superkey*.
+
+A superkey of a relation is some subset of attributes of the relation which uniquely identifies any tuple in the relation.  Returning to an example from :numref:`Chapter {number} <relational-model-chapter>`, consider the **simple_books** relation below:
+
+.. table:: **simple_books**
+    :class: lined-table
+
+    =============== ======================== ==== ================
+    author          title                    year genre
+    =============== ======================== ==== ================
+    Ralph Ellison   Invisible Man            1952 fiction
+    Jhumpa Lahiri   Unaccustomed Earth       2008 fiction
+    J.R.R. Tolkien  The Hobbit               1937 fantasy
+    Isabel Allende  The House of the Spirits 1982 magical realism
+    =============== ======================== ==== ================
+
+We assert that the set of attributes {**author**, **title**, and **year**} is a superkey for the **simple_books** relation.
+
+The definition of superkey applies not just to the current data in the relation, but to *any data we might possibly store in the relation*.  That is, a superkey is not a transitory property of the data, but a constraint we impose on the data.  For example, although each publication year listed in the **year** column above is unique to its book, that cannot be guaranteed for future books we might add to the relation.  Therefore the set {**year**} is not a superkey for **simple_books**.
+
+A second, and equivalent definition of superkey is as a subset of attributes of the relation that are guaranteed to contain a unique setting of values for any tuple in the relation.  For our example, this means there can never be two books in the **simple_books** relation which share the same author, title, and year.  From this second definition and the definition of a relation, we note that *every* relation has at least one superkey: the set of all attributes of the relation.  The set {**author**, **title**, **year**, and **genre**} is a superkey for the **simple_books** relation simply because every tuple in the relation must be unique.
+
+We can further state that any subset of attributes of the relation which is a superset of some superkey of the relation is also a superkey of the relation.
+
+A key of a relation is a superkey of the relation from which we cannot subtract any attributes and get a superkey.  For the **simple_books** relation, we assert that {**author**, **title**} is a superkey of the relation; however, both **author** and **title** are needed.  That is, neither {**author**} nor {**title**} is a superkey of **simple_books**.  Therefore, {**author**, **title**} is a key of **simple_books**; however, {**author**, **title**, **year**} is a superkey but not a key because we can remove **year** and still have a superkey [#]_.
+
+Functional dependencies
+:::::::::::::::::::::::
+
+- types
+- derivation rules
+- closure
+  - third definition of superkey
+
+Decomposition requirements
+::::::::::::::::::::::::::
+
+- lossless join
+- dependency preservation
+
+Second, third, and Boyce-Codd normal forms
+::::::::::::::::::::::::::::::::::::::::::
+
+- 2NF
+- 3NF/BCNF
+- when to relax
 
 
-redundancy, data consistency, null
 
-Other goals include reducing or eliminating redundancy, and ensuring data integrity.   Continuing our person example, we would not want the person's name spelled differently in one place in the database than in another; we would not want the person's country of residence to be different in one place than in another.  This goal is largely met when our primary goal is met; when data is in its simplest form, each fact is expressed once and only once, eliminating
-
-Example
--------
-
-
-
+- 1NF - author, author awards, book title, ...
+- 2NF - author, book title, author birth/death, ... (author -> author dates)
+- 3NF & BCNF - book_id, author, author dates, book title, ...?
+- relaxation: award, year, format -> book and book -> format
+- 4NF - author, books, author awards?
+- higher
 
 
-.. _normalization-by-example:
+Multivalue dependencies and fourth normal form
+::::::::::::::::::::::::::::::::::::::::::::::
 
-Normalization by example
-::::::::::::::::::::::::
+Normalization in database design
+::::::::::::::::::::::::::::::::
 
+Databases can be created using a number of approaches.  The approach taken depends greatly on the circumstances which have led to the need for a database.
 
-Data modeling and normalization
-:::::::::::::::::::::::::::::::
+In some cases, data have been previously collected and stored in some fashion, but not organized into something we would consider a database.  Many scientific, industrial, and business processes produce large amounts of data in the form of sensor readings, application logs, reports, and form responses.  This data may exist in electronic form or on paper.  There may be little structure to the data; it may exist in a *flat* form in which there is only one type of record which stores every piece of information relevant to some event.  Creating a database to more efficiently work with such data may be best accomplished using a top-down approach, in which relations (or tables) are systematically decomposed.  Data modeling (:numref:`Part {number} <data-modeling-part`) may be used as part of this process, to document, communicate, and reason about the evolving database.
 
-Databases can be created using a number of approaches.  The approach taken depends greatly on the circumstances which have led to the need for a database.  Data modeling (:numref:`Part {number} <data-modeling-part`) and normalization both have a role to play.
+In contrast, when creating a new software application, a bottom-up approach may be preferred.  The application developers and other interested parties work to identify the data that need to be collected and stored.  A multitude of relations will arise naturally, corresponding to different parts of the application.  Data modeling should almost always occur early in this process.
 
-In some cases, data have been previously collected and stored in some fashion, but not organized into something we would consider a database.  Many scientific, industrial, and business processes produce large amounts of data in the form of sensor readings, application logs, reports, and form responses.  This data may exist in electronic form or on paper.  There may be little structure to the data; it may exist in a *flat* form in which there is only one type of record which stores every piece of information relevant to some event.  Creating a database to more efficiently work with such data may be best accomplished using a *top-down* approach, in which relations (or tables) are broken down into multiple, smaller relations.
-
-In contrast, when creating a new software application, a *bottom-up* approach may be preferred.  The application developers and other interested parties work to identify the data that need to be collected and stored.  A multitude of relations will arise naturally, corresponding to different parts of the application.
-
-Whatever the approach, data modeling can provide useful insights, and will typically lead to a better database design; we strongly recommend this as a first step.  Data modeling is very effective at producing relations that accurately represent independent concepts and the relationships between them.
-
-Normalization provides a different perspective on database design.  As with data modeling, our understanding of the real world and our data informs our design choices.  However, while data modeling focuses on mapping concepts in the real world to relations, normalization works to produce a database structure that is more resistant to data errors.  Data modeling ensures our database accurately captures the data we need, while normalization ensures our database can be used effectively.  The two activities are thus complementary.  Whether or not normalization is applied formally, an understanding of normalization and its trade-offs is important for any database designer.
-
+Data modeling is very effective at producing relations that accurately represent independent concepts and the relationships between them.  However, some relations may still require normalization.  Normalization provides a different perspective on database design.  As with data modeling, our understanding of the real world and our data informs our choices.  However, while data modeling focuses on mapping concepts in the real world to relations, normalization works to produce a database structure that is more resistant to data errors.  Data modeling ensures our database accurately captures the data we need, while normalization ensures our database can be used effectively.  The two activities are thus complementary.  Whether or not normalization is applied formally, an understanding of normalization and its trade-offs is important for any database designer.
 
 Trade-offs
-----------
+::::::::::
 
 - efficiency (space vs time)
 
@@ -120,5 +205,14 @@ Trade-offs
 
 |chapter-end|
 
+----
+
+**Notes**
+
+.. [#] We may need to use NULLs when information is truly unknown or absent; for example, we would set the **instructor** attribute NULL for classes which have no instructor assigned at the current time.  Similarly, we might set the **office** attribute NULL for new instructors who do not yet have an office.  Neither of these cases requires special handling in our software, so we consider these NULLs acceptable.  While it is possible to design a database that avoids even these NULLs, it would complicate the database (with more relations) for little gain.
+
+.. [#] It is common practice in some countries where English is the primary language to break a name into first (or given), middle, and last name (or surname).  However, this naming scheme is by no means universal, even for English speakers.  Unless there is a compelling need to break a name into components for your application, we recommend a single name attribute.  For more on this topic, see https://www.w3.org/International/questions/qa-personal-names.
+
+.. [#] We reiterate that a superkey is a constraint *we impose* on the data.  When designing a database, we of course hope to create a structure that accommodates true facts from the world, but a) we sometimes fail due to incomplete information about the world, and b) we sometimes compromise on a simpler design that accommodates *most* facts from the world.  For our **simple_books** relation, we are unaware of any books by the same author with the same title in the same year, so we are comfortable asserting that {**author**, **title**, **year**} is a valid superkey (but we could be wrong).  On the other hand, this design intentionally fails to capture any number of the complexities of books in the real world.  For one example, authors occasionally re-publish a book with small changes, under the same title, years after the original publication.  Is this the same "book" (in which case **year** really stands for "year of first publication"), or a different book (in which case {**author**, **title**} is *not* a superkey)?  For another example, we are completely ignoring the fact that some books have multiple authors, and some have no known authors.  Databases about books can be very complex!
 
 |license-notice|
