@@ -105,32 +105,165 @@ Keys and superkeys
 
 This section reiterates some material from :numref:`Chapter {number} <relational-model-chapter>` in which we defined the term *key*, but in a bit more detail.  We start by defining a more general term, *superkey*.
 
-A superkey of a relation is some subset of attributes of the relation which uniquely identifies any tuple in the relation.  Returning to an example from :numref:`Chapter {number} <relational-model-chapter>`, consider the **simple_books** relation below:
+A superkey of a relation is some subset of attributes of the relation which uniquely identifies any tuple in the relation.  Consider the **books** relation below:
 
-.. table:: **simple_books**
+.. table:: **books**
     :class: lined-table
 
-    =============== ======================== ==== ================
-    author          title                    year genre
-    =============== ======================== ==== ================
-    Ralph Ellison   Invisible Man            1952 fiction
-    Jhumpa Lahiri   Unaccustomed Earth       2008 fiction
-    J.R.R. Tolkien  The Hobbit               1937 fantasy
-    Isabel Allende  The House of the Spirits 1982 magical realism
-    =============== ======================== ==== ================
+    =============== ========================== ==== ================ ============ ============
+    author          title                      year genre            author_birth author_death
+    =============== ========================== ==== ================ ============ ============
+    Ralph Ellison   Invisible Man              1952 fiction          1914-03-01   1994-04-16
+    Jhumpa Lahiri   Unaccustomed Earth         2008 fiction          1967-07-11
+    J.R.R. Tolkien  The Hobbit                 1937 fantasy          1892-01-03   1973-09-02
+    Isabel Allende  The House of the Spirits   1982 magical realism  1942-08-02
+    J.R.R. Tolkien  The Fellowship of the Ring 1954 fantasy          1892-01-03   1973-09-02
+    =============== ========================== ==== ================ ============ ============
 
-We assert that the set of attributes {**author**, **title**, and **year**} is a superkey for the **simple_books** relation.
+(The blank entries for **author_death** in this table represent NULLs.  The authors are still living at the time of this writing.)
 
-The definition of superkey applies not just to the current data in the relation, but to *any data we might possibly store in the relation*.  That is, a superkey is not a transitory property of the data, but a constraint we impose on the data.  For example, although each publication year listed in the **year** column above is unique to its book, that cannot be guaranteed for future books we might add to the relation.  Therefore the set {**year**} is not a superkey for **simple_books**.
+We assert that the set of attributes {**author**, **title**, and **year**} is a superkey for the **books** relation.
 
-A second, and equivalent definition of superkey is as a subset of attributes of the relation that are guaranteed to contain a unique setting of values for any tuple in the relation.  For our example, this means there can never be two books in the **simple_books** relation which share the same author, title, and year.  From this second definition and the definition of a relation, we note that *every* relation has at least one superkey: the set of all attributes of the relation.  The set {**author**, **title**, **year**, and **genre**} is a superkey for the **simple_books** relation simply because every tuple in the relation must be unique.
+The definition of superkey applies not just to the current data in the relation, but to *any data we might possibly store in the relation*.  That is, a superkey is not a transitory property of the data, but a constraint we impose on the data.  For example, although each publication year listed in the **year** column above is unique to its book, that cannot be guaranteed for future books we might add to the relation.  Therefore the set {**year**} is not a superkey for **books**.
 
-We can further state that any subset of attributes of the relation which is a superset of some superkey of the relation is also a superkey of the relation.
+A second, and equivalent definition of superkey is as a subset of attributes of the relation that are guaranteed to contain a unique setting of values for any tuple in the relation.  For our example, this means there can never be two books in the **books** relation which share the same author, title, and year.  From this second definition and the definition of a relation, we note that *every* relation has at least one superkey: the set of all attributes of the relation.  The set {**author**, **title**, **year**, **genre**, **author_birth**, **author_death**} is a superkey for the **books** relation simply because every tuple in the relation must be unique.
 
-A key of a relation is a superkey of the relation from which we cannot subtract any attributes and get a superkey.  For the **simple_books** relation, we assert that {**author**, **title**} is a superkey of the relation; however, both **author** and **title** are needed.  That is, neither {**author**} nor {**title**} is a superkey of **simple_books**.  Therefore, {**author**, **title**} is a key of **simple_books**; however, {**author**, **title**, **year**} is a superkey but not a key because we can remove **year** and still have a superkey [#]_.
+We can further state that any subset of attributes of the relation which is a superset of some superkey of the relation is also a superkey of the relation.  For our example, {**author**, **title**, **year**, **author_birth**} must be a superkey because it is a superset of a known superkey.
+
+A *key* of a relation is a superkey of the relation from which we cannot subtract any attributes and get a superkey.  For the **books** relation, we assert that {**author**, **title**} is a superkey of the relation; furthermore, both **author** and **title** are needed.  That is, neither {**author**} nor {**title**} is a superkey of **books**.  Therefore, {**author**, **title**} is a key of **books**; the set {**author**, **title**, **year**} is a superkey but not a key because we can remove **year** and still have a superkey [#]_.
+
+Identifying the keys of a relation is a key step in analyzing whether or not a relation is already normalized with respect to 2NF or higher.
 
 Functional dependencies
 :::::::::::::::::::::::
+
+A *functional dependency* (FD) is a statement about two sets of attributes of a relation.  Consider two sets of attributes, which we will label **X** and **Y**.  We say that **X** *functionally determines* **Y**, or **Y** is *functionally dependent on* **X**, if, whenever two tuples in the relation agree on the values in **X**, they must also agree on the values in **Y**.  The notation for this is:
+
+.. math::
+    \text{X} \rightarrow \text{Y}
+
+This is a topic closely related to keys.  As with keys, FDs are constraints that we impose on the data.  Another way of thinking about a functional dependency is, if you had a relation such that the relation contains only the attributes that are in **X** or **Y**, then **X** would be a key for that relation.  That is, **X** uniquely determines everything in **X** and **Y**.  (Alternately, we could define a key as a subset of attributes of a relation that functionally determines all subsets of attributes of the relation.)
+
+Another way of thinking about FDs is, if **X** functionally determines **Y**, then if we know the values in **X**, we know or can determine the values in **Y**, because **Y** just contains single-valued facts about **X**.  In our **books** relation, the set {**author**, **title**} functionally determines the set {**year**}, because if we know the author and title of the book, then we should be able to find out what the publication year is; and whatever sources we consult to find the year should all give us the same answer.  The dependency is "functional" in this sense; there exists some *function* between the domain of (author, title) pairs and the domain of publication years that yields the correct answer for every valid input.  The function in this case is simply a mapping between domains, not something we can analytically derive.
+
+Here are some more FDs for the **books** relation:
+
+.. math::
+
+    \begin{eqnarray*}
+    \text{\{author, title\}} & \rightarrow & \text{\{genre\}} \\
+    \text{\{author\}} & \rightarrow & \text{\{author_birth, author_death\}} \\
+    \text{\{author, title\}} & \rightarrow & \text{\{title, year\}} \\
+    \text{\{title, genre\}} & \rightarrow & \text{\{title\}} \\
+    \end{eqnarray*}
+
+The first FD tells us that each book is categorized into exactly one genre in our database.  The second tells us that an author's dates of birth and death should be the same every time the author appears in the database.  The last two FDs are different from the previous ones; in these, there is an overlap between the set on the left-hand side and the set on the right-hand side.  We will give special names to these in a moment.  For now, the third FD tells us that, if we know the author and title of a book, then we know the title and the publication year.  The final FD simply tells us that any two tuples having the same title and genre, have the same title!
+
+Types of functional dependency
+------------------------------
+
+FDs are categorized into three types: *trivial*, *non-trivial*, and *completely non-trivial*.
+
+A trivial FD is one in which the right-hand side of the FD is a subset of the left-hand side.  The last FD in our example above is a trivial FD.  A trivial FD conveys no useful information - it tells us "we know what we know" - but they still have some use to us in our normalization procedures.  Every trivial FD we can write down for a relation is true, as long as the left-hand side of the FD is a subset of the attributes of the relation.
+
+A non-trivial FD is one in which some part of the right-hand side of the FD is not in the left-hand side.  The intersection of the left-hand side and the right-hand side is not empty, but the right-hand side is not a subset of the left-hand side.  The third FD above is a non-trival FD.  These FDs convey some new information.
+
+As you might guess by now, a completely non-trivial FD is one for which there is no overlap between the left-hand side and the right-hand side - the intersection of the two sets is the empty set.  The first two FDs above are completely non-trivial.  Identifying completely non-trivial FDs in our relations is a crucial step in normalization.
+
+Inference rules
+---------------
+
+Many FDs can be inferred or derived from other FDs.  There are a number of inference rules that yield useful derivations, all of which can be proven from first principles or from other rules.  As we are focused on the practical aspects of normalization, we provide only three rules, and without proof.
+
+Let X, Y, and Z be subsets of the attributes of the same relation.  Let the concatenation of Y and Z be denoted YZ.  Then we have:
+
+*Splitting rule (or decomposition, or projective, rule)*
+    If
+
+    .. math::
+
+        X \rightarrow YZ
+
+    holds, then so do
+
+    .. math::
+
+        X \rightarrow Y \\
+        X \rightarrow Z
+
+    Plainly stated, if knowing the values for X tells us the values for Y **and** Z, then knowing the values for X tells us the values for Y, and likewise for Z.  In our **books** example, we have
+
+    .. math::
+
+        \text{\{author\}} \rightarrow \text{\{author_birth, author_death\}}
+
+    therefore, it is also true that
+
+    .. math::
+
+        \text{\{author\}} \rightarrow \text{\{author_birth\}} \\
+        \text{\{author\}} \rightarrow \text{\{author_death\}}
+
+    Note that we can "split" the right-hand side only.  For example, given :math:`\text{\{author, title\}} \rightarrow \text{\{year\}}`, it is **not** true that :math:`\text{\{author\}} \rightarrow \text{\{year\}}`.
+
+*Combining rule (or union, or additive, rule)*
+    This is the splitting rule in reverse.  If we have both of
+
+    .. math::
+
+        X \rightarrow Y \\
+        X \rightarrow Z
+
+    then
+
+    .. math::
+
+        X \rightarrow YZ
+
+    also holds. In our **books** example, we have
+
+    .. math::
+
+        \text{\{author, title\}} \rightarrow \text{\{year\}} \\
+        \text{\{author, title\}} \rightarrow \text{\{genre\}}
+
+    thus
+
+    .. math::
+
+        \text{\{author, title\}} \rightarrow \text{\{year, genre\}}
+
+
+*Transitive rule*
+    If we have both of
+
+    .. math::
+
+        X \rightarrow Y \\
+        Y \rightarrow Z
+
+    then
+
+    .. math::
+
+        X \rightarrow Z
+
+    also holds.  That is, if knowing X tells us Y, and from Y we can know Z, then knowing X also tells us Z.
+
+    We do not have a direct example from our **books** relation to use; but imagine that we augment our relation with a **store_section** attribute, used by some bookstore.  The **store_section** attribute indicates the part of the store in which a book can be found.  If we then assert that
+
+    .. math::
+
+        \text{\{genre\}} \rightarrow \text{\{store_section\}} \\
+        \text{\{author, title\}} \rightarrow \text{\{genre\}}
+
+    then
+
+    .. math::
+
+        \text{\{author, title\}} \rightarrow \text{\{store_section\}}
+
+***Oops, also need augmenting rule, I think.***
 
 - types
 - derivation rules
