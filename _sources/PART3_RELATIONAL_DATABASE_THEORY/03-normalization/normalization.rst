@@ -96,7 +96,7 @@ The concept of normalization originates with the relational model itself.  Addit
 
 When a database meets the requirement for a normal form, we say that the database is *in* the form.  As commonly defined, most normal forms include a requirement that earlier normal forms are also met.  Therefore, any database that is in 4NF is necessarily also in 1NF, 2NF, 3NF, and BCNF; a database in BCNF is also in 3NF and below; and so forth.  However, it is also true that higher forms address less frequently occurring situations, so, for example, a database that has been restructured to be in 3NF is very likely to also be in BCNF or even 4NF or 5NF.  3NF is generally considered the minimum requirement a database must meet to be considered "normalized".
 
-To explain most of the normal forms, we first need to provide some additional foundation.  However, we can explain 1NF immediately.  1NF requires that the domain of an attribute of a relation contains *atomic* values only.  Atomic here simply means that we cannot usefully break the value down into smaller parts.  Non-atomic elements include compound values, arrays of values, and relations.  For example, a character string containing an author's name may be atomic [#]_, but a string identifying a book by author and title is probably compound; a list of authors would be an array; and a table of values giving a book's publication history (including publisher, year, ISBN, etc. for each publication) would be a relation.  To meet the 1NF requirements, compound values should be broken into separate attributes, while arrays and relations should be broken out into their own relations (with a foreign key referencing the original relation).
+To explain most of the normal forms, we first need to provide some additional foundation, covered in the next few sections.  However, we can explain 1NF immediately.  1NF requires that the domain of an attribute of a relation contains *atomic* values only.  Atomic here simply means that we cannot usefully break the value down into smaller parts.  Non-atomic elements include compound values, arrays of values, and relations.  For example, a character string containing an author's name may be atomic [#]_, but a string identifying a book by author and title is probably compound; a list of authors would be an array; and a table of values giving a book's publication history (including publisher, year, ISBN, etc. for each publication) would be a relation.  To meet the 1NF requirements, compound values should be broken into separate attributes, while arrays and relations should be broken out into their own relations (with a foreign key referencing the original relation).
 
 1NF is often described as simply part of the definition of a relational database, and early relational database systems indeed provided no capabilities that would permit violations of 1NF.  Some modern database systems now provide support for compound values, in the form of user-defined types, and array values.  While 1NF technically remains a requirement for all higher normal forms, for certain applications these violations of 1NF may be highly useful.  Some authors have argued for permitting relation-valued attributes as well.
 
@@ -137,14 +137,16 @@ Identifying the keys of a relation is a key step in analyzing whether or not a r
 Functional dependencies
 :::::::::::::::::::::::
 
-A *functional dependency* (FD) is a statement about two sets of attributes of a relation.  Consider two sets of attributes, which we will label **X** and **Y**.  We say that **X** *functionally determines* **Y**, or **Y** is *functionally dependent on* **X**, if, whenever two tuples in the relation agree on the values in **X**, they must also agree on the values in **Y**.  The notation for this is:
+Now we turn to the topic of functional dependencies, which are closely related to superkeys.
+
+A *functional dependency* (FD) is a statement about two sets of attributes of a relation.  Consider two sets of attributes, which we will label *X* and *Y*.  We say that *X* *functionally determines* *Y*, or *Y* is *functionally dependent on* *X*, if, whenever two tuples in the relation agree on the values in *X*, they must also agree on the values in *Y*.  The notation for this is:
 
 .. math::
-    \text{X} \rightarrow \text{Y}
+    X \rightarrow Y
 
-This is a topic closely related to keys.  As with keys, FDs are constraints that we impose on the data.  Another way of thinking about a functional dependency is, if you had a relation such that the relation contains only the attributes that are in **X** or **Y**, then **X** would be a key for that relation.  That is, **X** uniquely determines everything in **X** and **Y**.  (Alternately, we could define a key as a subset of attributes of a relation that functionally determines all subsets of attributes of the relation.)
+As with keys, FDs are constraints that we impose on the data.  Another way of thinking about a functional dependency is, if you had a relation such that the relation contains only the attributes that are in *X* or *Y*, then *X* would be a superkey for that relation.  That is, *X* uniquely determines everything in the union of *X* and *Y*.  (We can now provide another defintiion of superkey as a subset of attributes of a relation that functionally determines the set of all attributes of the relation.)
 
-Another way of thinking about FDs is, if **X** functionally determines **Y**, then if we know the values in **X**, we know or can determine the values in **Y**, because **Y** just contains single-valued facts about **X**.  In our **books** relation, the set {**author**, **title**} functionally determines the set {**year**}, because if we know the author and title of the book, then we should be able to find out what the publication year is; and whatever sources we consult to find the year should all give us the same answer.  The dependency is "functional" in this sense; there exists some *function* between the domain of (author, title) pairs and the domain of publication years that yields the correct answer for every valid input.  The function in this case is simply a mapping between domains, not something we can analytically derive.
+Another way of thinking about FDs is, if *X* functionally determines *Y*, then if we know the values in *X*, we know or can determine the values in *Y*, because *Y* just contains single-valued facts about *X*.  In our **books** relation, the set {**author**, **title**} functionally determines the set {**year**}, because if we know the author and title of the book, then we should be able to find out what the publication year is; and whatever sources we consult to find the year should all give us the same answer.  The dependency is "functional" in this sense; there exists some *function* between the domain of (author, title) pairs and the domain of publication years that yields the correct answer for every valid input.  The function in this case is simply a mapping between domains, not something we can analytically derive.
 
 Here are some more FDs for the **books** relation:
 
@@ -173,9 +175,89 @@ As you might guess by now, a completely non-trivial FD is one for which there is
 Inference rules
 ---------------
 
-Many FDs can be inferred or derived from other FDs.  There are a number of inference rules that yield useful derivations, all of which can be proven from first principles or from other rules.  As we are focused on the practical aspects of normalization, we provide only three rules, and without proof.
+Many FDs can be inferred or derived from other FDs.  We are particularly interested in non-trivial FDs which have a maximal set on the right-hand side, that is, a set which cannot be added to without making the FD false.  There is a straightforward algorithm to infer such FDs from a set of FDs, which we discuss in the next section.  We need the five inference rules below for the algorithm.  The first three inference rules are known as *Armstrong's axioms*, and can be used to prove the remaining rules.
 
-Let X, Y, and Z be subsets of the attributes of the same relation.  Let the concatenation of Y and Z be denoted YZ.  Then we have:
+We present these without proof, but the intuition behind these should be clear.  Let *X*, *Y*, and *Z* be subsets of the attributes of the same relation.  Let the union of *Y* and *Z* be denoted *YZ*.  Then we have:
+
+*Reflexive rule*
+    If Y is a subset of X, then
+
+    .. math::
+
+        X \rightarrow Y
+
+    This is simply a statement that all trivial FDs are true.
+
+*Augmentation rule*
+    If
+
+    .. math::
+
+        X \rightarrow Y
+
+    then
+
+    .. math::
+
+        XZ \rightarrow YZ
+
+    also holds.
+
+    This rule says we can add the same attributes to both the left-hand and right-hand sides of an FD.  Trivially, if we add *Z* to what we know (left-hand side), then we should be able to determine *Z* in addition to what we could determine previously (right-hand side).
+
+    In our **books** example, we are given
+
+    .. math::
+
+        \text{\{author\}} \rightarrow \text{\{author_birth, author_death\}}
+
+    therefore, it is also true that
+
+    .. math::
+
+        \text{\{author, genre\}} \rightarrow \text{\{author_birth, author_death, genre\}}
+
+    A special case of this is that we can add the left-hand side to both sides; this leaves the left-hand side unchanged, since the union of any set with itself is just the set.  We will use this trick later:
+
+    .. math::
+
+        X \rightarrow Y
+
+    implies
+
+    .. math::
+
+        X \rightarrow XY
+
+
+*Transitive rule*
+    If we have both of
+
+    .. math::
+
+        X \rightarrow Y \\
+        Y \rightarrow Z
+
+    then
+
+    .. math::
+
+        X \rightarrow Z
+
+    also holds.  That is, if knowing *X* tells us *Y*, and from *Y* we can know *Z*, then knowing *X* also tells us *Z*.
+
+    We do not have a direct example from our **books** relation to use; but imagine that we augment our relation with a **store_section** attribute, used by some bookstore.  The **store_section** attribute indicates the part of the store in which a book can be found.  If we then assert that
+
+    .. math::
+
+        \text{\{genre\}} \rightarrow \text{\{store_section\}} \\
+        \text{\{author, title\}} \rightarrow \text{\{genre\}}
+
+    then
+
+    .. math::
+
+        \text{\{author, title\}} \rightarrow \text{\{store_section\}}
 
 *Splitting rule (or decomposition, or projective, rule)*
     If
@@ -191,7 +273,7 @@ Let X, Y, and Z be subsets of the attributes of the same relation.  Let the conc
         X \rightarrow Y \\
         X \rightarrow Z
 
-    Plainly stated, if knowing the values for X tells us the values for Y **and** Z, then knowing the values for X tells us the values for Y, and likewise for Z.  In our **books** example, we have
+    Plainly stated, if knowing the values for *X* tells us the values for *Y* **and** *Z*, then knowing the values for *X* tells us the values for *Y*, and likewise for *Z*.  In our **books** example, we have
 
     .. math::
 
@@ -233,40 +315,34 @@ Let X, Y, and Z be subsets of the attributes of the same relation.  Let the conc
 
         \text{\{author, title\}} \rightarrow \text{\{year, genre\}}
 
+While any FDs that can be inferred from a given collection of FDs on a relation can be inferred using the above rules, there is unfortunately no way of deciding that some collection of FDs is, in fact, *complete* - that is, that the collection of FDs lets us infer every possible true FD on the relation.  FDs come from the minds of the database designer and others involved in analysis and design, a process which requires some "trial and error", i.e., iterative improvement.
 
-*Transitive rule*
-    If we have both of
+Closure
+-------
 
-    .. math::
+As mentioned, we are going to be particularly interested in non-trivial FDs which have a maximal set on the right-hand side.  The *closure* of a subset *X* of relation *R* is defined as the set of all attributes in *R* which are functionally determined by *X*, and is denoted *X*:sup:`+`.  More formally, the closure of *X* is the union of all sets {*a*} such that we can infer :math:`X \rightarrow {a}` to be true given some collection of FDs.
 
-        X \rightarrow Y \\
-        Y \rightarrow Z
+Note from this definition that the closure of a superkey of a relation is the set of all attributes of the relation.  We can use this fact to determine whether or not some set of attributes is a superkey; further, we could (given sufficient time) find all superkeys by simply examining the closure of every subset of attributes.
 
-    then
+The closure of a set of attributes can be determined with reasonable efficiency using the following algorithm.
 
-    .. math::
+*Closure algorithm*
+    test
 
-        X \rightarrow Z
+For example, for our **books** relation, we are given the following FDs:
 
-    also holds.  That is, if knowing X tells us Y, and from Y we can know Z, then knowing X also tells us Z.
+.. math::
 
-    We do not have a direct example from our **books** relation to use; but imagine that we augment our relation with a **store_section** attribute, used by some bookstore.  The **store_section** attribute indicates the part of the store in which a book can be found.  If we then assert that
+    \begin{eqnarray*}
+    \text{\{author, title\}} & \rightarrow & \text{\{year\}} \\
+    \text{\{author, title\}} & \rightarrow & \text{\{genre\}} \\
+    \text{\{author\}} & \rightarrow & \text{\{author_birth, author_death\}} \\
+    \text{\{author, title\}} & \rightarrow & \text{\{title, year\}} \\
+    \text{\{title, genre\}} & \rightarrow & \text{\{title\}} \\
+    \end{eqnarray*}
 
-    .. math::
+We already asserted that the set {author, title} is a superkey for this relation, so the closure {author, title}:sup:+ should be the set {author, title, year, genre, author_birth, author_death}.  We now show that this follows from our inference rules.
 
-        \text{\{genre\}} \rightarrow \text{\{store_section\}} \\
-        \text{\{author, title\}} \rightarrow \text{\{genre\}}
-
-    then
-
-    .. math::
-
-        \text{\{author, title\}} \rightarrow \text{\{store_section\}}
-
-***Oops, also need augmenting rule, I think.***
-
-- types
-- derivation rules
 - closure
   - third definition of superkey
 
