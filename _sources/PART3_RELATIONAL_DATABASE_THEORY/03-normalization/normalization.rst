@@ -1,5 +1,7 @@
 .. _normalization-chapter:
 
+.. |zero-width-space| unicode:: &+200B
+
 =============
 Normalization
 =============
@@ -217,7 +219,7 @@ We present these without proof, but the intuition behind these should be clear. 
 
         \text{\{author, genre\}} \rightarrow \text{\{author_birth, author_death, genre\}}
 
-    A special case of this is that we can add the left-hand side to both sides; this leaves the left-hand side unchanged, since the union of any set with itself is just the set.  We will use this trick later:
+    A special case of this is that we can add the left-hand side to both sides; this leaves the left-hand side unchanged, since the union of any set with itself is just the set:
 
     .. math::
 
@@ -320,16 +322,32 @@ While any FDs that can be inferred from a given collection of FDs on a relation 
 Closure
 -------
 
-As mentioned, we are going to be particularly interested in non-trivial FDs which have a maximal set on the right-hand side.  The *closure* of a subset *X* of relation *R* is defined as the set of all attributes in *R* which are functionally determined by *X*, and is denoted *X*:sup:`+`.  More formally, the closure of *X* is the union of all sets {*a*} such that we can infer :math:`X \rightarrow {a}` to be true given some collection of FDs.
+As mentioned, we are going to be particularly interested in non-trivial FDs which have a maximal set on the right-hand side.  The *closure* of a subset *X* of relation *R* given some collection of FDs is the union of all sets {*a*} such that *a* is an attribute of *R* and we can infer :math:`X \rightarrow {a}`.  Informally, the closure of *X* is the set of attributes which are functionally determined by *X*.  The closure of *X* is denoted *X*:sup:`+`.
 
-Note from this definition that the closure of a superkey of a relation is the set of all attributes of the relation.  We can use this fact to determine whether or not some set of attributes is a superkey; further, we could (given sufficient time) find all superkeys by simply examining the closure of every subset of attributes.
+We are interested in closure for a couple of reasons.  First, note from this definition that the closure of a superkey of a relation is the set of all attributes of the relation.  We can use this fact to test whether or not some set of attributes is a superkey; further, we could in theory find all superkeys of a relation by examining the closure of every subset of attributes (in practice this can become too much work fairly quickly as the number of attributes increases).  Second, closure will be useful in the decomposition step of our normalization algorithms.
 
-The closure of a set of attributes can be determined with reasonable efficiency using the following algorithm.
+The closure of a set of attributes can be determined using the following algorithm.
 
 *Closure algorithm*
-    test
+    Given a collection *F* of FDs and a set of attributes *X*:
 
-For example, for our **books** relation, we are given the following FDs:
+    1. Let *C* = *X*.  Trivially, :math:`X \rightarrow C`.
+    2. While there exists some functional dependency :math:`Y \rightarrow Z` in *F* such that *Y* is a subset of *C* and *Z* contains some attributes not in *C*, add the attributes in *Z* to *C* to create *C\'*.  Then,
+
+       .. math::
+
+          \begin{eqnarray*}
+          & & C \rightarrow Y    ~~\text{(reflexive rule)} \\
+          & & C \rightarrow Z    ~~\text{(transitive rule)} \\
+          & & X \rightarrow Z    ~~\text{(transitive rule)} \\
+          & & X \rightarrow C'   ~~\text{(combining rule)} \\
+          \end{eqnarray*}
+
+       Let *C* = *C\'*.
+
+    3. When no more FDs meet the criteria above, *C* = *X*:sup:`+`.
+
+We previously asserted that the set {author, title} is a superkey for our example **books** relation, so the closure {author, title}\ :sup:`+` should be the set of all attributes of **books**.  We now show that this follows from our inference rules, and from the FDs given previously:
 
 .. math::
 
@@ -341,16 +359,14 @@ For example, for our **books** relation, we are given the following FDs:
     \text{\{title, genre\}} & \rightarrow & \text{\{title\}} \\
     \end{eqnarray*}
 
-We already asserted that the set {author, title} is a superkey for this relation, so the closure {author, title}:sup:+ should be the set {author, title, year, genre, author_birth, author_death}.  We now show that this follows from our inference rules.
+1. Let *C* = {author, title}.
+2. We have :math:`\text{\{author, title\}} \rightarrow \text{\{year\}}`, and {author, title} is a subset of *C*, so add **year** to *C*: *C* = {author, title, year}.
+3. Similarly, :math:`\text{\{author, title\}} \rightarrow \text{\{genre\}}`, so let *C* = {author, title, year, genre}.
+4. We have :math:`\text{\{author\}} \rightarrow \text{\{author_birth, author_death\}}`, and {author} is a subset of *C*.  Let *C* = {author, title, year, genre, author_birth, author_death}.
+5. The algorithm completes at this point because the right-hand sides of all of the unused FDs are already subsets of *C*; and in any case, *C* already has all attributes of **books**.
 
-- closure
-  - third definition of superkey
+Thus, {author, title}\ :sup:`+` = {author, title, year, genre, author_birth, author_death}.
 
-Decomposition requirements
-::::::::::::::::::::::::::
-
-- lossless join
-- dependency preservation
 
 Second, third, and Boyce-Codd normal forms
 ::::::::::::::::::::::::::::::::::::::::::
@@ -359,6 +375,12 @@ Second, third, and Boyce-Codd normal forms
 - 3NF/BCNF
 - when to relax
 
+
+Decomposition requirements
+::::::::::::::::::::::::::
+
+- lossless join
+- dependency preservation
 
 
 - 1NF - author, author awards, book title, ...

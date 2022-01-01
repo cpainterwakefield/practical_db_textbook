@@ -56,6 +56,10 @@ code {
     padding: 0px !important;
 }
 
+dt {
+    margin-top: 2rem !important;
+}
+
 dd {
     margin-left: 3rem !important;
 }
