@@ -59,7 +59,7 @@ Example solution
 
 Normalizing the **classes** relation will prevent each of the situations above.  In effect, normalization requires us to structure relations such that the data is expressed in a very simple and consistent form.  We typically achieve normalization by *decomposing* a relation into multiple smaller relations.
 
-Informally, in a normalized relation, some thing or concept is uniquely identified by a primary key composed of one or more attributes and every other attribute represents a *single-valued* fact about the thing or concept only. For our example, the **classes** relation describes classes; it has **class_name** as a primary key, and **classroom**, **time**, and **instructor** as single-valued attributes.  (An example of an attribute that is not single-valued would be a list of students in the class.  We call such an attribute *multi-valued*.)  However, **office** and **department** are not really facts about a class; instead, they are facts about instructors.  These extended facts need to be removed to another relation through decomposition of the **classes** relation:
+Informally, in a normalized relation, some thing or concept is uniquely identified by a primary key composed of one or more attributes and every other attribute represents a *single-valued* fact about the thing or concept only. For our example, the **classes** relation describes classes; it has **class_name** as a primary key, and **classroom**, **time**, and **instructor** as single-valued attributes.  (An example of an attribute that is not single-valued would be a list of students in the class.  We call such an attribute *multi-valued*.)  However, **office** and **department** are not really facts about a class; instead, they are facts about instructors.  These extended facts need to be removed to another relation through *decomposition* of the **classes** relation:
 
 .. table:: **classes**
     :class: lined-table
@@ -107,32 +107,33 @@ Keys and superkeys
 
 This section reiterates some material from :numref:`Chapter {number} <relational-model-chapter>` in which we defined the term *key*, but in a bit more detail.  We start by defining a more general term, *superkey*.
 
-A superkey of a relation is some subset of attributes of the relation which uniquely identifies any tuple in the relation.  Consider the **books** relation below:
+A superkey of a relation is some subset of attributes of the relation which uniquely identifies any tuple in the relation.  Consider the **library** relation below (we will be using this example extensively):
 
-.. table:: **books**
+.. table:: **library**
     :class: lined-table
 
-    =============== ========================== ==== ================ ============ ============
-    author          title                      year genre            author_birth author_death
-    =============== ========================== ==== ================ ============ ============
-    Ralph Ellison   Invisible Man              1952 fiction          1914-03-01   1994-04-16
-    Jhumpa Lahiri   Unaccustomed Earth         2008 fiction          1967-07-11
-    J.R.R. Tolkien  The Hobbit                 1937 fantasy          1892-01-03   1973-09-02
-    Isabel Allende  The House of the Spirits   1982 magical realism  1942-08-02
-    J.R.R. Tolkien  The Fellowship of the Ring 1954 fantasy          1892-01-03   1973-09-02
-    =============== ========================== ==== ================ ============ ============
+    ================= ========================== ==== ================ ============ ============ ===================
+    author            title                      year genre            author_birth author_death section
+    ================= ========================== ==== ================ ============ ============ ===================
+    Ralph Ellison     Invisible Man              1952 fiction          1914-03-01   1994-04-16   literature
+    Jhumpa Lahiri     Unaccustomed Earth         2008 fiction          1967-07-11                literature
+    J.R.R. Tolkien    The Hobbit                 1937 fantasy          1892-01-03   1973-09-02   speculative fiction
+    Isabel Allende    The House of the Spirits   1982 magical realism  1942-08-02                literature
+    J.R.R. Tolkien    The Fellowship of the Ring 1954 fantasy          1892-01-03   1973-09-02   speculative fiction
+    Ursula K. Le Guin The Dispossessed           1974 science fiction  1929-10-21   2018-01-22   speculative fiction
+    ================= ========================== ==== ================ ============ ============ ===================
 
 (The blank entries for **author_death** in this table represent NULLs.  The authors are still living at the time of this writing.)
 
-We assert that the set of attributes {**author**, **title**, and **year**} is a superkey for the **books** relation.
+We assert that the set of attributes {**author**, **title**, and **year**} is a superkey for the **library** relation.
 
-The definition of superkey applies not just to the current data in the relation, but to *any data we might possibly store in the relation*.  That is, a superkey is not a transitory property of the data, but a constraint we impose on the data.  For example, although each publication year listed in the **year** column above is unique to its book, that cannot be guaranteed for future books we might add to the relation.  Therefore the set {**year**} is not a superkey for **books**.
+The definition of superkey applies not just to the current data in the relation, but to *any data we might possibly store in the relation*.  That is, a superkey is not a transitory property of the data, but a constraint we impose on the data.  For example, although each publication year listed in the **year** column above is unique to its book, that cannot be guaranteed for future books we might add to the relation.  Therefore the set {**year**} is not a superkey for **library**.
 
-A second, and equivalent definition of superkey is as a subset of attributes of the relation that are guaranteed to contain a unique setting of values for any tuple in the relation.  For our example, this means there can never be two books in the **books** relation which share the same author, title, and year.  From this second definition and the definition of a relation, we note that *every* relation has at least one superkey: the set of all attributes of the relation.  The set {**author**, **title**, **year**, **genre**, **author_birth**, **author_death**} is a superkey for the **books** relation simply because every tuple in the relation must be unique.
+A second, and equivalent definition of superkey is as a subset of attributes of the relation that are guaranteed to contain a unique setting of values for any tuple in the relation.  For our example, this means there can never be two books in the **library** relation which share the same author, title, and year.  From this second definition and the definition of a relation, we note that *every* relation has at least one superkey: the set of all attributes of the relation.  The set {**author**, **title**, **year**, **genre**, **author_birth**, **author_death**, **section**} is a superkey for the **library** relation simply because every tuple in the relation must be unique.
 
 We can further state that any subset of attributes of the relation which is a superset of some superkey of the relation is also a superkey of the relation.  For our example, {**author**, **title**, **year**, **author_birth**} must be a superkey because it is a superset of a known superkey.
 
-A *key* of a relation is a superkey of the relation from which we cannot subtract any attributes and get a superkey.  For the **books** relation, we assert that {**author**, **title**} is a superkey of the relation; furthermore, both **author** and **title** are needed.  That is, neither {**author**} nor {**title**} is a superkey of **books**.  Therefore, {**author**, **title**} is a key of **books**; the set {**author**, **title**, **year**} is a superkey but not a key because we can remove **year** and still have a superkey [#]_.
+A *key* of a relation is a superkey of the relation from which we cannot subtract any attributes and get a superkey.  For the **library** relation, we assert that {**author**, **title**} is a superkey of the relation; furthermore, both **author** and **title** are needed.  That is, neither {**author**} nor {**title**} is a superkey of **library**.  Therefore, {**author**, **title**} is a key of **library**; the set {**author**, **title**, **year**} is a superkey but not a key because we can remove **year** and still have a superkey [#]_.
 
 Identifying the keys of a relation is a key step in analyzing whether or not a relation is already normalized with respect to 2NF or higher.
 
@@ -148,20 +149,21 @@ A *functional dependency* (FD) is a statement about two sets of attributes of a 
 
 As with keys, FDs are constraints that we impose on the data.  Another way of thinking about a functional dependency is, if you had a relation such that the relation contains only the attributes that are in *X* or *Y*, then *X* would be a superkey for that relation.  That is, *X* uniquely determines everything in the union of *X* and *Y*.  (We can now provide another defintiion of superkey as a subset of attributes of a relation that functionally determines the set of all attributes of the relation.)
 
-Another way of thinking about FDs is, if *X* functionally determines *Y*, then if we know the values in *X*, we know or can determine the values in *Y*, because *Y* just contains single-valued facts about *X*.  In our **books** relation, the set {**author**, **title**} functionally determines the set {**year**}, because if we know the author and title of the book, then we should be able to find out what the publication year is; and whatever sources we consult to find the year should all give us the same answer.  The dependency is "functional" in this sense; there exists some *function* between the domain of (author, title) pairs and the domain of publication years that yields the correct answer for every valid input.  The function in this case is simply a mapping between domains, not something we can analytically derive.
+Another way of thinking about FDs is, if *X* functionally determines *Y*, then if we know the values in *X*, we know or can determine the values in *Y*, because *Y* just contains single-valued facts about *X*.  In our **library** relation, the set {**author**, **title**} functionally determines the set {**year**}, because if we know the author and title of the book, then we should be able to find out what the publication year is; and whatever sources we consult to find the year should all give us the same answer.  The dependency is "functional" in this sense; there exists some *function* between the domain of (author, title) pairs and the domain of publication years that yields the correct answer for every valid input.  The function in this case is simply a mapping between domains, not something we can analytically derive.
 
-Here are some more FDs for the **books** relation:
+Here are some more FDs for the **library** relation:
 
 .. math::
 
     \begin{eqnarray*}
     \text{\{author, title\}} & \rightarrow & \text{\{genre\}} \\
     \text{\{author\}} & \rightarrow & \text{\{author_birth, author_death\}} \\
+    \text{\{genre\}} & \rightarrow & \text{\{section\}} \\
     \text{\{author, title\}} & \rightarrow & \text{\{title, year\}} \\
     \text{\{title, genre\}} & \rightarrow & \text{\{title\}} \\
     \end{eqnarray*}
 
-The first FD tells us that each book is categorized into exactly one genre in our database.  The second tells us that an author's dates of birth and death should be the same every time the author appears in the database.  The last two FDs are different from the previous ones; in these, there is an overlap between the set on the left-hand side and the set on the right-hand side.  We will give special names to these in a moment.  For now, the third FD tells us that, if we know the author and title of a book, then we know the title and the publication year.  The final FD simply tells us that any two tuples having the same title and genre, have the same title!
+The first FD tells us that each book is categorized into exactly one genre in our database.  The second tells us that an author's dates of birth and death should be the same every time the author appears in the database.  The third tells us that the location in the library in which a book is shelved depends on the genre of the book.  The last two FDs are different from the previous ones; in these, there is an overlap between the set on the left-hand side and the set on the right-hand side.  We will give special names to these in a moment.  For now, the fourth FD tells us that, if we know the author and title of a book, then we know the title and the publication year.  The final FD simply tells us that any two tuples having the same title and genre, have the same title!
 
 Types of functional dependency
 ------------------------------
@@ -170,9 +172,9 @@ FDs are categorized into three types: *trivial*, *non-trivial*, and *completely 
 
 A trivial FD is one in which the right-hand side of the FD is a subset of the left-hand side.  The last FD in our example above is a trivial FD.  A trivial FD conveys no useful information - it tells us "we know what we know" - but they still have some use to us in our normalization procedures.  Every trivial FD we can write down for a relation is true, as long as the left-hand side of the FD is a subset of the attributes of the relation.
 
-A non-trivial FD is one in which some part of the right-hand side of the FD is not in the left-hand side.  The intersection of the left-hand side and the right-hand side is not empty, but the right-hand side is not a subset of the left-hand side.  The third FD above is a non-trival FD.  These FDs convey some new information.
+A non-trivial FD is one in which some part of the right-hand side of the FD is not in the left-hand side.  The intersection of the left-hand side and the right-hand side is not empty, but the right-hand side is not a subset of the left-hand side.  The fourth FD above is a non-trival FD.  These FDs convey some new information.  Identifying non-trivial FDs in our relations is a crucial step in normalization.
 
-As you might guess by now, a completely non-trivial FD is one for which there is no overlap between the left-hand side and the right-hand side - the intersection of the two sets is the empty set.  The first two FDs above are completely non-trivial.  Identifying completely non-trivial FDs in our relations is a crucial step in normalization.
+As you might guess by now, a completely non-trivial FD is one for which there is no overlap between the left-hand side and the right-hand side - the intersection of the two sets is the empty set.  The first three FDs above are completely non-trivial.
 
 Inference rules
 ---------------
@@ -207,7 +209,7 @@ We present these without proof, but the intuition behind these should be clear. 
 
     This rule says we can add the same attributes to both the left-hand and right-hand sides of an FD.  Trivially, if we add *Z* to what we know (left-hand side), then we should be able to determine *Z* in addition to what we could determine previously (right-hand side).
 
-    In our **books** example, we are given
+    In our **library** example, we are given
 
     .. math::
 
@@ -248,18 +250,18 @@ We present these without proof, but the intuition behind these should be clear. 
 
     also holds.  That is, if knowing *X* tells us *Y*, and from *Y* we can know *Z*, then knowing *X* also tells us *Z*.
 
-    We do not have a direct example from our **books** relation to use; but imagine that we augment our relation with a **store_section** attribute, used by some bookstore.  The **store_section** attribute indicates the part of the store in which a book can be found.  If we then assert that
+    In our **library** relation we have
 
     .. math::
 
-        \text{\{genre\}} \rightarrow \text{\{store_section\}} \\
         \text{\{author, title\}} \rightarrow \text{\{genre\}}
+        \text{\{genre\}} \rightarrow \text{\{section\}} \\
 
-    then
+    thus
 
     .. math::
 
-        \text{\{author, title\}} \rightarrow \text{\{store_section\}}
+        \text{\{author, title\}} \rightarrow \text{\{section\}}
 
 *Splitting rule (or decomposition, or projective, rule)*
     If
@@ -275,7 +277,7 @@ We present these without proof, but the intuition behind these should be clear. 
         X \rightarrow Y \\
         X \rightarrow Z
 
-    Plainly stated, if knowing the values for *X* tells us the values for *Y* **and** *Z*, then knowing the values for *X* tells us the values for *Y*, and likewise for *Z*.  In our **books** example, we have
+    Plainly stated, if knowing the values for *X* tells us the values for *Y* **and** *Z*, then knowing the values for *X* tells us the values for *Y*, and likewise for *Z*.  In our **library** example, we have
 
     .. math::
 
@@ -304,7 +306,7 @@ We present these without proof, but the intuition behind these should be clear. 
 
         X \rightarrow YZ
 
-    also holds. In our **books** example, we have
+    also holds. In our **library** example, we have
 
     .. math::
 
@@ -347,7 +349,7 @@ The closure of a set of attributes can be determined using the following algorit
 
     3. When no more FDs meet the criteria above, *C* = *X*:sup:`+`.
 
-We previously asserted that the set {author, title} is a superkey for our example **books** relation, so the closure {author, title}\ :sup:`+` should be the set of all attributes of **books**.  We now show that this follows from our inference rules, and from the FDs given previously:
+We previously asserted that the set {author, title} is a superkey for our example **library** relation, so the closure {author, title}\ :sup:`+` should be the set of all attributes of **library**.  We now show that this follows from our inference rules, and from the FDs given previously:
 
 .. math::
 
@@ -355,6 +357,7 @@ We previously asserted that the set {author, title} is a superkey for our exampl
     \text{\{author, title\}} & \rightarrow & \text{\{year\}} \\
     \text{\{author, title\}} & \rightarrow & \text{\{genre\}} \\
     \text{\{author\}} & \rightarrow & \text{\{author_birth, author_death\}} \\
+    \text{\{genre\}} & \rightarrow & \text{\{section\}} \\
     \text{\{author, title\}} & \rightarrow & \text{\{title, year\}} \\
     \text{\{title, genre\}} & \rightarrow & \text{\{title\}} \\
     \end{eqnarray*}
@@ -363,32 +366,255 @@ We previously asserted that the set {author, title} is a superkey for our exampl
 2. We have :math:`\text{\{author, title\}} \rightarrow \text{\{year\}}`, and {author, title} is a subset of *C*, so add **year** to *C*: *C* = {author, title, year}.
 3. Similarly, :math:`\text{\{author, title\}} \rightarrow \text{\{genre\}}`, so let *C* = {author, title, year, genre}.
 4. We have :math:`\text{\{author\}} \rightarrow \text{\{author_birth, author_death\}}`, and {author} is a subset of *C*.  Let *C* = {author, title, year, genre, author_birth, author_death}.
-5. The algorithm completes at this point because the right-hand sides of all of the unused FDs are already subsets of *C*; and in any case, *C* already has all attributes of **books**.
+5. We have :math:`\text{\{genre\}} \rightarrow \text{\{section\}}`, and {genre} is a subset if *C*.  Let *C* = {author, title, year, genre, author_birth, author_death, section}.
+6. The algorithm completes at this point because the right-hand sides of all of the unused FDs are already subsets of *C*; and in any case, *C* already has all attributes of **library**.
 
-Thus, {author, title}\ :sup:`+` = {author, title, year, genre, author_birth, author_death}.
+Thus, {author, title}\ :sup:`+` = {author, title, year, genre, author_birth, author_death, section}.
 
 
 Second, third, and Boyce-Codd normal forms
 ::::::::::::::::::::::::::::::::::::::::::
 
-- 2NF
-- 3NF/BCNF
-- when to relax
+We are now ready to discuss the normal forms up to Boyce-Codd normal form (BCNF).  In this section we will provide definitions of the normal forms, with examples.
 
+Second normal form
+------------------
 
-Decomposition requirements
-::::::::::::::::::::::::::
+A relation is in second normal form (2NF) if it is in 1NF and there are no *non-key attributes* which are functionally dependent on a proper subset of the key.  A non-key attribute is an attribute which is not part of any key.
 
-- lossless join
-- dependency preservation
+From this definition, we can see that **library** is not in 2NF.  The key of **library** is {author, title}.  However, we have the FD
 
+.. math::
 
-- 1NF - author, author awards, book title, ...
-- 2NF - author, book title, author birth/death, ... (author -> author dates)
-- 3NF & BCNF - book_id, author, author dates, book title, ...?
-- relaxation: award, year, format -> book and book -> format
-- 4NF - author, books, author awards?
-- higher
+    \text{\{author\}} \rightarrow \text{\{author_birth, author_death\}}
+
+in which the left-hand side only contains **author**.  We say that the above FD *violates* second normal form.
+
+Note that any relations (in 1NF) for which the key has a single attribute is automatically in 2NF.
+
+Third normal form
+-----------------
+
+A relation is in third normal form (3NF) if it is in 2NF and there are no non-key attributes which are functionally dependent on other non-key attributes.
+
+Considering the **library** relation again, the dependency
+
+.. math::
+
+    \text{\{genre\}} \rightarrow \text{\{section\}}
+
+violates 3NF because neither **genre** nor **section** are part of any key.
+
+Boyce-Codd normal form
+----------------------
+
+Boyce-Codd [#]_ normal form is a slightly stronger version of third normal form; any relation in BCNF is also in 3NF.  However, most relations in 3NF are also in BCNF.  BCNF has a simple and general definition which encompasses the definitions of 2NF and 3NF:
+
+*Definition of BCNF*
+    A relation is in BCNF if it is in 1NF and if, for every non-trivial functional dependency of the form :math:`X \rightarrow Y` on the relation, *X* is a superkey of the relation.
+
+It may not be obvious from this definition that relations in BCNF are also in 2NF and 3NF.  We will demonstrate that this is true for 2NF; a similar argument holds for 3NF.  Recall that 2NF requires we have no non-key attributes functionally dependent on a proper subset of the key.  By the definition of key, a proper subset of the key cannot be a key or superkey; therefore, an FD forbidden by 2NF must have a left-hand side that is not a superkey.  On the other hand, non-key attributes cannot be part of the key at all.  The right-hand side of an FD forbidden by 2NF can have no intersection with the left-hand side, so the FD is completely non-trivial.  Thus any FDs that would violate 2NF also meet the criteria for violating BCNF.
+
+The difference between 3NF and BCNF is simply that 3NF permits FDs for which the right-hand side is a subset of a key.  This situation is fairly uncommon, which is why most relations in 3NF are also in BCNF.  We will explore this difference further in a later section.
+
+Decomposition
+:::::::::::::
+
+We say that a database is normalized with respect to some normal form if all relations in the database are in the normal form.  To normalize a database, we must *decompose* relations which have some violating FD.  Decomposition of a relation involves creating two new relations, each of which has a subset of the attributes of the original relation.  The original relation can then be discarded.
+
+In this section we discuss the BCNF decomposition algorithm and provide an example walkthrough of normalization.  We close the section by exploring why some problematic relations may be better left in 3NF.
+
+Decomposition algorithm
+-----------------------
+
+There is a simple approach to decomposition that both eliminates a violation of a normal form, and that allows for exact recovery of the original relation in all cases.  The algorithm below is expressed in terms of BCNF, but works equally well for 2NF and 3NF:
+
+*Decomposition algorithm*
+    Given some relation *R*, and a functional dependency :math:`X \rightarrow Y` on *R* that violates BCNF:
+
+    1. (Optional, but strongly recommended) Add to *Y* any attributes that are functionally determined by *X* and that are not already in *Y*; i.e., let *Y* = *X*:sup:`+`.  (It is easy to show that :math:`X \rightarrow X^{+}` violates BCNF given the original violation, so we are merely substituting one violating FD for another.)
+    2. Let *Z* be the set of attributes of *R* that are not in *X* or *Y*.  (This set must be non-empty because, by definition, *X* is not a superkey.)
+    3. Create relations *R1* and *R2* such that *R1* has the attributes in the union of *X* and *Y*, and *R2* has the attributes in the union of *X* and *Z*.  In relational algebra terms, we use projection to create the new relations:
+
+       .. math::
+
+          R1 = \pi_{XY}(R) \\
+          R2 = \pi_{XZ}(R)
+
+    4. Discard *R*.
+
+Worked example
+--------------
+
+We now apply this algorithm to a database initially composed of just the **library** relation.  To start, we previously noted that the FD
+
+.. math::
+
+    \text{\{author\}} \rightarrow \text{\{author_birth, author_death\}}
+
+violates 2NF and thus BCNF.  To apply the decomposition algorithm to this violation:
+
+1. Let *Y* be the closure of {author}, which is {author, author_birth, author_death}.
+2. Let *Z* then be {title, year, genre, section}.
+3. The union of *X* and *Y* is just *Y* because we did the optional closure in step 1.  The union of *X* and *Z* is {author, title, year, genre, section}.  Projecting on to these attribute sets yields the following relations, which we rename to **authors** and **library2**:
+
+.. table:: **authors**
+    :class: lined-table
+
+    ================= ============ ============
+    author            author_birth author_death
+    ================= ============ ============
+    Ralph Ellison     1914-03-01   1994-04-16
+    Jhumpa Lahiri     1967-07-11
+    J.R.R. Tolkien    1892-01-03   1973-09-02
+    Isabel Allende    1942-08-02
+    Ursula K. Le Guin 1929-10-21   2018-01-22
+    ================= ============ ============
+
+.. table:: **library2**
+    :class: lined-table
+
+    ================= ========================== ==== ================ ====================
+    author            title                      year genre            section
+    ================= ========================== ==== ================ ====================
+    Ralph Ellison     Invisible Man              1952 fiction          literature
+    Jhumpa Lahiri     Unaccustomed Earth         2008 fiction          literature
+    J.R.R. Tolkien    The Hobbit                 1937 fantasy          speculative fiction
+    Isabel Allende    The House of the Spirits   1982 magical realism  literature
+    J.R.R. Tolkien    The Fellowship of the Ring 1954 fantasy          speculative fiction
+    Ursula K. Le Guin The Dispossessed           1974 science fiction  speculative fiction
+    ================= ========================== ==== ================ ====================
+
+4. Discard **library**.
+
+Note that we can recover the original relation by applying a natural join operation to **authors** and **library2**.
+
+We must now look at our new relations, and determine if they are now normalized.  A first step is determining keys and FDs for the new relations.  There is a formal process to compute the superkeys and FDs of the new relation from the FDs on the old relation [#]_.  However, in practice it is usually possible for a database designer to identify the FDs and keys of the new relations given their knowledge of the data, without all of the computations implied above.
+
+For our example, in **authors** we can quickly determine that the only useful non-trivial FD is
+
+.. math::
+
+    \text{\{author\}} \rightarrow \text{\{author_birth, author_death\}}
+
+From this we can also see that the closure of {author} includes all attributes in authors, and thus {author} is a key.  There are no violating FDs remaining in this relation, so it is normalized with respect to BCNF.
+
+Now consider the relation **library2**.  Note that the FD above does not apply, because **author_birth** and **author_death** are not attributes in **library2**.  From our knowledge of the FDs in the **library** relation, we can determine that these FDs hold in **library2**:
+
+.. math::
+
+    \begin{eqnarray*}
+    \text{\{author, title\}} & \rightarrow & \text{\{year, genre, section\}} \\
+    \text{\{genre\}} & \rightarrow & \text{\{section\}} \\
+    \end{eqnarray*}
+
+and that the key is {author, title}.
+
+The second FD above violates BCNF (and 3NF).  Decomposing on this FD, we have *X* = {genre}, *Y* = {section}, and *Z* = {title, author, year, genre}.  Decomposition results in the following relations, which we rename to **books** and **genres**:
+
+.. table:: **books**
+    :class: lined-table
+
+    ================= ========================== ==== ================
+    author            title                      year genre
+    ================= ========================== ==== ================
+    Ralph Ellison     Invisible Man              1952 fiction
+    Jhumpa Lahiri     Unaccustomed Earth         2008 fiction
+    J.R.R. Tolkien    The Hobbit                 1937 fantasy
+    Isabel Allende    The House of the Spirits   1982 magical realism
+    J.R.R. Tolkien    The Fellowship of the Ring 1954 fantasy
+    Ursula K. Le Guin The Dispossessed           1974 science fiction
+    ================= ========================== ==== ================
+
+.. table:: **genres**
+    :class: lined-table
+
+    =============== ===================
+    genre           section
+    =============== ===================
+    fiction         literature
+    fantasy         speculative fiction
+    magical realism literature
+    science fiction speculative fiction
+    =============== ===================
+
+We discard **library2**, leaving us with just three relations: **authors**, **books**, and **genres**. All three relations are now in BCNF, so no further normalization (with respect to BCNF or lower) is possible.  We can recover the **library2** relation by a natural join of **books** and **genres**; or we can recover the original **library** relation by a natural join of all three relations.
+
+Note that the normalized database has a clear separation of concerns in the different relations; one relation is just about authors, another about books, and a third with specialized information about the layout of a library.  Redundancy has been reduced, and modification anomalies are much less likely.
+
+Decomposition properties
+------------------------
+
+There are two desirable properties for a normalization decomposition, which we discuss in this section.
+
+Exact recovery
+##############
+
+This first property we have mentioned, which is that the original relation must be recoverable by joining the decomposition products.  This means that the joined relation must have all of the tuples of the original, and no extra tuples.  This property is non-negotiable; a join of the relations must give true answers.  In fact, the BCNF decomposition algorithm as presented fulfills this condition; an arbitrary decomposition would not necessarily do so.
+
+We omit a full proof of the correctness of the decomposition algorithm.  An intuitive understanding begins with a consideration of the meaning of functional dependency.  The existence of some functional dependency :math:`X \rightarrow Y` tells us that the *Y* attributes must remain in lockstep with the *X* attributes.  Any distinct value of *X* can be associated with exactly one setting of *Y* values; so *X* uniquely identifies *Y*.  Therefore, if we have a relation that lets us look up the values for *Y* for each distinct value of *X*, we can use *just the* X *attributes* in the original relation as representative of both *X* and *Y*.  The decomposition algorithm creates exactly this situation; projection onto the attributes involved in the functional dependency creates the "lookup" relation (**authors** in our first decomposition example); the *X* attributes (**author**) remain as a foreign key and the *Y* attributes (**author_birth**, **author_death**) can be removed.  A join of the relations on the shared foreign key restores the *Y* values to the correct tuples.
+
+Dependency preservation
+#######################
+
+A second desirable property for a decomposition is *not* always met with BCNF decomposition.  This second property requires that all constraints implied by the original functional dependencies are preserved in the database after decomposition.  It turns out that we can guarantee this property by normalizing to 3NF, but not BCNF.  This is best illustrated with an example.
+
+Consider the relation below, regarding the Hugo and Nebula awards for literary and other works in the science fiction genre.  These two awards are given each year in multiple categories, such as "Best Novel", "Best Short Story" and so forth.  Typically only one work in a given format in a given year wins a given award (we will assume that rule is always enforced for example purposes).  Therefore, if we are given the award, year, and format, we can unambiguously determine the award winning work.  The relation below gives some representative data:
+
+.. table:: **scifi_awards**
+    :class: lined-table
+
+    ====== ==== =========== ================= ====================
+    award  year format      author            title
+    ====== ==== =========== ================= ====================
+    Hugo   1975 novel       Ursula K. Le Guin The Dispossessed
+    Hugo   1975 short story Larry Niven       The Hole Man
+    Hugo   1974 novel       Arthur C. Clarke  Rendezvous With Rama
+    Nebula 1975 novel       Joe Haldeman      The Forever War
+    Nebula 1974 novel       Ursula K. Le Guin The Dispossessed
+    ====== ==== =========== ================= ====================
+
+There are two important functional dependencies.  The first, reflecting the rule that only one work in each format can win a particular award in a given year, is
+
+.. math::
+
+    \text{\{award, year, format\}} \rightarrow \text{\{author, title\}}
+
+The first constraint does not violate 3NF or BCNF, because the left-hand side is a key for the relation.
+
+The second FD acknowledges that each work is in a particular format; a work may be a novel or a short story, but not both:
+
+.. math::
+
+    \text{\{author, title\}} \rightarrow \text{\{format\}}
+
+This relation falls into the narrow category of relations that are in 3NF but not in BCNF.  As in this example, this occurs when the relation contains sets of attributes *A*, *B*, and *C*, with :math:`AB \rightarrow C` and :math:`C \rightarrow B`.  The second FD violates BCNF, because {author, title} is not a key for this relation (as demonstrated in the example data above).  However, the FD does not violate 3NF, because the right-hand side ({format}) is part of a key for the relation.
+
+If we decompose as usual on the BCNF violation, the immediate decomposition products must join together to return the original relation, which has correct data, so that is not a problem.  However, after decomposition, we have relations with attributes {author, title, format} and {award, year, author, title}.  The first FD above, which enforced the constraint of an award going to only one work in each format each year, no longer applies to either relation.  The new relations cannot prevent us storing data such as the following:
+
+.. table:: **scifi_awards_1**
+    :class: lined-table
+
+    ================= ==================== ======
+    author            title                format
+    ================= ==================== ======
+    Ursula K. Le Guin The Dispossessed     novel
+    Roger Zelazny     Doorways in the Sand novel
+    ================= ==================== ======
+
+.. table:: **scifi_awards_2**
+    :class: lined-table
+
+    ===== ==== ================= ====================
+    award year author            title
+    ===== ==== ================= ====================
+    Hugo  1975 Ursula K. Le Guin The Dispossessed
+    Hugo  1975 Roger Zelazny     Doorways in the Sand
+    ===== ==== ================= ====================
+
+Since the Hugo award is given to multiple works in a given year (just for different categories of work), the data in the second relation *could be* valid - but only if the two works listed happen to be in different categories.  However, as the first relation shows, they are in the same category (the second relation, as it happens, contains false data).  Only if we join these two relations can we see that we have violated our constraint.
+
+In this particular case, it would be preferable to leave the original relation in 3NF and preserve the constraint with a primary key composed of {award, year, format}.  The redundancy involved is small, given that works can appear at most twice in the relation (since we only have the two awards).  If you encounter such a situation, however, you must determine the best way forward for your particular case.  If you leave the relation in 3NF, then you must manage the modification anomalies implied implied by the BCNF violation (in the application software, or some other mechanism).  If you move the relation to BCNF, then you must enforce the lost constraint in some other fashion.
 
 
 Multivalue dependencies and fourth normal form
@@ -445,5 +671,9 @@ Trade-offs
 .. [#] It is common practice in some countries where English is the primary language to break a name into first (or given), middle, and last name (or surname).  However, this naming scheme is by no means universal, even for English speakers.  Unless there is a compelling need to break a name into components for your application, we recommend a single name attribute.  For more on this topic, see https://www.w3.org/International/questions/qa-personal-names.
 
 .. [#] We reiterate that a superkey is a constraint *we impose* on the data.  When designing a database, we of course hope to create a structure that accommodates true facts from the world, but a) we sometimes fail due to incomplete information about the world, and b) we sometimes compromise on a simpler design that accommodates *most* facts from the world.  For our **simple_books** relation, we are unaware of any books by the same author with the same title in the same year, so we are comfortable asserting that {**author**, **title**, **year**} is a valid superkey (but we could be wrong).  On the other hand, this design intentionally fails to capture any number of the complexities of books in the real world.  For one example, authors occasionally re-publish a book with small changes, under the same title, years after the original publication.  Is this the same "book" (in which case **year** really stands for "year of first publication"), or a different book (in which case {**author**, **title**} is *not* a superkey)?  For another example, we are completely ignoring the fact that some books have multiple authors, and some have no known authors.  Databases about books can be very complex!
+
+.. [#] Named after Raymond F. Boyce and Edgar F. Codd, who published a :ref:`paper <relational-theory-references>` in 1974 defining this normal form.  However, a 1971 paper by Ian Heath gave a prior description.
+
+.. [#] Given *R* and *R1* and a collection of FDs on R1, for every subset *X* of the attributes of *R1*, compute the closure, *X*:sup:`+` in *R*. For every attribute *a* of *R1* that is in the closure of *X*, by the splitting rule, :math:`X \rightarrow \{a\}` is an FD for *R1*. If *X*:sup:`+` contains every attribute of *R1*, then *X* is a superkey of *R1*.
 
 |license-notice|
