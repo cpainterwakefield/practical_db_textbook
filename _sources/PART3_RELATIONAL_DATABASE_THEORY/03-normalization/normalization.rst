@@ -94,9 +94,9 @@ Note how we have eliminated redundancy through this decomposition.  If we need t
 Normal forms
 ::::::::::::
 
-The concept of normalization originates with the relational model itself.  Additional refinements have been added over time, leading to a series of normal forms, which mostly build on earlier normal forms.  We will not study every normal form that has been proposed, but focus on the forms which are most useful and most likely to be of value in most applications.  The first form we consider is appropriately named the *first normal form*, abbreviated 1NF.  We proceed with the second, third, and fourth normal forms (2NF, 3NF, 4NF) as well as Boyce-Codd normal form (BCNF), which fits in between 3NF and 4NF.  We briefly mention fifth normal form.
+The concept of normalization originates with the relational model itself.  Additional refinements have been added over time, leading to a series of normal forms, which mostly build on earlier normal forms.  We will not study every normal form that has been proposed, but focus on the forms which are most useful and most likely to be of value in most applications.  The first form we consider is appropriately named the *first normal form*, abbreviated 1NF.  We proceed with the second, third, and fourth normal forms (2NF, 3NF, 4NF) as well as Boyce-Codd normal form (BCNF), which fits in between 3NF and 4NF.
 
-When a database meets the requirement for a normal form, we say that the database is *in* the form.  As commonly defined, most normal forms include a requirement that earlier normal forms are also met.  Therefore, any database that is in 4NF is necessarily also in 1NF, 2NF, 3NF, and BCNF; a database in BCNF is also in 3NF and below; and so forth.  However, it is also true that higher forms address less frequently occurring situations, so, for example, a database that has been restructured to be in 3NF is very likely to also be in BCNF or even 4NF or 5NF.  3NF is generally considered the minimum requirement a database must meet to be considered "normalized".
+When a database meets the requirement for a normal form, we say that the database is *in* the form.  As commonly defined, most normal forms include a requirement that earlier normal forms are also met.  Therefore, any database that is in 4NF is necessarily also in 1NF, 2NF, 3NF, and BCNF; a database in BCNF is also in 3NF and below; and so forth.  However, it is also true that higher forms address less frequently occurring situations, so, for example, a database that has been restructured to be in 3NF is very likely to also be in BCNF or even 4NF.  3NF is generally considered the minimum requirement a database must meet to be considered "normalized".
 
 To explain most of the normal forms, we first need to provide some additional foundation, covered in the next few sections.  However, we can explain 1NF immediately.  1NF requires that the domain of an attribute of a relation contains *atomic* values only.  Atomic here simply means that we cannot usefully break the value down into smaller parts.  Non-atomic elements include compound values, arrays of values, and relations.  For example, a character string containing an author's name may be atomic [#]_, but a string identifying a book by author and title is probably compound; a list of authors would be an array; and a table of values giving a book's publication history (including publisher, year, ISBN, etc. for each publication) would be a relation.  To meet the 1NF requirements, compound values should be broken into separate attributes, while arrays and relations should be broken out into their own relations (with a foreign key referencing the original relation).
 
@@ -617,48 +617,106 @@ Since the Hugo award is given to multiple works in a given year (just for differ
 In this particular case, it would be preferable to leave the original relation in 3NF and preserve the constraint with a primary key composed of {award, year, format}.  The redundancy involved is small, given that works can appear at most twice in the relation (since we only have the two awards).  If you encounter such a situation, however, you must determine the best way forward for your particular case.  If you leave the relation in 3NF, then you must manage the modification anomalies implied implied by the BCNF violation (in the application software, or some other mechanism).  If you move the relation to BCNF, then you must enforce the lost constraint in some other fashion.
 
 
-Multivalue dependencies and fourth normal form
-::::::::::::::::::::::::::::::::::::::::::::::
+Multivalued dependencies and fourth normal form
+:::::::::::::::::::::::::::::::::::::::::::::::
+
+Relations that violate BCNF frequently occur in normal data collection activities.  For example, a web server keeping activity logs might record user information along with information about the pages the user visits on the website.  Redundancy is apparent in the user information appearing identically in multiple log entries.
+
+In contrast, fourth normal form (4NF) violations are unlikely to occur in data gathering.  Instead, 4NF addresses problems that occur when an attempt is made to store data that includes multiple independent one-to-many relationships in a single relation.  Redundancy in this setting is more subtle and harder to identify.
+
+For an example, we will consider some of the many awards given for literary merit.  Some awards are given to authors (Nobel Prize in Literature, Neustadt International Prize for Literature) without reference to a specific work.  Others (Pulitzer Prize, Nebula Award) are given in recognition of specific works.  An author can win multiple awards of either type.  If we are incautious in our design, we might come up with a relation like the following:
+
+.. table:: **authors_and_awards**
+    :class: lined-table
+
+    =============== =========================== ===================================
+    author          author_award                book_award
+    =============== =========================== ===================================
+    Louise Glück    Nobel Prize                 Pulitzer Prize
+    Louise Glück    Nobel Prize                 National Book Award
+    John Steinbeck  Nobel Prize                 Pulitzer Prize
+    Alice Munro     Nobel Prize                 Giller Prize
+    Alice Munro     International Booker Prize  Giller Prize
+    Alice Munro     Nobel Prize                 National Book Critics Circle Award
+    Alice Munro     International Booker Prize  National Book Critics Circle Award
+    =============== =========================== ===================================
+
+This is just an illustration; we would probably want to include other attributes to our relation such as the year each award was won, or the book for which a book award was won, but these extra attributes distract from the central concern we are trying to address.
+
+At a casual glance it appears that there are many redundancies in this relation.  For example, we have two tuples showing that Louise Glück won a Nobel Prize, and the same for Alice Munro.  We show Alice Munro winning the Giller Prize in two different tuples [#]_.  For this relation, however, there are no non-trivial functional dependencies whatsoever.  The only key for the relation is the set {author, author_award, book_award}, so each tuple is unique.  Therefore the relation is in BCNF.
+
+The pattern here is indicative of something called a *multivalued dependency* (MVD).  The formal definition of an MVD is rather opaque, and we will not state it here.  Informally, we have subsets of attributes *A*, *B*, and *C*, such that, for a given *A*, every distinct value of *B* must be paired with every distinct value of *C* associated with the value of *A*.  When this is true we state that *A* *multidetermines* *B*, and write
+
+.. math::
+
+    A \twoheadrightarrow B
+
+The situation is also symmetric; when *A* multidetermines *B* it also multidetermines *C*.  Thus we may write
+
+.. math::
+
+    A \twoheadrightarrow B|C
+
+In our example, considering Alice Munro and her Nobel Prize, what book awards did she win?  The answer must include both the Giller Prize and the National Book Critics Circle Award.  The same answer applies when we consider her International Booker Prize.  We might instead consider Alice Munro and her Giller prize and ask what author awards she won; this time the answer would include her Nobel Prize and her International Booker Prize.  Thus, for this relation the MVD
+
+.. math::
+
+  \text{\{author\}} \twoheadrightarrow \text{\author_award\}} | \text{\{book_award\}}
+
+holds.
+
+The definition of fourth normal form looks much like the definition of BCNF, substitution MVD for FD:
+
+*Definition of 4NF*
+    A relation is in 4NF if, for every non-trivial multivalued dependency of the form :math:`X \twoheadrightarrow Y` on the relation, *X* is a superkey of the relation.
+
+Clearly in our example relation, the set {author} is not a superkey, so the relation is not in 4NF.  The solution to a 4NF violation happens to be identical to the solution for a BCNF violation.  Given an MVD :math:`X \twoheadrightarrow Y` that violates 4NF, we decompose into two relations, one with the attributes in *XY*, and the other with the attributes in *XZ*, where *Z* is everything not in *X* or *Y* (*Z* is also multidetermined by *X* as discussed above).  The decomposition eliminates the pairing of independent concepts.  For our example, the decomposition yields:
+
+.. table:: **author_awards**
+    :class: lined-table
+
+    =============== ===========================
+    author          author_award
+    =============== ===========================
+    Louise Glück    Nobel Prize
+    John Steinbeck  Nobel Prize
+    Alice Munro     Nobel Prize
+    Alice Munro     International Booker Prize
+    =============== ===========================
+
+.. table:: **author_book_awards**
+    :class: lined-table
+
+    =============== ===================================
+    author          book_award
+    =============== ===================================
+    Louise Glück    Pulitzer Prize
+    Louise Glück    National Book Award
+    John Steinbeck  Pulitzer Prize
+    Alice Munro     Giller Prize
+    Alice Munro     National Book Critics Circle Award
+    =============== ===================================
+
+The formal definition of MVD is sufficiently general that every FD qualifies as an MVD.  Therefore, a relation in 4NF is also in BCNF.
+
+Trade-offs
+::::::::::
+
+As we have seen, the process of normalization leads to increased numbers of (generally smaller) relations.  Despite this proliferation of relations, normalization actually simplifies application software due to eliminating modification anomalies and related issues.  Smaller relations may also provide modest space savings, and performing queries on the relations in isolation will be faster.  However, when a query requires data collected into many different relations, performance can suffer.  Particularly when large volumes of data are involved, join operations become expensive for relational database systems.
+
+As a result, there are occasions when it is desirable to create a *de-normalized* database, in which data is held in one or more large relations representing the result of joining together numerous relations.  Such a decision should not be made lightly and without consideration for the impact of modification anomalies.  One popular approach creates not one, but two databases containing the same data.  In this approach, one database is fully normalized and is used to process data updates.  The other, de-normalized database is used solely for read-only queries, and may be updated (or re-created) only periodically (perhaps daily or hourly).  Users of the de-normalized database receive slightly out-of-date answers, but faster.
 
 Normalization in database design
 ::::::::::::::::::::::::::::::::
 
 Databases can be created using a number of approaches.  The approach taken depends greatly on the circumstances which have led to the need for a database.
 
-In some cases, data have been previously collected and stored in some fashion, but not organized into something we would consider a database.  Many scientific, industrial, and business processes produce large amounts of data in the form of sensor readings, application logs, reports, and form responses.  This data may exist in electronic form or on paper.  There may be little structure to the data; it may exist in a *flat* form in which there is only one type of record which stores every piece of information relevant to some event.  Creating a database to more efficiently work with such data may be best accomplished using a top-down approach, in which relations (or tables) are systematically decomposed.  Data modeling (:numref:`Part {number} <data-modeling-part`) may be used as part of this process, to document, communicate, and reason about the evolving database.
+In some cases, data have been previously collected and stored in some fashion, but not organized into something we would consider a database.  Many scientific, industrial, and business processes produce large amounts of data in the form of sensor readings, application logs, reports, and form responses.  This data may exist in electronic form or on paper.  There may be little structure to the data; it may exist in a *flat* form in which there is only one type of record which stores every piece of information relevant to some event.  Creating a database to more efficiently work with such data may be best accomplished using a top-down approach, in which relations are systematically decomposed.  Data modeling (:numref:`Part {number} <data-modeling-part`) may be used as part of this process, to document, communicate, and reason about the evolving database.
 
-In contrast, when creating a new software application, a bottom-up approach may be preferred.  The application developers and other interested parties work to identify the data that need to be collected and stored.  A multitude of relations will arise naturally, corresponding to different parts of the application.  Data modeling should almost always occur early in this process.
+In contrast, when creating a new software application, a bottom-up approach may be preferred.  The application developers and other interested parties work to identify the data attributes that need to be collected and stored.  Multiple relations emerge naturally, corresponding to different parts of the application.  Data modeling should almost always occur early in this process.
 
 Data modeling is very effective at producing relations that accurately represent independent concepts and the relationships between them.  However, some relations may still require normalization.  Normalization provides a different perspective on database design.  As with data modeling, our understanding of the real world and our data informs our choices.  However, while data modeling focuses on mapping concepts in the real world to relations, normalization works to produce a database structure that is more resistant to data errors.  Data modeling ensures our database accurately captures the data we need, while normalization ensures our database can be used effectively.  The two activities are thus complementary.  Whether or not normalization is applied formally, an understanding of normalization and its trade-offs is important for any database designer.
 
-Trade-offs
-::::::::::
-
-- efficiency (space vs time)
-
-
-
-- adjunct to design (paths to getting there)
-- meaning of normal forms
-  - intuitions (do one thing)
-  - update anomalies
-- basic example without math
-  - intuitive explanation of BCNF
-- Key and superkey (and functional dependencies?)
-- 1NF-3NF (keep this brief)
-  - Examples
-- Functional dependencies
-  - Defined
-  - Trivial/non-trivial/completely non-trivial
-  - Rules/properties (combining, splitting, transitive)
-  - Closure
-- BCNF
-  - Definition & example
-  - BCNF supercedes 1-3NF
-  - possible reason to relax to 3NF
-  - Complete walkthrough
-- Multivalue dependencies & 4NF
-- Higher NFs?  Myabe 5NF by example (6NF deals w/temporal data, not in scope)
 
 |chapter-end|
 
@@ -675,5 +733,7 @@ Trade-offs
 .. [#] Named after Raymond F. Boyce and Edgar F. Codd, who published a :ref:`paper <relational-theory-references>` in 1974 defining this normal form.  However, a 1971 paper by Ian Heath gave a prior description.
 
 .. [#] Given *R* and *R1* and a collection of FDs on R1, for every subset *X* of the attributes of *R1*, compute the closure, *X*:sup:`+` in *R*. For every attribute *a* of *R1* that is in the closure of *X*, by the splitting rule, :math:`X \rightarrow \{a\}` is an FD for *R1*. If *X*:sup:`+` contains every attribute of *R1*, then *X* is a superkey of *R1*.
+
+.. [#] As it happens, Alice Munro won two Giller Prizes, in different years; if we included an attribute for year, we would have to double the number of entries for Alice Munro!
 
 |license-notice|
