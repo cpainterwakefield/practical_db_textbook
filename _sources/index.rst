@@ -45,8 +45,6 @@ Table of contents
    PART1_SQL/index
    PART2_DATA_MODELING/index
    PART3_RELATIONAL_DATABASE_THEORY/index
-   PART4_DATABASE_PROGRAMMING/index
-   PART5_SELECTED_TOPICS/index
 
 .. toctree::
    :maxdepth: 1
