@@ -56,11 +56,11 @@ code {
     padding: 0px !important;
 }
 
-dt {
+dt:not(.footnote dt) {
     margin-top: 2rem !important;
 }
 
-dd {
+dd:not(.footnote dd) {
     margin-left: 3rem !important;
 }
 
