@@ -4,7 +4,7 @@
 SQL
 ===
 
-Part 1 of this book is all about SQL, the most popular language used for interacting with *relational databases*, the main focus of the book.  The chapters in this section have been organized to allow introducing topics in somewhat different orders according to the instructor's desired approach.  The diagram below shows the strong dependencies between chapters; chapters will assume knowledge introduced in earlier chapters as implied by the graph.  Chapters without a strong dependency may still refer to other chapters in passing, with a link to the chapter explaining the reference; these weak dependencies are not critical for understanding the referencing chapter.
+Part 1 of this book is all about SQL, the most popular language used for interacting with *relational databases*, the main focus of the book.  The chapters in this section have been organized to allow topics to be introduced in somewhat different orders according to the instructor's desired approach.  The diagram below shows the strong dependencies between chapters; chapters will assume knowledge introduced in earlier chapters as implied by the graph.  Chapters without a strong dependency may still refer to other chapters in passing, with a link to the chapter explaining the reference; these weak dependencies are not critical for understanding the referencing chapter.
 
 .. figure:: chapter_dependencies.svg
 

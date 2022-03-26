@@ -1,7 +1,5 @@
 .. _normalization-chapter:
 
-.. |zero-width-space| unicode:: &+200B
-
 =============
 Normalization
 =============
@@ -711,7 +709,7 @@ Normalization in database design
 
 Databases can be created using a number of approaches.  The approach taken depends greatly on the circumstances which have led to the need for a database.
 
-In some cases, data have been previously collected and stored in some fashion, but not organized into something we would consider a database.  Many scientific, industrial, and business processes produce large amounts of data in the form of sensor readings, application logs, reports, and form responses.  This data may exist in electronic form or on paper.  There may be little structure to the data; it may exist in a *flat* form in which there is only one type of record which stores every piece of information relevant to some event.  Creating a database to more efficiently work with such data may be best accomplished using a top-down approach, in which relations are systematically decomposed.  Data modeling (:numref:`Part {number} <data-modeling-part`) may be used as part of this process, to document, communicate, and reason about the evolving database.
+In some cases, data have been previously collected and stored in some fashion, but not organized into something we would consider a database.  Many scientific, industrial, and business processes produce large amounts of data in the form of sensor readings, application logs, reports, and form responses.  This data may exist in electronic form or on paper.  There may be little structure to the data; it may exist in a *flat* form in which there is only one type of record which stores every piece of information relevant to some event.  Creating a database to more efficiently work with such data may be best accomplished using a top-down approach, in which relations are systematically decomposed.  Data modeling (:numref:`Part {number} <data-modeling-part>`) may be used as part of this process, to document, communicate, and reason about the evolving database.
 
 In contrast, when creating a new software application, a bottom-up approach may be preferred.  The application developers and other interested parties work to identify the data attributes that need to be collected and stored.  Multiple relations emerge naturally, corresponding to different parts of the application.  Data modeling should almost always occur early in this process.
 

@@ -4,7 +4,7 @@
 Basics
 ======
 
-Part 1 of this book is all about SQL, the most popular language used for interacting with *relational databases*, the main focus of the book.  (We will talk more about the difference between relational and other databases in :numref:`Part {number} <relational-theory-part>`.)  The goal of this chapter is to introduce the most simple features of relational databases and SQL.  You will learn how to get data out of the database, and how to get data into the database, and how to use this textbook's interactive features.
+Part 1 of this book is all about SQL, the most popular language used for interacting with *relational databases*, the main focus of the book. The goal of this chapter is to introduce the most simple features of relational databases and SQL.  You will learn how to get data out of the database, and how to get data into the database, and how to use this textbook's interactive features.
 
 
 .. index::
@@ -35,9 +35,9 @@ Structured Query Language (SQL)
 
 An important characteristic of modern databases is that they abstract low-level operations on files, tables, indexes and so forth into high-level requests to the database management system (DBMS).  Requests to the database are typically expressed in a *query language*.  Query languages are a type of programming language, but are different from most in that query languages tend to be declarative rather than imperative.  Whereas imperative languages require the programmer to specify exactly what steps to take to perform a task, declarative languages simply describe a desired outcome.
 
-Structured query language (SQL) is the most popular query language for relational databases, and is an example of a declarative language.  SQL was developed by engineers at IBM in the 1970s and was standardized by standards organizations ANSI and ISO starting in 1986, with regular updates.  New features continue to be added to SQL as relational database technology and applications evolve.
+Structured query language (SQL) is the most popular query language for relational databases, and is an example of a declarative language.  SQL was developed by engineers at IBM in the 1970s and was standardized by standards organizations ANSI and ISO in 1986, with regular updates following.  New features continue to be added to SQL as relational database technology and applications evolve.
 
-Even though a standard exists for SQL, relational databases have slightly different implementations of the relational model, and similarly different "dialects" of SQL.  Despite these differences, most SQL dialects share enough in common that, with care, highly portable SQL code can be written.  Examples in this textbook use the SQLite database engine, and thus the dialect of SQL used by SQLite.  To the extent possible, however, examples will be portable to other dialects; where there are significant differences between implementations, these will be noted.  Due to the large number of relational DBMSes available, only a few highly popular DBMSes are included:  SQLite, PostgreSQL, MySQL, Oracle, and Microsoft SQL Server.
+Even though a standard exists for SQL, relational databases have slightly different implementations of the relational model, and similarly different "dialects" of SQL.  Despite these differences, most SQL dialects share enough in common that, with care, highly portable SQL code can be written.  Examples in this textbook use the SQLite database engine, and thus the dialect of SQL used by SQLite.  To the extent possible, however, examples will be portable to other dialects; differences between implementations will be noted where significant.  Due to the large number of relational DBMSes available, only a few highly popular DBMSes are included:  SQLite, PostgreSQL, MySQL, Oracle, and Microsoft SQL Server.
 
 SQLite examples can be run directly inside this online textbook (more on this below).  :ref:`Appendix A <appendix-a>` provides SQL scripts to create the database used in this book for each of the database engines listed above.
 
@@ -54,7 +54,7 @@ SQLite examples can be run directly inside this online textbook (more on this be
 
   SQL is sometimes subdivided into smaller languages focused on particular tasks: a data query language (DQL) for retrieving data, a data manipulation language (DML) for modifying data, a data definition language (DDL) for defining and modifying database objects, and a data control language (DCL) for managing authorization and access to data.  These distinctions are largely unimportant, and will not be used in this textbook.
 
-The basic element of SQL is the *statement* or *query*.  While a distinction can be made between these two (statements acting to change the state of the database, queries acting to retrieve data), it is common to use the terms interchangeably.  Statements in SQL read much like English sentences, although with very strict rules.
+The basic element of SQL is the *statement* or *query*.  While a distinction can be made between these two (statements act to change the state of the database, while queries act to retrieve data), it is common to use the terms interchangeably.  Statements in SQL read much like English sentences, although with very strict rules.
 
 SQL is often pronounced as "sequel", although it is equally valid to simply say each letter.
 
@@ -71,7 +71,7 @@ In its simplest form, the **SELECT** statement can be used to retrieve all data 
 
     SELECT * FROM fruit_stand;
 
-Here, **fruit_stand** is the name of the table.  The **\*** is a special symbol used with **SELECT** statements to mean "all columns in the table".  The table **fruit_stand** is one table in the example database for this textbook. The interactive example below will let you query this database; the query above is already set up for you - click on "Run" to see what it results in.  The column names for the table are shown across the top of the result table.
+Here, **fruit_stand** is the name of the table.  The **\*** is a special symbol used with **SELECT** statements to mean "all columns in the table".  The table **fruit_stand** is one table in the example database for this textbook. The interactive example below will let you query this database; the query above is already set up for you - click on "Run" to see its results.  The column names for the table are shown across the top of the result table.
 
 .. activecode:: sql_basics_example_select
     :language: sql
@@ -79,7 +79,7 @@ Here, **fruit_stand** is the name of the table.  The **\*** is a special symbol 
 
     SELECT * FROM fruit_stand;
 
-The statement (or query) above is said to have two *clauses*; a clause is a part of a SQL statement, usually starting with a SQL keyword.  The two clauses in the statement above are the **SELECT** clause, "SELECT \*" and the **FROM** clause, "FROM fruit_stand".  Most clauses are optional, in the sense that they are not required in every query, although they will be necessary to produce certain desired results.
+The statement (or query) above is said to have two *clauses*; a clause is a part of a SQL statement, usually starting with a SQL keyword.  The two clauses in the statement above are the **SELECT** clause, "SELECT \*" and the **FROM** clause, "FROM fruit_stand".  Most clauses are optional in the sense that they are not required in every query, although they will be necessary to produce certain desired results.
 
 Retrieving specific columns
 ---------------------------
@@ -101,7 +101,7 @@ There is a lot more we can do with a **SELECT** query, which will be explored in
 Creating tables and adding data
 :::::::::::::::::::::::::::::::
 
-Of course, before you can retrieve data from a database, you need to get data into it.  First, we need to define a table structure.  We do this with a **CREATE TABLE** statement.  The **fruit_stand** table above was created using this statement:
+Of course, before you can retrieve data from a database, you need to put data into it.  First, we need to define a table structure.  We do this with a **CREATE TABLE** statement.  The **fruit_stand** table above was created using this statement:
 
 ::
 
@@ -162,9 +162,9 @@ Next, SQL keywords are case-insensitive.  That is, we can write:
 
 and get the same result for each query.  In the examples in this book, the convention is that SQL keywords will be capitalized.
 
-To some extent, the names of things (tables, columns, functions, etc.) also act as if they are case-insensitive.  However, the behavior here varies among databases.  We'll explore more on this topic in :numref:`Chapter {number} <joins-chapter>`.  A fairly common convention is to always put the names of things in lowercase.  The examples in this book will follow that convention, which will help distinguish keywords from things that exist in the database.
+To some extent, the names of things (tables, columns, functions, etc.) also act as if they are case-insensitive.  However, the behavior here varies among databases.  We will explore more on this topic in :numref:`Chapter {number} <joins-chapter>`.  A fairly common convention is to always put the names of things in lowercase.  The examples in this book will follow that convention, which will help distinguish keywords from things that exist in the database.
 
-Note the conventions used in this textbook may be different from those used by your teacher, at your place of work, or in code found on the internet!
+Note that the conventions used in this textbook may be different from those used by your teacher, at your place of work, or in code found on the internet!
 
 .. index:: comments
 
@@ -172,7 +172,7 @@ Note the conventions used in this textbook may be different from those used by y
 Comments
 ::::::::
 
-SQL provides for two types of comments, which we will occasionally use to annotate queries in this book.  Multi-line comments are any text between `/*` and `*/`.  Single-line comments start with two dashes.  Here is a query using both types of comment:
+SQL provides for two types of comments, which we will occasionally use to annotate queries in this book.  Any text between `/*` and `*/` forms a multi-line comment.  Single-line comments start with two dashes.  Here is a query using both types of comment:
 
 ::
 
@@ -192,7 +192,7 @@ The good news is that this means you can experiment as much as you want with the
 
 The bad news is that any queries you create will disappear when you leave the page.  If you work on anything complex, or anything that you want to return to, you may want to copy it to a separate document on your computer.  You can also save code in the "Scratch ActiveCode" tool - click on the pencil at the top of the page to get to the tool.  Note that the scratch tool is not connected to the same database, but instead uses an empty database.
 
-As you work through this textbook, there will be frequent interactive examples based on various tables in the database.  The available tables are described in more detail in :ref:`Appendix A <appendix-a>`.  You can also query the database to learn about its tables.  To get a list of available tables, do:
+As you work through this textbook, there will be frequent interactive examples based on various tables in the database.  The available tables are described in more detail in :ref:`Appendix A <appendix-a>`.  You can also query the database to learn about its tables.  To get a list of available tables, execute the query:
 
 .. activecode:: sql_basics_example_catalog
     :language: sql
