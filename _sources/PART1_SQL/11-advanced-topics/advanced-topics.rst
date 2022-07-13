@@ -9,7 +9,7 @@ This chapter provides brief coverage of some advanced SQL capabilities that did 
 Tables used in this chapter
 :::::::::::::::::::::::::::
 
-For this chapter we will be using the books dataset (tables **books**, **authors**, etc.), a description of which can be found in :ref:`Appendix A <appendix-a>`.
+For this chapter we will be using the books dataset (with tables **books**, **authors**, etc.), a description of which can be found in :ref:`Appendix A <appendix-a>`.
 
 
 Views
@@ -68,7 +68,7 @@ CTEs are defined prior to the main **SELECT** clause, using a **WITH** clause:
       ...
     SELECT ...
 
-Here is an example listing books along with some additional pieces of information: the number of awards the book has won, and the number of printed editions of the book (keeping in mind we only have editions information for books by J.R.R. Tolkien).  We could easily provide either one of these pieces of information simply using joins and grouping and aggregation, but providing both in the same query would require using at least one subquery or window functions (discussed in the next section).  Here we use CTEs to do our grouping and aggregation steps separately, then join to those results in the main query.
+Here is an example listing books along with some additional pieces of information: the number of awards the book has won, and the number of printed editions of the book (keeping in mind that we only have edition information for books by J.R.R. Tolkien).  We could easily provide either one of these pieces of information simply using joins and grouping and aggregation, but providing both in the same query would require writing at least one subquery or using window functions (which are discussed in the next section).  Here we use CTEs to do our grouping and aggregation steps separately, then we join those results in the main query.
 
 .. activecode:: advanced_example_cte
     :language: sql
@@ -101,7 +101,7 @@ Here is an example listing books along with some additional pieces of informatio
 Window functions
 ::::::::::::::::
 
-As we saw in :numref:`Chapter {number} <grouping-chapter>`, grouping and aggregation lets us report aggregate statistics on groups of data, along with attributes common to the group (typically, attributes we grouped on).  However, the individual elements of the group are not visible.  *Window functions* provide a mechanism for reporting information related to some grouping of data while also listing all rows.  In general, all aggregate functions are available as window functions, and there are additional functions that relate a row to its membership in the group (such as its rank within the group according to some ordering).
+As we saw in :numref:`Chapter {number} <grouping-chapter>`, grouping and aggregation let us report aggregate statistics on groups of data, along with attributes common to the group (typically, attributes that we grouped by).  However, the individual elements of the group are not visible.  *Window functions* provide a mechanism for reporting information related to some grouping of data while also listing all individual rows.  In general, all aggregate functions are available as window functions, and there are additional functions that relate a row to its membership in the group (such as its rank within the group according to some ordering).
 
 As an example, suppose we wish to list all books, along with the number of books by the same author, and the ordinal number of the book as part of the author's body of work, in order by publication year (e.g., was this the author's first, second, or third book?).  We can do this with window functions:
 
@@ -136,6 +136,6 @@ Window functions have a number of additional options allowing for fairly complex
 
 **Notes**
 
-.. [#] Some databases also provide *materialized views*, which store actual data; these are used when executing the query for the view would take too long.  These views do become out of date and must be refreshed periodically.
+.. [#] Some databases also provide *materialized views*, which store actual data; these are used when executing the query for a view would take too long.  Such views do become out of date and must be refreshed periodically.
 
 |license-notice|
