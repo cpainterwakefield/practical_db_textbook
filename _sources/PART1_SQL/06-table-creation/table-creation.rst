@@ -9,12 +9,12 @@ This chapter will discuss basic table creation, starting with an explanation of 
 Data types
 ::::::::::
 
-The SQL standard defines several basic data types with which columns can be associated.  While most of the basic types exist in all relational database systems, actual implementation of the types varies quite a bit.  Most database systems define additional, non-standard types for various uses.  Unusually, SQLite is dynamically typed, and you can store values of any type in any column no matter how the column is defined.  For all of these reasons, you will want to consult your database system's documentation to understand the types available to you.  In this section we survey the major data types, without discussion of database compatibility; for more information, see Appendix B, :ref:`appendix-b-data-types`.
+The SQL standard defines several basic data types with which columns can be associated.  While most of the basic types exist in all relational database systems, actual implementation of the types varies quite a bit.  Most database systems define additional, non-standard types for various uses.  Unusually, SQLite is dynamically typed, and you can store values of any type in any column no matter how the column is defined.  For all of these reasons, you will want to consult your database system's documentation to understand the types available to you.  In this section we survey the major data types, without discussion of database compatibility; for more information, see Appendix B - :ref:`appendix-b-data-types`.
 
 Numbers
 -------
 
-SQL provides support for several different types of numbers, each with different applications and limitations.  However, actual implementation of the standard varies quite a bit; see Appendix B, :ref:`appendix-b-number-types` for a full discussion of number types.
+SQL provides support for several different types of numbers, each with different applications and limitations.  However, actual implementation of the standard varies quite a bit; see Appendix B - :ref:`appendix-b-number-types` for a full discussion of number types.
 
 Integers
 ########
@@ -24,7 +24,7 @@ SQL defines three integer types: **INTEGER**, **SMALLINT**, and **BIGINT**.  Imp
 Exact decimal numbers
 #####################
 
-Decimal number types allow for exact storage of numbers that have digits to the right of the decimal point, e.g., 1234.56789.  These numbers are exact (compare to the floating point types below), and permit exact mathematical operations where possible (addition, subtraction, and multiplication).  The two defined types for SQL are **NUMERIC** and **DECIMAL**, which are synonyms of each other.  These types may be defined with parameters representing *precision* and *scale*, where precision is the number of significant digits that can be stored, and scale is the number of digits following the decimal point.  If the precision is given, but not the scale, the scale defaults to zero.
+Decimal number types allow for exact storage of numbers that have digits to the right of the decimal point, e.g., 1234.56789.  These numbers are exact (unlike the floating point types described below) and permit exact mathematical operations where possible (addition, subtraction, and multiplication).  The two defined types for SQL are **NUMERIC** and **DECIMAL**, which are synonyms of each other.  These types may be defined with parameters representing *precision* and *scale*, where precision is the number of significant digits that can be stored, and scale is the number of digits following the decimal point.  If the precision is given, but not the scale, the scale defaults to zero.
 
 For example, in most implementations:
 
@@ -39,7 +39,7 @@ Decimal number types are particularly important for the storage of monetary data
 Floating point numbers
 ######################
 
-Floating point number types allow for (possibly inexact) storage of real numbers, similar (or sometimes identical to) the `IEEE 754`_ specification.  The SQL standard defines the types **FLOAT**, **REAL**, and **DOUBLE PRECISION** (often abbreviated **DOUBLE**), but implementation of these types vary.  These types can support extremely large and extremely small numbers, and are most useful in scientific and mathematical applications.
+Floating point number types allow for a possibly inexact storage of real numbers, similar (or sometimes identical to) the `IEEE 754`_ specification.  The SQL standard defines the types **FLOAT**, **REAL**, and **DOUBLE PRECISION** (often abbreviated **DOUBLE**), but implementation of these types vary.  These types can support extremely large and extremely small numbers, and are most useful in scientific and mathematical applications.
 
 .. _`IEEE 754`: https://en.wikipedia.org/wiki/IEEE_754
 
@@ -47,7 +47,7 @@ Floating point number types allow for (possibly inexact) storage of real numbers
 Character string types
 ----------------------
 
-There are several data types for storing character data in SQL; again, actual implementations vary.  See Appendix B, :ref:`appendix-b-string-types` for a full discussion of character string types.
+There are several data types for storing character data in SQL; again, actual implementations vary.  See Appendix B - :ref:`appendix-b-string-types` for a full discussion of character string types.
 
 The type **CHARACTER**, usually abbreviated as **CHAR**, is used for fixed-length strings.  The type **CHAR** is followed by parentheses enclosing the length of the string.  All values in a column of type **CHAR(4)**, for example, must contain exactly 4 characters.  In practice, many databases relax the "exactly" part of the definition and allow for shorter strings to be stored, although they may pad the value with trailing space characters.  Attempting to store strings longer than *n* usually results in an error.
 
@@ -64,9 +64,9 @@ One disadvantage to **VARCHAR** is the need to predict the maximum length of str
 Date and time types
 -------------------
 
-Management of date and time data is a very complicated affair.  Calendars change over time and differ among cultures, time zones vary geographically, and "leap" adjustments to the calendar and clock occur irregularly.  SQL provides very robust date and time types along with operations on these types that allow for very precise storage and management of these values.  However, here again, implementations vary, and you should read your database system's documentation to understand the fine points.  See Appendix B, :ref:`appendix-b-datetime-types` for a full discussion.
+Management of date and time data is a very complicated affair.  Calendars change over time and differ among cultures, time zones vary geographically, and "leap" adjustments to the calendar and clock occur irregularly.  SQL provides very robust date and time types along with operations on these types that allow for very precise storage and management of these values.  However, here again implementations vary, and you should read your database system's documentation to understand the fine points.  See Appendix B - :ref:`appendix-b-datetime-types` for a full discussion.
 
-There is no standard syntax for date and time literals in SQL.  In most cases, strings in some implementation-defined format(s) are used to represent dates and times.  Internally, the values may be stored as decimal numbers - offsets from some fixed reference.  In this book we will simply use character strings conforming to the `ISO 8601`_ standard.  Using this format, dates can be usefully compared - ``'2001-04-10'`` is correctly less than ``'2014-01-22'`` - which also means we can put data in order by date columns.  Time values can be trickier due to the possible inclusion of time zone, but we will avoid these complications by simply ignoring them (there are no examples of time values in our database).
+There is no standard syntax for date and time literals in SQL.  In most cases, strings in some implementation-defined format(s) are used to represent dates and times.  Internally, the values may be stored as decimal numbers - offsets from some fixed reference.  In this book we will simply use character strings conforming to the `ISO 8601`_ standard.  Using this format, dates can be usefully compared - ``'2001-04-10'`` is correctly less than ``'2014-01-22'`` - which also means we can put data in order by date columns.  Time values can be trickier due to the possible inclusion of time zones, but we will avoid these complications by simply ignoring them (there are no examples of time values in our database).
 
 .. _`ISO 8601`: https://en.wikipedia.org/wiki/ISO_8601
 
@@ -76,8 +76,8 @@ Additional data types
 
 Below is a list of some other data types you might encounter or wish to use in a SQL setting.  These are not supported by all database implementations.
 
-- SQL defines a Boolean data type (**BOOLEAN**) which can store the literal values **True** and **False**, however not all databases support this type.
-- SQL also defines types designed to hold binary data.  This can sometimes be useful, although binary data such as images or music files take up a great deal of space; it is often preferable to store them externally, and in the database only record the information needed to retrieve the files (e.g., a file path or URL).
+- SQL defines a Boolean data type (**BOOLEAN**) which can store the literal values **True** and **False**, however, not all databases support this type.
+- SQL also defines types designed to hold binary data.  This can sometimes be useful, although binary data such as images or music files take up a great deal of space. Thus, it is often preferable to store them externally, and only record the information needed to retrieve the files in the database  (e.g., a file path or URL).
 - SQL provides for user-defined types; that is, custom data types created by the database user for specific applications.
 - Many databases support types not defined in the SQL standard, or defined as optional extensions, such as types for storing and working with JSON and XML documents, geometric objects, geographical or spatial coordinates, arrays, and more.
 
@@ -85,7 +85,7 @@ Below is a list of some other data types you might encounter or wish to use in a
 Types in SQLite
 ---------------
 
-As mentioned earlier, SQLite (used in the interactive examples in this book) allows the storage of arbitrary types of data into any column; no type checking is performed.  Essentially, a value in SQLite can be ``NULL``, an integer, a floating point number, or a character string.  However, SQLite supports standard SQL syntax for table creation, including specifying data types for columns; this type information can be viewed as a type of hint to the database user as to what kind of data should be stored.  We will consistently use types you might find in other databases, and store data appropriate to the type in our examples.
+As mentioned earlier, SQLite (used in the interactive examples in this book) allows the storage of arbitrary types of data into any column; no type checking is performed.  Essentially, a value in SQLite can be ``NULL``, an integer, a floating point number, or a character string.  However, SQLite supports standard SQL syntax for table creation, including specifying data types for columns; this type information can be viewed as a hint to the database user as to what kind of data should be stored.  We will consistently use types that you might find in other databases, and store data appropriate to those types in our examples.
 
 
 Creating tables
@@ -150,7 +150,7 @@ This statement will cause an error if you do it when there is no table named **t
 
 (Note for Oracle users: Oracle does not recognize this syntax.)
 
-Note that dropping a table also destroys all data stored in the table, and this action is irrevocable (there is no "undo" operation [#]_).  This is one reason that database-modifying programs are usually developed and thoroughly tested using a copy of a database, before ever using it on the "real" database.
+Note that dropping a table also destroys all data stored in the table, and this action is irrevocable (there is no "undo" operation).  This is one reason that database-modifying programs are usually developed and thoroughly tested by using a copy of a database before they are ever used on the "real" database.
 
 
 Creating a table from a query
@@ -162,7 +162,8 @@ From the perspective of SQL, the result of a **SELECT** query is essentially the
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    DROP TABLE IF EXISTS recent_books;  -- good to always start with this
+    -- good practice to always start with this
+    DROP TABLE IF EXISTS recent_books;
 
     CREATE TABLE recent_books AS
       SELECT
@@ -223,7 +224,7 @@ In the simplest case, as above, we can provide a literal value for a column.  Mo
 
     SELECT * FROM test3;
 
-Another common use for default columns is in combination with a special kind of database object called a *sequence*, which simply generates sequential integers.  This can be used, for example, to create unique identifiers for every row in a table.  This usage is so common that the SQL standard provides syntax that both creates the necessary sequence and sets up the default for the table; not all databases support this syntax, but most provide some mechanism for the generation of sequential values for a column.  The SQL standard syntax does not work in SQLite, so you will not be able to test it in an interactive tool in this book, but the column definition using this syntax is
+Default columns are also commonly used in combination with a special kind of database object called a *sequence*, which simply generates sequential integers.  This can be used, for example, to create unique identifiers for every row in a table.  This usage is so common that the SQL standard provides syntax that both creates the necessary sequence and sets up the default for the table; not all databases support this syntax, but most provide some mechanism for the generation of sequential values for a column.  The SQL standard syntax does not work in SQLite, so you will not be able to test it in an interactive tool in this book, but the column definition using this syntax is
 
 ::
 
@@ -235,9 +236,11 @@ or
 
     column_name type GENERATED ALWAYS AS IDENTITY
 
-The first form allows values to be provided by the user when inserting a row, just like a regular value.  The second form requires that the value always be provided by the database - it cannot be overridden by the user.  (Of the databases considered for this book, only PostgreSQL and Oracle support the standard syntax; they also provide equivalent mechanisms using different syntax.  For MySQL, see documentation on the AUTO_INCREMENT property of the INTEGER data type, and for SQL Server, see the IDENTITY option under CREATE TABLE.  For SQLite, see below.)
+The first form allows values to be provided by the user when inserting a row, just like a regular value.  The second form requires that the value always be provided by the database - it cannot be overridden by the user.
 
-SQLite provides a mechanism which is similar to, but different from the standard.  In SQLite, we can create an integer column that automatically provides a new value when one is not provided by the user using the **AUTOINCREMENT** keyword; the new value provided is 1 (if the table is empty) or one greater than the maximum value already stored.  To create a column of this type, the column must also be declared to be a primary key, a topic covered in :numref:`Chapter {number} <constraints-chapter>`.  Here is an example to try out:
+(Note: of the databases considered for this book, only PostgreSQL and Oracle support the standard syntax; they also provide equivalent mechanisms using different syntax.  For MySQL, see documentation on the AUTO_INCREMENT property of the INTEGER data type, and for SQL Server, see the IDENTITY option under CREATE TABLE.  For SQLite, see below.)
+
+SQLite provides a mechanism which is similar to, but different from the standard.  In SQLite, we can create an integer column that automatically provides a new value using the **AUTOINCREMENT** keyword. If the user does not provide a value, the database supplies a value of 1 (if the table is empty) or 1 greater than the maximum value already stored.  To create a column of this type, the column must also be declared to be a primary key, a topic covered in :numref:`Chapter {number} <constraints-chapter>`.  Here is an example to try out:
 
 ::
 
@@ -325,9 +328,10 @@ This section contains exercises on table creation.  If you get stuck, click on t
 
 ----
 
-**Notes**
+..
+ **Notes**
 
-.. [#] Relational databases allow operations to be wrapped in something called a *transaction*, which does provide a way to undo work.  We will study transactions more in chapter XXX.
+ .. [#] Relational databases allow operations to be wrapped in something called a *transaction*, which does provide a way to undo work.  We will study transactions more in chapter XXX.
 
 
 |license-notice|
