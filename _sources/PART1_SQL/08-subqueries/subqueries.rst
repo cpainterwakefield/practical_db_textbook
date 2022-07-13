@@ -10,7 +10,7 @@ A subquery is simply a **SELECT** query enclosed with parentheses and nested wit
 Tables used in this chapter
 :::::::::::::::::::::::::::
 
-For this chapter we will be using the books dataset (tables **books**, **authors**, etc.), a description of which can be found in :ref:`Appendix A <appendix-a>`.
+For this chapter we will be using the books dataset (tables **books**, **authors**, etc.), described in :ref:`Appendix A <appendix-a>`.
 
 
 Scalars, rows, and tables
@@ -24,7 +24,7 @@ Before we discuss subqueries, it is useful to talk about some additional types o
 
 In most databases (but not SQLite), you can **SELECT** the above expression as a literal, with the result showing as a single column.
 
-Rows can be used in comparison expressions: the two queries below are equivalent (although the first is probably preferred as a matter of style):
+Rows can be used in comparison expressions. The two queries below are equivalent (although the second is probably preferred as a matter of style):
 
 .. activecode:: subqueries_example_row_expressions
     :language: sql
@@ -53,13 +53,13 @@ Beyond rows, we can also think in terms of *tables* as values.  Here we are usin
 Boolean subquery expressions
 ::::::::::::::::::::::::::::
 
-To start with, we examine Boolean expressions using subqueries.  These are appropriate for use within the **WHERE** clause of another query or statement.
+To start with, we will examine Boolean expressions using subqueries.  These are appropriate for use within the **WHERE** clause of another query or statement.
 
 
 Scalar or row result
 --------------------
 
-We can use a subquery in place of a scalar expression as long as we know the subquery will return a single row and column.  For an example, let's return to an example from :numref:`Chapter {number} <joins-chapter>` using our **books** table: how can we find all books published in the same year as *The Three-Body Problem*?  We will use a subquery to first obtain the **publication_year**, and then use that result to get our list of books:
+We can use a subquery in place of a scalar expression as long as we know the subquery will return a single row and column.  Let us return to an example from :numref:`Chapter {number} <joins-chapter>` using our **books** table: how can we find all books published in the same year as *The Three-Body Problem*?  We will use a subquery to first obtain the **publication_year** of *The Three-Body Problem*, and then we will use that result to get our list of books:
 
 .. activecode:: subqueries_example_single_row
     :language: sql
@@ -79,13 +79,13 @@ To see what is happening in this query, first execute the subquery on its own:
     FROM books
     WHERE title = 'The Three-Body Problem';
 
-Since this particular query returns exactly one row and one column, we treat the result as a scalar value, and simply substitute the scalar in place of the subquery:
+Since this particular query returns exactly one row and one column, we treat the result (the integer ``2008``) as a scalar value, and simply substitute the scalar in place of the subquery:
 
 ::
 
     SELECT * FROM books WHERE publication_year = 2008;
 
-Note that this only works because we only have one book with the title *The Three-Body Problem*.  In general it is not a good idea to assume a query will return a single row unless you use a **WHERE** clause condition on a column known to hold unique values, or unless you are computing an aggregate statistic over a set of rows (we will discuss aggregates in :numref:`Chapter {number} <grouping-chapter>`).  If multiple rows are returned by the subquery, the query will result in an error.  However, if zero rows are returned from the subquery, the result is considered to be ``NULL``, rather than an error.
+Note that this only works because we only have one book with the title *The Three-Body Problem*.  In general, it is not a good idea to assume a query will return a single row unless you use a **WHERE** clause condition on a column known to hold unique values, or unless you are computing an aggregate statistic over a set of rows (we will discuss aggregates in :numref:`Chapter {number} <grouping-chapter>`).  If multiple rows are returned by the subquery, the query will result in an error.  However, if zero rows are returned from the subquery, the result is considered to be ``NULL``, rather than an error.
 
 This same approach works with row expressions, although the syntax is perhaps a bit inconsistent.  If a subquery would return multiple columns, then you need to use a row expression on the left-hand side of your comparison only.  That is, the below is correct SQL:
 
@@ -100,7 +100,7 @@ This same approach works with row expressions, although the syntax is perhaps a 
 
 Putting parentheses around the columns in the **SELECT** clause of the subquery will cause an error.
 
-Comparisons do not have to be equality; you can use any comparison operator:
+Comparisons do not have to be equality; you can use any comparison operator instead:
 
 ::
 
@@ -114,12 +114,12 @@ Comparisons do not have to be equality; you can use any comparison operator:
 Table or column result
 ----------------------
 
-When a query can return multiple rows (a column or table), we have a different set of operators to work with.  In this section we discuss the **IN** operator and the use of comparison operators with **ALL**, **ANY**, and **SOME**.  Another Boolean operator, **EXISTS**, will wait until we discuss correlated subqueries later in the chapter.  All of the operators that work with multiple rows work also work on subqueries returning zero rows or one row.
+When a query can return multiple rows (a column or table), we have a different set of operators to work with.  In this section, we discuss the **IN** operator and the use of comparison operators with **ALL**, **ANY**, and **SOME**.  Another Boolean operator, **EXISTS**, will wait until we discuss correlated subqueries later in the chapter.  All of the operators that work with multiple rows also work on subqueries which return zero rows or one row.
 
 IN
 ####
 
-The **IN** operator lets us compare some expression to every row returned from a subquery.  If the expression equals any result from the subquery, then the **IN** expression evaluates to ``True``.  For example, we can ask our database for a list of books which have won awards - books with book ids matching some book id in the **books_awards** table:
+The **IN** operator lets us compare some expression to every row returned from a subquery.  If the expression equals any result from the subquery, then the **IN** expression evaluates to ``True``.  For example, we can ask our database for a list of books which have won awards (books with book ids matching some book id in the **books_awards** table):
 
 .. activecode:: subqueries_example_multiple_rows
     :language: sql
@@ -152,7 +152,7 @@ The **IN** operator also works with row expressions, when we want to compare aga
 
 As always, it can be helpful to execute the subquery separately to see what values it returns in order to better understand what the entire query is doing.
 
-**IN** also has a useful application not involving a subquery.  If we follow **IN** with a comma-separated list of expressions inside parentheses, the operator will test the expression to the left of **IN** against every expression listed in the parentheses. Note that, while the expression list looks like a row expression, it is very different; every expression in the list after **IN** should have a type compatible with the expression being compared.
+**IN** also has a useful application that does not involve a subquery.  If we follow **IN** with a comma-separated list of expressions inside parentheses, the operator will test the expression to the left of **IN** against every expression listed in the parentheses. Note that while the expression list looks like a row expression, it is very different; every expression in the list after **IN** should have a type compatible with the expression being compared.
 
 For example, we might be interested in books by a few different authors:
 
@@ -173,10 +173,10 @@ If we want to compare multiple values (i.e., row expressions), we must use paren
     (expr1, expr2, ...) IN ((test11, test12, ...), (test21, test22, ...), ...)
 
 
-ALL, ANY, SOME
-##############
+ALL, ANY, and SOME
+##################
 
-We can alternately use comparison operators, in conjunction with the **ALL** or **ANY** or **SOME** keywords, to compare an expression against the results of a subquery.  For example, we can ask again for books which have won awards by using the equality operator together with the **ANY** keyword as follows (note that the **ALL**/**ANY**/**SOME** keywords are not supported by SQLite, so you cannot test this within the textbook's interactive tools):
+We can alternately use comparison operators in conjunction with the **ALL** or **ANY** or **SOME** keywords to compare an expression against the results of a subquery.  For example, we can ask again for books which have won awards by using the equality operator together with the **ANY** keyword as follows (note that the **ALL**/**ANY**/**SOME** keywords are not supported by SQLite, so you cannot test this within the textbook's interactive tools):
 
 ::
 
@@ -217,7 +217,7 @@ There are no rows matching this condition in the database (unless you add them),
 Correlated subqueries
 :::::::::::::::::::::
 
-In all of our examples so far, we used subqueries which are executable on their own as separate **SELECT** queries.  The subquery can be executed once, and the result of the subquery substituted in its place in the outer query.  It is possible, however, to construct queries that are dependent on the outer query.  When a subquery references some attribute from the outer query in an expression, we say that the subquery is *correlated* with the outer query.
+In all of our examples so far, we used subqueries which are executable on their own as separate **SELECT** queries.  The subquery can be executed once, with the result of the subquery substituted in its place in the outer query.  It is possible, however, to construct queries that are dependent on the outer query.  When a subquery references some attribute from the outer query in an expression, we say that the subquery is *correlated* with the outer query.
 
 For example, consider the problem of finding books published after the author's death (posthumous books).  We previously saw a way of using a subquery to get books published in the same year as the author's death:
 
@@ -232,7 +232,7 @@ For example, consider the problem of finding books published after the author's 
         (SELECT author_id, substring(death, 1, 4) FROM authors)
     ;
 
-It is not clear how we can modify this query's **WHERE** clause to indicate that we want the author ids to match, but that an inequality shoudld be used to compare the publication year with the author's death year.  What we want to do is, for each book in the outer query, compare its publication year to the death year of *its author only*.  To do this, we need our subquery to only return results relevant for the current row in the outer query - in this case, the subquery should return the scalar value representing the book's author's death year.
+It is not clear how we can modify this query's **WHERE** clause to indicate that we want the author ids to match, but that an inequality should be used to compare the publication year with the author's death year.  What we want to do is, for each book in the outer query, compare its publication year to the death year of *its author only*.  To do this, we need our subquery to only return results relevant for the current row in the outer query - in this case, the subquery should return the scalar value representing the book's author's death year.
 
 Here is the solution:
 
@@ -262,7 +262,7 @@ EXISTS
 
 The **EXISTS** operator precedes a subquery; there is no operand before the **EXISTS** keyword.  An **EXISTS** expression evaluates to ``True`` only if the subquery returns one or more rows.  The actual data from the subquery is ignored, so you can put anything you want in the **SELECT** clause.  We will use a constant ``1`` in our examples, just to emphasize that the data we are returning is unimportant.
 
-Many uncorrelated subqueries can be rewritten as correlated subqueries using **EXISTS**.  For example, to find all books that have won awards, we can either do
+Many uncorrelated subqueries can be rewritten as correlated subqueries using **EXISTS**.  For example, to find all books that have won awards, we can either write
 
 ::
 
@@ -292,7 +292,7 @@ SELECT
 
 Used in a **SELECT** clause, subqueries can be used to retrieve values that are not easily obtained from the tables used in the outer query.  Used in this way, the subquery must return a scalar.  These subqueries are almost always correlated, as we want to return a value that is specific to each row.
 
-For example, we might want to include, in a listing of books, the total number of books written by the author.  For this we will use the aggregate expression **COUNT(\*)**, which simply counts the number of rows matching the **WHERE** clause in a **SELECT** query [#]_.  (Aggregates are discussed fully in :numref:`Chapter {number} <grouping-chapter>`.)
+For example, in a listing of books, we might want to include the total number of books written by the author.  For this we will use the aggregate expression **COUNT(\*)**, which simply counts the number of rows matching the **WHERE** clause in a **SELECT** query [#]_.  (Aggregates are discussed fully in :numref:`Chapter {number} <grouping-chapter>`.)
 
 .. activecode:: subqueries_example_other_clauses
     :language: sql
@@ -324,7 +324,7 @@ As an example, in preparation of this book's database, a statement was run to po
        WHERE books.book_id = editions.book_id)
     ;
 
-Note: if you run the statement above, you will update most books to have a ``NULL`` publication year - when the subquery returns zero rows, the result is interpreted as ``NULL``.  (Do not panic if you executed this statement - changes are only made to a copy of the data.  You can obtain an unmodified copy of the database by refreshing your browser window.)  You can modify the statement to only update rows for which we have editions data using another subquery:
+Note: if you run the statement above, you will update most books to have a ``NULL`` publication year - when the subquery returns zero rows, the result is interpreted as ``NULL``.  (Do not worry if you executed this statement - changes are only made to a copy of the data.  You can obtain an unmodified copy of the database by refreshing your browser window.)  You can modify the statement to only update rows for which we have editions data using another subquery:
 
 ::
 
@@ -341,7 +341,7 @@ Note: if you run the statement above, you will update most books to have a ``NUL
 FROM
 ----
 
-Subqueries can also be used within the **FROM** clause of a **SELECT** query, in which case the subquery result acts like a table containing exactly the data returned by the subquery.  In this usage, the subquery expression *must* be given a name using aliasing.  The subquery cannot be correlated!  The subquery expression can be used to obtain computed data not available in any table in the database.  For example, above we used a correlated subquery to retrieve author book counts on a row-by-row basis to go with each book title.  We could instead compute all author totals using an uncorrelated subquery, and then join to the result as if it were a table.  (Here the subquery uses both grouping and aggregation, covered in :numref:`Chapter {number} <grouping-chapter>`.)
+Subqueries can also be used within the **FROM** clause of a **SELECT** query, in which case the subquery result acts like a table containing exactly the data returned by the subquery.  In this usage, the subquery expression *must* be given a name using aliasing.  The subquery cannot be correlated!  The subquery expression can be used to obtain computed data not available in any table in the database.  For example, above we used a correlated subquery to retrieve author's book counts on a row-by-row basis to go with each book title.  We could instead compute all author totals using an uncorrelated subquery, and then join each to the result as if it were a table.  (Here the subquery uses both grouping and aggregation, covered in :numref:`Chapter {number} <grouping-chapter>`.)
 
 ::
 
@@ -365,7 +365,7 @@ Comparison with joins
 
 Subqueries are comparable to joins in the sense that they both involve multiple tables.  There are many cases in which a subquery can substitute for a join or vice-versa.  However, there are some subtle differences.
 
-First, of course, is that, short of using **SELECT** clause subqueries, you can only return data that actually appears in the outer query's tables.  If you need your result to contain data contained in multiple tables, it is generally best to join the tables rather than using **SELECT** clause subqueries.  (The example used above of a **SELECT** clause subquery is an exception, since the data we pulled in was not actually stored in any table.)  Using a separate subquery for each column needed is unwieldy, hard to read, and probably inefficient.
+First, of course, is that short of using **SELECT** clause subqueries, you can only return data that actually appears in the outer query's tables.  If you need your result to contain data contained in multiple tables, it is generally best to join the tables rather than using **SELECT** clause subqueries.  (The example used above of a **SELECT** clause subquery is an exception, since the data we pulled in was not actually stored in any table.)  Using a separate subquery for each column needed is unwieldy, hard to read, and probably inefficient.
 
 On the other hand, if you are retrieving data from one table only, it may be preferable to use a subquery.  Consider these two queries to retrieve books that have won awards:
 
@@ -430,7 +430,7 @@ This section contains some exercises using the books data set (reminder: you can
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to list books (title, publication_year) by the author Viet Thanh Nguyen:
+    Write a query to list books (title, publication_year) by the author Viet Thanh Nguyen.
     ~~~~
 
 .. reveal:: subqueries_self_test_scalar_1_hint
@@ -448,7 +448,7 @@ This section contains some exercises using the books data set (reminder: you can
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query giving the author of *How We Became Human*:
+    Write a query giving the author of *How We Became Human*.
     ~~~~
 
 .. reveal:: subqueries_self_test_scalar_2_hint
@@ -466,7 +466,7 @@ This section contains some exercises using the books data set (reminder: you can
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to list authors born after the death of author Albert Camus:
+    Write a query to list authors born after the death of author Albert Camus.
     ~~~~
 
 .. reveal:: subqueries_self_test_scalar_3_hint
@@ -484,7 +484,7 @@ This section contains some exercises using the books data set (reminder: you can
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to list books for which we have editions information:
+    Write a query to list books for which we have editions information.
     ~~~~
 
 .. reveal:: subqueries_self_test_in_1_hint
@@ -502,7 +502,7 @@ This section contains some exercises using the books data set (reminder: you can
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to list the titles of books by living authors (assume a ``NULL`` death date means the author is living):
+    Write a query to list the titles of books by living authors (assume a ``NULL`` death date means the author is living).
     ~~~~
 
 .. reveal:: subqueries_self_test_in_2_hint
@@ -520,7 +520,7 @@ This section contains some exercises using the books data set (reminder: you can
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to list the authors who have won any kind of Pulitzer prize (a book award starting with the string 'Pulitzer') for their books:
+    Write a query to list the authors who have won any kind of Pulitzer prize (a book award starting with the string 'Pulitzer') for their books.
     ~~~~
 
 .. reveal:: subqueries_self_test_challenge_1_hint
@@ -615,7 +615,7 @@ This section contains some exercises using the books data set (reminder: you can
 
 **Notes**
 
-.. [#] For this particular problem, we could instead use something called a *window function*, which will be discussed briefly in chapter XXX.
+.. [#] For this particular problem, we could instead use something called a *window function*, which will be discussed briefly in :numref:`Chapter {number} <advanced-sql-chapter>`.
 
 
 
