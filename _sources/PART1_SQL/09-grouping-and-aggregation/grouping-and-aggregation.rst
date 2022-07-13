@@ -4,13 +4,13 @@
 Grouping and aggregation
 ========================
 
-Previous chapters have focused on mechanisms for storing and retrieving data.  SQL also provides facilities for doing simple analyses of the data.  In this chapter, we discuss methods of partitioning data and computing simple statistics on the partitions.
+Previous chapters have focused on mechanisms for storing and retrieving data.  SQL also provides facilities for simple analyses of the data.  In this chapter, we discuss methods of partitioning data and computing simple statistics on the partitions.
 
 
 Tables used in this chapter
 :::::::::::::::::::::::::::
 
-For this chapter, we will primarily work with the tables **bookstore_inventory** and **bookstore_sales**, which simulate a simple database a seller of used books might use.  The **bookstore_inventory** table lists printed books that the bookstore either has in stock, or has sold recently, along with the condition of the book and the asking price.  When the bookstore sells a book, a record is added to the **bookstore_sales** table.  This table lists the **stock_number** of the book sold, the date sold, and the type of payment.  The column **stock_number** is a unique identifier for each book, and can be used to join the tables.
+For this chapter, we will primarily work with the tables **bookstore_inventory** and **bookstore_sales**, which simulate a simple database that a seller of used books might reference.  The **bookstore_inventory** table lists printed books that the bookstore either has in stock or has sold recently, along with the condition of the book and the asking price.  When the bookstore sells a book, a record is added to the **bookstore_sales** table.  This table lists the **stock_number** of the book sold, the date sold, and the type of payment.  The column **stock_number** is a unique identifier for each book, and can be used to join the tables.
 
 We will also use the **authors** table to illustrate the interaction of ``NULL`` with aggregate functions.
 
@@ -20,7 +20,7 @@ A full description of these tables can be found in :ref:`Appendix A <appendix-a>
 Aggregate statistics
 ::::::::::::::::::::
 
-*Aggregate statistics* are values computed on entire sets of data.  Counts, sums, and averages are examples of aggregate statistics.  SQL provides a number of aggregate functions for computing such statistics.  This section will cover some of the most commonly used functions; for documentation on all of the aggregate functions defined by SQL, see see Appendix B, :ref:`appendix-b-aggregate-functions`.
+*Aggregate statistics* are values computed on entire sets of data.  Counts, sums, and averages are examples of aggregate statistics.  SQL provides a number of aggregate functions for computing such statistics.  This section will cover some of the most commonly used functions; for documentation on all of the aggregate functions defined by SQL, see Appendix B - :ref:`appendix-b-aggregate-functions`.
 
 We start by using the **COUNT** aggregate function to illustrate the basic rules for aggregate functions.  At its simplest, **COUNT** can be used to return the number of rows in a table:
 
@@ -38,7 +38,7 @@ If you add a **WHERE** clause, **COUNT** will only consider rows matching the **
     FROM bookstore_sales
     WHERE payment = 'cash';
 
-The use of **\*** within the aggregate function is unique to **COUNT**; it simply means that we want to count rows, not any particular column.  Other aggregate functions require application to a column or expression.  When applied to a column or expression, **COUNT** and the other aggregate functions ignore ``NULL`` values.  For example, observe the result when applying **COUNT** to different columns of the **authors** table:
+The use of **\*** within the aggregate function is unique to **COUNT**; it simply means that we want to count rows, rather than any particular column.  Other aggregate functions require application to a column or expression.  When applied to a column or expression, **COUNT** and the other aggregate functions ignore ``NULL`` values.  For example, observe the result when applying **COUNT** to different columns of the **authors** table:
 
 ::
 
@@ -53,12 +53,12 @@ In each of the results above, we obtain a single number for each function in the
 
 While SQLite does not give us an error, the data returned demonstrates why this is an error in most databases; the returned **title** value represents just one row of the table, while the **COUNT(\*)** value is a summary of the whole table.  These two things do not match.
 
-In addition to **COUNT**, the most common aggregate functions implemented by SQLite are **SUM**, **AVG**, **MIN**, and **MAX**.  SQL defines a number of other aggregate functions, including statistical functions such as variance and standard deviation.  As with **COUNT**, the argument of the function is a column or expression, which is evaluated for every row; ``NULL`` values are discarded.  For all aggregates except **COUNT**, if the argument evaluates to ``NULL`` for every row, then the result is ``NULL`` (for **COUNT** the result is zero).
+In addition to **COUNT**, the most common aggregate functions implemented by SQLite are **SUM**, **AVG**, **MIN**, and **MAX**.  SQL defines a number of other aggregate functions as well, including statistical functions such as variance and standard deviation.  As with **COUNT**, the argument of the function is a column or expression, which is evaluated for every row; ``NULL`` values are discarded.  For all aggregates except **COUNT**, if the argument evaluates to ``NULL`` for every row, then the result is ``NULL`` (for **COUNT** the result is zero).
 
 You can probably guess the meaning of these aggregate functions:
 
-- **SUM** computes the sum, can only be applied to numbers
-- **AVG** computes the average, can only be applied to numbers
+- **SUM** computes the sum, and can only be applied to numbers
+- **AVG** computes the average, and can only be applied to numbers
 - **MIN** finds the minimum value according to the normal sort order for the value type
 - **MAX** finds the maximum value according to the normal sort order for the value type
 
@@ -69,7 +69,7 @@ We can apply all of these to the **price** column of **bookstore_inventory**:
     SELECT COUNT(price), SUM(price), AVG(price), MIN(price), MAX(price)
     FROM bookstore_inventory;
 
-In addition to ignoring ``NULL`` values, it is possible to indicate that duplicate values should be ignored, by putting the **DISTINCT** keyword before the argument of the aggregate function.  This is mostly useful when used with **COUNT**.  For example, if we want to know the total number of books versus the number of unique titles in our inventory, we could do:
+In addition to ignoring ``NULL`` values, it is possible to indicate that duplicate values should be ignored by putting the **DISTINCT** keyword before the argument of the aggregate function.  This is mostly useful when combined with **COUNT**.  For example, if we want to know the total number of books versus the number of unique titles in our inventory, we could write:
 
 ::
 
@@ -81,7 +81,7 @@ Grouping
 
 Aggregates can be very useful when applied to an entire table or to a set of rows matching a **WHERE** clause.  Sometimes, though, we want more than one count, or sum, or average from a table; we may want these statistics over some subsets of rows, organized by some common attribute.  For example, our **bookstore_inventory** table includes books in different conditions; we might be interested in the average price we are charging for books in "good" condition separately from books in "fair" condition, and so forth.
 
-SQL provides the **GROUP BY** clause for this purpose.  **GROUP BY** lets us specify an attribute, such as the condition of a book, by which to organize a table into *groups*.  Membership in a specific group is based on the **GROUP BY** expression; all members of a group share the same value for the expression.  The groups form a *partition* of the data; every row (matching the optional **WHERE** clause) is assigned to a group, and no row is assigned to more than one group.
+SQL provides the **GROUP BY** clause for this purpose.  **GROUP BY** lets us specify an attribute, such as the condition of a book, by which to organize a table into *groups*.  Membership in a specific group is based on the **GROUP BY** expression; all members of a group share the same value for the expression.  The groups form a *partition* of the data; every row (matching the optional **WHERE** clause, if used) is assigned to a group, and no row is assigned to more than one group.
 
 With **GROUP BY** in effect, we can now retrieve information about each group as a whole; each row of our output will represent information about one group.  If we put an aggregate function expression in our **SELECT** clause, the aggregate is applied to each group's rows separately.  In addition to aggregates, we can **SELECT** the **GROUP BY** expression - this is allowed (and makes sense) because all of the rows in each group will have the same value for the expression. You usually want to include the grouping expression as a label for the group - otherwise you will not know what group each aggregate expression belongs to!
 
@@ -95,7 +95,7 @@ The **GROUP BY** clause comes immediately after the **WHERE** clause, or after *
     FROM bookstore_inventory
     GROUP BY condition;
 
-If we want to exclude books that have already been sold, we could add a **WHERE** clause (here we use a subquery - subqueries are discussed in :numref:`Chapter {number} <subqueries-chapter>`):
+If we want to exclude books that have already been sold, we could add a **WHERE** clause (here we use a subquery as discussed in :numref:`Chapter {number} <subqueries-chapter>`):
 
 ::
 
@@ -105,7 +105,7 @@ If we want to exclude books that have already been sold, we could add a **WHERE*
       (SELECT stock_number FROM bookstore_sales)
     GROUP BY condition;
 
-It is also possible to group by more than one expression, in which case each group is defined by a unique setting for all of the expressions.  Our **bookstore_sales** table contains information about the date in which a book was sold, as well as the type of payment used in the purchase.  We might be very interested in knowing sales totals by month, or by type of payment, or both.  To get the price paid, we will have to join in the **bookstore_inventory** table.
+It is also possible to group by more than one expression, in which case each group is defined by a unique setting for all of the expressions.  Our **bookstore_sales** table contains information about the date in which a book was sold, as well as the type of payment used in the purchase.  We might be very interested in knowing sales totals by month, or by type of payment, or both.  To get the price that was paid, we will have to join in the **bookstore_inventory** table.
 
 To start with, let's retrieve sales totals by month (here we will use SQLite's substring() function to extract the 2-digit month number; in other databases it may be possible to extract a month by name):
 
@@ -175,7 +175,7 @@ This section contains exercises on grouping and aggregation, using the **booksto
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to count the number of books in our inventory by the author Toni Morrison:
+    Write a query to count the number of books in our inventory by the author Toni Morrison.
     ~~~~
 
 .. reveal:: grouping_self_test_count_hint
@@ -191,7 +191,7 @@ This section contains exercises on grouping and aggregation, using the **booksto
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to find the minimum, maximum, and average price of a book in "good" condition:
+    Write a query to find the minimum, maximum, and average price of a book in 'good' condition.
     ~~~~
 
 .. reveal:: grouping_self_test_statistics_hint
@@ -209,7 +209,7 @@ This section contains exercises on grouping and aggregation, using the **booksto
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to find out how many different authors we have books by:
+    Write a query to find out how many different authors have written books in our inventory.
     ~~~~
 
 .. reveal:: grouping_self_test_distinct_hint
@@ -225,7 +225,7 @@ This section contains exercises on grouping and aggregation, using the **booksto
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to get the average price of a book, by author; sort by highest average price first:
+    Write a query to get the average price of a book, by author; sort by highest average price first.
     ~~~~
 
 .. reveal:: grouping_self_test_grouping_1_hint
@@ -244,7 +244,7 @@ This section contains exercises on grouping and aggregation, using the **booksto
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to get the average price of a book, by author and condition; sort by author and condition:
+    Write a query to get the average price of a book, by author and condition; sort by author and condition.
     ~~~~
 
 .. reveal:: grouping_self_test_grouping_2_hint
@@ -263,7 +263,7 @@ This section contains exercises on grouping and aggregation, using the **booksto
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to give the number of books sold, and the total sales from those books, by condition.  Exclude books for the payment type "trade in".
+    Write a query to give the number of books sold and the total sales from those books, grouped by condition.  Exclude books for the payment type 'trade in'.
     ~~~~
 
 .. reveal:: grouping_self_test_grouping_3_hint
@@ -284,7 +284,7 @@ This section contains exercises on grouping and aggregation, using the **booksto
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to find which authors' books have an average price less than 3.
+    Write a query to find which authors' books have an average price less than 3 units of currency.
     ~~~~
 
 .. reveal:: grouping_self_test_having_hint
@@ -303,7 +303,7 @@ This section contains exercises on grouping and aggregation, using the **booksto
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to get the difference between the maximum and minimum price of a book for each possible book condition:
+    Write a query to get the difference between the maximum and minimum price of a book for each possible book condition.
     ~~~~
 
 .. reveal:: grouping_self_test_challenge_1_hint
@@ -321,7 +321,7 @@ This section contains exercises on grouping and aggregation, using the **booksto
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to find the maximum price of any book in our inventory, and list the books at that price.  *Hint*: you will need to use a subquery for this one.
+    Write a query to find the maximum price of any book in our inventory and list the books with that price.  *Hint*: you will need to use a subquery for this one.
     ~~~~
 
 .. reveal:: grouping_self_test_challenge_2_hint
