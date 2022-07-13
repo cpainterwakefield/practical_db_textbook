@@ -309,7 +309,7 @@ This section contains exercises on table creation.  If you get stuck, click on t
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a statement to create a table named **a_authors** containing just authors whose names start with the letter 'A':
+    Write a statement to create a table named **a_authors** containing just authors whose names start with the letter 'A'.
     ~~~~
 
 .. reveal:: table_creation_self_test_create_as_select_hint
