@@ -539,7 +539,7 @@ This section contains some exercises using the books data set (reminder: you can
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to list authors who have won book awards but not author awards:
+    Write a query to list authors who have won book awards but not author awards.
     ~~~~
 
 .. reveal:: subqueries_self_test_challenge_2_hint
