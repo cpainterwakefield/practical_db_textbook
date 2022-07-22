@@ -4,12 +4,12 @@
 ERD alternatives and variations
 ===============================
 
-In this chapter we explore alternatives to Chen notation entity-relationship data modeling and other variations.  We start with *crow's foot* notation, a popular notation for entity-relationship modeling.  We show how the basic crow's foot notation can be used to model relational databases at lower levels of abstraction.  We finish with an overview of some of the more common variations you are likely to encounter in both Chen and crow's foot notation.  The examples used throughout correspond to the computer manufacturer data model developed in :numref:`Chapter {number} <erd-chapter>`.
+In this chapter we explore alternatives to Chen notation entity-relationship data modeling as well as other variations.  We start with *crow's foot* notation, a popular notation for entity-relationship modeling.  We will show how the basic crow's foot notation can be used to model relational databases at lower levels of abstraction.  We will finish with an overview of some of the more common variations you are likely to encounter in both Chen and crow's foot notation.  The examples used throughout correspond to the computer manufacturer data model developed in :numref:`Chapter {number} <erd-chapter>`.
 
 Crow's foot notation
 ::::::::::::::::::::
 
-"Crow's foot" is the nickname given to a family of modeling notations that originate in a :ref:`paper by Gordon Everest <data-modeling-references>` in 1976.  The notation has been widely adopted, expanded, and modified since.  The name comes from the symbol used to represent the "many" cardinality in relationships, which resembles a crow's foot (Everest originally called the symbol an "inverted arrow", and later "fork").
+"Crow's foot" is the nickname given to a family of modeling notations that originated in a :ref:`paper by Gordon Everest <data-modeling-references>` in 1976.  The notation has been widely adopted, expanded, and modified since.  The name comes from the symbol used to represent the "many" cardinality in relationships, which resembles a crow's foot (Everest originally called the symbol an "inverted arrow", and later a "fork").
 
 Entity-relationship modeling
 ----------------------------
@@ -73,11 +73,11 @@ We have so far been discussing data modeling at an abstract level, which we migh
 
 At the next level of abstraction lives the *logical* model, which includes all of the relational database structure that results from applying the techniques described in :numref:`Chapter {number} <erd-to-relational-chapter>`.  Crow's foot notation is well suited to modeling at this level.
 
-Below we show the conceptual and logical versions of two parts of our example data model.  Rectangles in the logical model now represent actual tables, and list all columns in the table.  We show columns participating in primary keys in boldface and underlined; foreign key columns are italicized.  Logical models often include data types, but we have omitted those details for now.
+Below we show the conceptual and logical versions of two parts of our example data model.  Rectangles in the logical model now represent actual tables and list all columns in the table.  We show columns participating in primary keys in boldface and underlined; foreign key columns are italicized.  Logical models often include data types, but we have omitted those details for now.
 
 .. figure:: crows_foot_conceptual_1.svg
 
-    A conceptual model showing entities **employee** and **factory**, and their relationships.
+    A conceptual model showing entities **employee** and **factory** and their relationships.
 
 .. figure:: crows_foot_logical_1.svg
 
@@ -85,7 +85,7 @@ Below we show the conceptual and logical versions of two parts of our example da
 
 .. figure:: crows_foot_conceptual_2.svg
 
-    A conceptual model showing entities **part** and **vendor**, and the many-to-many relationship between them.  The relationship has an attribute, which we have shown as a rectangle connected to the relationship line.
+    A conceptual model showing entities **part** and **vendor** and the many-to-many relationship between them.  The relationship has an attribute, which we have shown as a rectangle connected to the relationship line.
 
 .. figure:: crows_foot_logical_2.svg
 
@@ -93,7 +93,7 @@ Below we show the conceptual and logical versions of two parts of our example da
 
 If we choose, we can add even more detail to create a *physical* model.  The physical model would definitely include data types as well as any constraints on columns or tables, and might include details such as indexes or even where a table lives on disk or on the network.
 
-Each level of abstraction has value, but whether or not you create models at a particular level will depend on your needs.  As discussed in :numref:`Chapter {number} <erd-chapter>`, models at the highest levels of abstraction are particularly valuable in the early stages of developing a database, and in communicating with all of the various stakeholders in a project.  The conceptual model can be used to produce a database directly, or you may prefer to create a logical model as an intermediate stage.  On the other hand, for some projects you may skip the conceptual level and start with a logical model.  It can be very useful to maintain a logical model documenting a database; with large and complex databases, even regular users of the database can forget the names of tables and columns!  Physical models are mostly used by database administrators (DBAs) on very complex projects, and are usually created in software tools that can also generate the SQL code to create the database.
+Each level of abstraction has value, but whether or not you create models at a particular level will depend on your needs.  As discussed in :numref:`Chapter {number} <erd-chapter>`, models at the highest levels of abstraction are particularly valuable in the early stages of developing a database, and in communicating with all of the various stakeholders in a project.  The conceptual model can be used to produce a database directly, or you may prefer to create a logical model as an intermediate stage.  On the other hand, for some projects you may skip the conceptual level and start with a logical model.  It can be very useful to maintain a logical model as documentation for a database; with large and complex databases, even regular users of the database can forget the names of tables and columns!  Physical models are mostly used by database administrators (DBAs) on very complex projects and are usually created in software tools that can also generate the SQL code to create the database.
 
 
 Common variations
@@ -101,7 +101,7 @@ Common variations
 
 Most visual languages for data modeling derive in greater or lesser degree from Chen's notation or crow's foot notation, although alternatives exist.  One popular alternative is the *unified modeling language* (UML).  While UML is not specifically intended for database design, it has been adapted for the purpose.  UML is especially applicable in more advanced settings involving inheritance hierarchies for entities.  Chen's notation has also been extended for these settings.  We do not cover inheritance in this book.
 
-All data modeling languages share certain commonalities, such as entities, attributes, keys, relationships, and cardinality ratios.  Most have some notion of participation or minimum cardinality.  The basic concepts are the same, but the notations vary.  We give an overview of just the most common variations you are likely to encounter below.
+All data modeling languages share certain commonalities, such as entities, attributes, keys, relationships, and cardinality ratios.  Most have some notion of participation or minimum cardinality.  The basic concepts are the same, but the notations vary.  We give an overview of the most common variations you are likely to encounter below.
 
 Cardinality ratios and participation
 ------------------------------------
@@ -179,7 +179,7 @@ Attributes
 
 In our presentation of crow's foot logical models above, we used text styling (boldface and underlining) to indicate primary keys.  We used italics to indicate foreign keys.  Many drawing and modeling tools similarly use text styling to indicate keys, although not necessarily the styling we used.  Tools may also or instead use background or foreground colors to indicate keys and other properties of columns.
 
-Many tools will also or instead indicate primary and foreign key columns with text indicators, usually "PK" and "FK".  Some will highlight primary keys by separating them from the other columns:
+Many tools will also (or instead) indicate primary and foreign key columns with text indicators, usually "PK" and "FK".  Some will highlight primary keys by separating them from the other columns:
 
 .. image:: entity_alternative.svg
     :alt: The entity employee with the primary key attribute labeled with "PK" and with the foreign key attributes labeled with "FK"

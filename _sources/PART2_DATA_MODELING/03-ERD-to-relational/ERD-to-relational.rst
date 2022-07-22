@@ -8,7 +8,7 @@ Converting ERD to a relational model
 
 In this chapter we explain the process of creating a relational database from an entity-relationship model.  While many steps are largely mechanical, a number of decisions need to be made along the way.  We will explore the trade-offs for each decision.  We will use the computer manufacturer data model from :numref:`Chapter {number} <erd-chapter>` as our example.
 
-This chapter assumes you are familiar with the basics of the relational model of the database, including tables and primary and foreign key constraints.  The necessary foundations are covered in either Part I (Chapters 1.1, 1.7) or Part III (Chapters ???).
+This chapter assumes you are familiar with the basics of the relational model of the database, including tables and primary and foreign key constraints.  The necessary foundations are covered in either Part I (Chapters :numref:`{number} <basics-chapter>` and :numref:`{number} <constraints-chapter>`) or Part III (:numref:`Chapter {number} <relational-model-chapter>`).
 
 There are many ways to represent the relational database: logical or physical data models (:numref:`Chapter {number} <other-notations-chapter>`), text or tabular descriptions, or SQL code.  Which you use will depend on your development process and needs.  In this chapter, we will provide simple text descriptions in tabular format.
 
@@ -56,7 +56,7 @@ Here is a preliminary conversion of the **employee** entity into a relational ta
     | Primary key: id                                                       |
     +---------------+----------+--------------+-----------------------------+
 
-This is not yet the final **employee** table!  We will add additional columns to the table when we address the relationships that **employee** participates in.
+This is not yet the final **employee** table!  We will add additional columns to the table when we address the relationships that the **employee** entity participates in.
 
 Weak entities
 -------------
@@ -122,7 +122,7 @@ For example, our ERD indicates a many-to-many relationship between the entities 
 .. image:: supplies.svg
     :alt: The vendor and part entities, their attributes, and the supplies relationship connecting them
 
-We create tables **vendor** and **part** following the guidelines above, and then create the cross-reference table **vendor_part**.  (It is common to name a cross-reference table using the names of the two tables being related, although other schemes can of course be used.)  Note that the **supplies** relationship also has a relationship attribute, **price**, which we can incorporate into cross-reference table.  The result, with some fictional data, is pictured below:
+We create tables **vendor** and **part** following the guidelines above, and then create the cross-reference table **vendor_part**.  (It is common to name a cross-reference table using the names of the two tables being related, although other schemes can of course be used.)  Note that the **supplies** relationship also has a relationship attribute, **price**, which we can incorporate into the cross-reference table.  The result, with some fictional data, is pictured below:
 
 .. image:: vendor_part_xref.svg
     :alt: The tables vendor, part, and vendor_part with sample data
@@ -197,7 +197,7 @@ In our ERD, the **employee** entity participates in one-to-many relationships wi
 
 There is also a one-to-one relationship between **employee** and **factory**, which we will deal with in the next section.
 
-Considering first the **works at** relationship, we see that each employee works at at most one factory.  Therefore, we can include a column for the factory city in the **employee** table.  For consistency with previous choices, we will call this column **factory_city**.  This column should be constrained by a foreign key referencing the **factory** table.
+Considering first the **works at** relationship, we see that each employee works at no more than one factory.  Therefore, we can include a column for the factory's city in the **employee** table.  For consistency with previous choices, we will call this column **factory_city**.  This column should be constrained by a foreign key referencing the **factory** table.
 
 We also have the **supervises** relationship to deal with.  In the same fashion as above, we should include a column in the **employee** table containing primary keys from the **employee** table.  However, we should give careful consideration to the name we give this added column; **employee_id** would be a very misleading choice!  A better choice is to consider the role of the employee whose id will be stored, and call the column **supervisor_id**.
 
@@ -326,7 +326,7 @@ We might, then, implement the model entity and its attributes using the followin
     | Foreign key: (model_name, model_number) |right-arrow| model (name, number) |
     +---------------+----------+--------------+----------------------------------+
 
-Many applications also require the values associated with a multivalued attribute to be restricted to a certain list of values.  In this case, an additional table is used.  The additional table exists just to contain the allowed values, allowing us to constrain the data to just those values.  For more complex values, a artificial identifier may be added as primary key, and the primary key used in the multivalued attribute table instead of the values themselves, in which case the multivalued attribute table becomes a cross-reference table. For small lists of simple values (as in our example) this adds unnecessary complication.
+Many applications also require the values associated with a multivalued attribute to be restricted to a certain list of values.  In this case, an additional table is used.  The additional table exists just to contain the allowed values, allowing us to constrain the data to just those values.  For more complex values, an artificial identifier may be added as a primary key, and the primary key used in the multivalued attribute table instead of the values themselves, in which case the multivalued attribute table becomes a cross-reference table. For small lists of simple values (as in our example), this adds unnecessary complication.
 
 For our example, we will constrain the **application** column using a foreign key constraint referencing this simple table:
 
@@ -378,7 +378,7 @@ In this section, we collect together all of the tables produced from our example
     | Foreign key: supervisor_id |right-arrow| employee (id)                |
     +---------------+----------+--------------+-----------------------------+
 
-Table **employee** contains columns for the attributes of the **employee** entity, and foreign keys implementing the relationships **works at** and **supervises**.
+The **employee** table contains columns for the attributes of the **employee** entity and foreign keys implementing the relationships **works at** and **supervises**.
 
 .. table:: Table **factory**
     :class: lined-table
@@ -397,7 +397,7 @@ Table **employee** contains columns for the attributes of the **employee** entit
     | Foreign key: manager_id |right-arrow| employee (id)                   |
     +---------------+----------+--------------+-----------------------------+
 
-Table **factory** contains columns for the attributes of the **factory** entity, and a foreign key implementing the relationship **manages**.  The **throughput** attribute is not reflected in the table, as it is a derived attribute.  The throughput of a factory can be computed by summing the throughputs of the assembly lines in the factory.
+The **factory** table contains columns for the attributes of the **factory** entity and a foreign key implementing the relationship **manages**.  The **throughput** attribute is not reflected in the table, as it is a derived attribute.  The throughput of a factory can be computed by summing the throughputs of the assembly lines in the factory.
 
 .. table:: Table **assembly_line**
     :class: lined-table
@@ -418,7 +418,7 @@ Table **factory** contains columns for the attributes of the **factory** entity,
     | Foreign key: factory_city |right-arrow| factory (city)                |
     +---------------+----------+--------------+-----------------------------+
 
-Table **assembly_line** implements the **assembly line** weak entity.  It incorporates a foreign key referencing the **factory** parent entity.  Its primary key is composed of the parent entity key (**factory_city**) and the partial key (**number**).
+The **assembly_line** table implements the **assembly line** weak entity.  It incorporates a foreign key referencing the **factory** parent entity.  Its primary key is composed of the parent entity key (**factory_city**) and the partial key (**number**).
 
 .. table:: Table **model**
     :class: lined-table
@@ -441,7 +441,7 @@ Table **assembly_line** implements the **assembly line** weak entity.  It incorp
     | Foreign key: factory_city |right-arrow| factory (city)                |
     +---------------+----------+--------------+-----------------------------+
 
-Table **model** contains columns for the attributes of the **model** entity.  Only the component attributes of the composite attribute **designation** are included; as **designation** was also the key attribute for **model**, the **model** table has a composite primary key.  The table also includes a foreign key implementing the **builds** relationship.  As mentioned in the text above, the **builds** relationship could alternately be implemented using a cross-reference table connecting **factory** and **builds**, but we have opted for the simpler solution here.  We assume the designation of computer models includes the name of the computer line (e.g. "Orion") and some particular version of the computer line, which we call the "number" of the model.  These versions may contain letters as well as numbers (e.g., "xz450"), which is why a column named "number" is implemented as text.
+The **model** table contains columns for the attributes of the **model** entity.  Only the component attributes of the composite attribute **designation** are included; as **designation** was also the key attribute for **model**, the **model** table has a composite primary key.  The table also includes a foreign key implementing the **builds** relationship.  As mentioned in the text above, the **builds** relationship could alternatively be implemented using a cross-reference table connecting **factory** and **builds**, but we have opted for the simpler solution here.  We assume that the designation of computer models includes the name of the computer line (e.g. "Orion") and some particular version of the computer line, which we call the "number" of the model.  These versions may contain letters as well as numbers (e.g., "xz450"), which is why a column named "number" is implemented as text.
 
 .. table:: Table **model_application**
     :class: lined-table; in this case
@@ -464,7 +464,7 @@ Table **model** contains columns for the attributes of the **model** entity.  On
     | Foreign key: application |right-arrow| application (application)           |
     +---------------+----------+--------------+----------------------------------+
 
-The table **model_application** implements the multivalued attribute **application** of the **model** entity.  Each row of the table contains a single **application** value describing a particular computer model.  Note that, as the **model** entity had a composite primary key, the **model_application** table has a composite foreign key referencing its parent (*not* two separate foreign keys for each component of the parent key).  Additionally, we constrain the values in **application** to come from a set list of possible values, contained in the **application** table (below).
+The **model_application** table implements the multivalued attribute **application** of the **model** entity.  Each row of the table contains a single **application** value describing a particular computer model.  Note that, as the **model** entity has a composite primary key, the **model_application** table has a composite foreign key referencing its parent (*not* two separate foreign keys for each component of the parent key).  Additionally, we constrain the values in **application** to come from a set list of possible values, contained in the **application** table (below).
 
 .. table:: Table **application**
     :class: lined-table
@@ -479,7 +479,7 @@ The table **model_application** implements the multivalued attribute **applicati
     | Primary key: application                                              |
     +---------------+----------+--------------+-----------------------------+
 
-The **application** table contains a simple list of unique values available to insert into the **model_application** table.
+The **application** table contains a simple list of unique values which are available to insert into the **model_application** table.
 
 .. table:: Table **part**
     :class: lined-table
@@ -496,7 +496,7 @@ The **application** table contains a simple list of unique values available to i
     | Primary key: part_number                                              |
     +---------------+----------+--------------+-----------------------------+
 
-Table **part** contains columns for the attributes of the **part** entity.  The column **part_number** here, similar to the model "number" above, can contain characters as well as numbers, so again we use a text type column.
+The **part** table contains columns for the attributes of the **part** entity.  The column **part_number** here, similar to the model "number" above, can contain characters as well as numbers, so again we use a text type column.
 
 .. table:: Table **model_part**
     :class: lined-table
@@ -519,7 +519,7 @@ Table **part** contains columns for the attributes of the **part** entity.  The 
     | Foreign key: part_number |right-arrow| part (part_number)                  |
     +---------------+----------+--------------+----------------------------------+
 
-Table **model_part** is a cross-reference table implementing the **can use** relationship.
+The **model_part** table is a cross-reference table implementing the **can use** relationship.
 
 .. table:: Table **vendor**
     :class: lined-table
@@ -538,7 +538,7 @@ Table **model_part** is a cross-reference table implementing the **can use** rel
     | Primary key: name                                                     |
     +---------------+----------+--------------+-----------------------------+
 
-Table **vendor** contains columns for the attributes of the **vendor** entity.  Only the component attributes of the **contact info** attribute are reflected.
+The **vendor** table contains columns for the attributes of the **vendor** entity.  Only the component attributes of the **contact info** attribute are reflected.
 
 .. table:: Table **vendor_part**
     :class: lined-table
@@ -561,7 +561,7 @@ Table **vendor** contains columns for the attributes of the **vendor** entity.  
     | Foreign key: part_number |right-arrow| part (part_number)             |
     +---------------+----------+--------------+-----------------------------+
 
-Table **vendor_part** is a cross-reference table implementing the **supplies** relationship.  In addition to the foreign keys for the tables it relates, it contains a column for the **price** attribute of the relationship.
+The **vendor_part** table is a cross-reference table implementing the **supplies** relationship.  In addition to the foreign keys for the tables it relates to, it contains a column for the **price** attribute of the relationship.
 
 
 Self-check exercises
@@ -657,13 +657,13 @@ This section has some questions you can use to check your understanding of how t
 
         + Correct.
 
-    -   Create a cross reference table **c_d** with columns **c_id**, **d_id**.  Make a composite primary key using **c_id** and **d_id**.
+    -   Create a cross reference table **c_d** with columns **c_id** and **d_id**.  Make a composite primary key using **c_id** and **d_id**.
         Add foreign key constraints on **c_id** and **d_id** referencing **c** and **d**, respectively.  Create another table, **c_d_x**,
         with columns **c_id**, **d_id**, and **x**.  Table **c_d_x** has primary key **x**, and a foreign key constraint on **c_id** and **d_id** referencing table **c_d**.
 
         - This could almost work (you would need a different primary key for **c_d_x**), but it is unnecessarily complicated.
 
-    -   Create a cross reference table **c_d** with columns **c_id**, **d_id**.  Make a composite primary key using **c_id** and **d_id**.
+    -   Create a cross reference table **c_d** with columns **c_id** and **d_id**.  Make a composite primary key using **c_id** and **d_id**.
         Add foreign key constraints on **c_id** and **d_id** referencing **c** and **d**, respectively.  Add column **x** to either **c** or **d**.
 
         - The values for **x** will differ for different combinations of **c** and **d**.
