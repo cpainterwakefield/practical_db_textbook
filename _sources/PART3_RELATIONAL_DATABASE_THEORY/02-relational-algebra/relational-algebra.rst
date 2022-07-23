@@ -4,14 +4,14 @@
 Relational algebra
 ==================
 
-In the last chapter, we introduced the relational model of the database, and defined the fundamental mathematical object in the model, the *relation*.  In this chapter, we discuss the *relational algebra*, which is the set of algebraic operations that can be performed on relations.  The relational algebra can be viewed as one mechanism for expressing queries on data stored in relations, and an understanding of relational algebra is important in understanding how relational databases represent and optimize queries.  We will cover only the basic relational algebra, ignoring later extensions such as those for group and aggregate operations and those for outer joins.
+In the last chapter, we introduced the relational model of the database, and defined the fundamental mathematical object in the model, the *relation*.  In this chapter, we discuss *relational algebra*, which is the set of algebraic operations that can be performed on relations.  Relational algebra can be viewed as one mechanism for expressing queries on data stored in relations, and an understanding of relational algebra is important in understanding how relational databases represent and optimize queries.  We will cover only basic relational algebra, ignoring later extensions such as those for group and aggregate operations and those for outer joins.
 
-A related topic, which we do not cover in this book, is the *relational calculus*.  The relational calculus provides another mathematical expression of queries on relations, and is equivalent in expressiveness to the relational algebra.
+A related topic, which we do not cover in this book, is *relational calculus*.  Relational calculus provides another mathematical expression of queries on relations, and is equivalent in expressiveness to relational algebra.
 
 Unary operations
 ::::::::::::::::
 
-The unary operations in the relational algebra act on one relation and result in another relation.  The unary operations are *selection*, *projection*, and *renaming*, and their associated operators are typically written as the Greek letters which match the starting letters of the operation:
+The unary operations in relational algebra act on one relation and result in another relation.  The unary operations are *selection*, *projection*, and *renaming*, and their associated operators are typically written as the Greek letters which match the starting letters of the operation:
 
 - :math:`\sigma` (sigma): selection
 - :math:`\pi` (pi): projection
@@ -34,12 +34,12 @@ We will explore each of these unary operators in application to the relation **b
     7       5         *A Wizard of Earthsea*       1968
     ======= ========= ============================ ====
 
-The **books** relation has primary key **book_id**; **author_id** is a foreign key to another table we will use later in this chapter.
+The **books** relation has primary key **book_id**, while **author_id** is a foreign key to another table we will use later in this chapter.
 
 Selection
 ---------
 
-Selection applies a Boolean condition to the tuples in a relation.  The result of a selection operation is a relation containing exactly those tuples for which the selection condition evaluated to true.  For example, if we are interested in books published after 1960, we can write the selection operation to retrieve just those books as:
+Selection applies a Boolean condition to the tuples in a relation.  The result of a selection operation is a relation containing exactly those tuples for which the selection condition is true.  For example, if we are interested in books published after 1960, we can write the selection operation to retrieve just those books as:
 
 .. math::
 
@@ -65,7 +65,7 @@ Simple Boolean expressions in the relational algebra usually involve comparisons
 
     \sigma_{\text{year} > 1960 \text{ OR } \text{author_id} = 6}(\text{books})
 
-Selection can result in a relation that has all of the tuples from the original (a relation equivalent to the original), some of the tuples from the original, or no tuples at all (an empty set).  In the case of a empty relation, we still consider the relation to have the same schema as the original relation.
+Selection can result in a relation that has all of the tuples from the original (a relation equivalent to the original), some of the tuples from the original, or no tuples at all (an empty set).  In the case of an empty relation, we still consider the relation to have the same schema as the original relation.
 
 Since the result of a selection is a relation, we can apply another selection to the result.  For example, we could find the books published after 1950, and then select from that result the books with **author_id** equal to 6:
 
@@ -116,7 +116,7 @@ This result contains a tuple for each tuple in **books**, but the tuples in the 
     *A Wizard of Earthsea*       1968
     ============================ ====
 
-At first glance, it might seem the result of a projection will always have the same number of tuples as the input relation, but this is not the case.  Consider what happens if we project **books** onto the single attribute **year**.  There are two tuples in **books** with the same **year** value of 1968; when we project onto this single attribute, we get two identical tuples.  Since relations cannot contain duplicates, the result only has one tuple with **year** equal to 1968.  Thus, the result has *fewer* tuples than the input relation:
+At first glance, it might seem the result of a projection will always have the same number of tuples as the input relation, but this is not the case.  Consider what happens if we project **books** onto the single attribute **year**.  There are two tuples in **books** with the same **year** value of 1968.  Since relations cannot contain duplicates, the result of our projection operation can contain only one tuple with **year** equal to 1968.  Thus, the result has *fewer* tuples than the input relation:
 
 .. table:: :math:`\pi_{\text{year}}(\text{books})`
     :class: lined-table
@@ -188,7 +188,7 @@ In the first expression, we select the books which were published in 1968, and t
 
 However, the second expression is not a correct expression.  The projection occurs first, yielding a relation with just one attribute named **title**.  The following selection is then incorrect, because it makes reference to an attribute, **year**, which does not exist in the input relation.
 
-Projection can also by applied to the result of another projection; however, the result is equivalent to just performing the second projection.  Compare:
+Projection can also be applied to the result of another projection; however, the result is equivalent to just performing the second projection.  Compare:
 
 .. math::
 
@@ -224,8 +224,8 @@ We can optionally leave out either the relation name or the list of attributes. 
     \rho_{\text{(year} \rightarrow \text{publication_year)}}(\text{books})
 
 
-Cross product and joins
-:::::::::::::::::::::::
+Cross products and joins
+::::::::::::::::::::::::
 
 We now turn our attention to operations which extend tuples in one relation with tuples from another relation.  For this section, we will be using **books** and a second relation, **authors**:
 
@@ -244,12 +244,12 @@ We now turn our attention to operations which extend tuples in one relation with
     7          Kazuo Ishiguro     1954-11-08
     ========== ================== =========== ============
 
-Relation **authors** has primary key **author_id**.  Relation **books** is related to **authors** via a foreign key on **author_id**.
+The **authors** relation has a primary key of **author_id**.  The **books** relation is related to **authors** via a foreign key on **author_id**.
 
 Cross product
 -------------
 
-The cross product (or *Cartesian product*) of two relations **A** and **B** is a new relation containing all tuples that can be created by concatenating some tuple from **B** onto some tuple from **A** [#]_.  Here we are using the definition of tuple as an ordered list of values.  The attributes of the new relation are the attributes of **A** and **B** concatenated (however, if there is a name collision, e.g., if both **A** and **B** have some attribute **x**, we will disambiguate the attributes in the new relation by prepending the relation names, that is, the cross product will have attributes **A.x** and **B.x**; we can avoid having to do this if we first apply renaming to one relation or the other).
+The cross product (or *Cartesian product*) of two relations **A** and **B** is a new relation containing all tuples that can be created by concatenating some tuple from **B** onto some tuple from **A** [#]_.  Here we are using the definition of tuple as an ordered list of values.  The attributes of the new relation are normally the attributes of **A** and **B** concatenated.  However, if there is a name collision, e.g., if both **A** and **B** have some attribute **x**, we will disambiguate the attributes in the new relation by prepending the relation names, that is, the cross product will have attributes **A.x** and **B.x**; we can avoid having to do this if we first apply renaming to one relation or the other.
 
 The cross product operator is denoted :math:`\times`, and is written between its two operands. To start, consider two rather abstract relations **S** and **T**:
 
@@ -280,7 +280,7 @@ We write the cross product of **S** and **T** as:
 
     \text{S} \times \text{T}
 
-which gives us the (unnamed) relation containing every pairing of a tuple from **S** with every tuple from **T**:
+which gives us the relation containing every pairing of a tuple from **S** with every tuple from **T**:
 
 .. table::
     :class: lined-table
@@ -301,7 +301,7 @@ From the definition, it is trivial to determine that the size of the cross produ
 Join
 ----
 
-The cross product is a fundamental operation in the relational algebra, but not a generally useful one when we consider actual data.  Consider the cross product of **books** and **authors**:
+The cross product is a fundamental operation in relational algebra, but not a generally useful one when we consider actual data.  Consider the cross product of **books** and **authors**:
 
 .. math::
 
@@ -325,7 +325,7 @@ The full set of tuples in this relation is large (the number of books multiplied
 
 The author of *The House of the Spirits* is Isabel Allende.  What meaning, then, can we make of a tuple that pairs *The House of the Spirits* with the author Ralph Ellison (the author of *Invisible Man*)?
 
-We are typically interested in pairing only certain tuples of a relation with certain tuples of another.  In the above example, we are interested in tuples where the **author_id** attribute from **books** agrees with the **author_id** attribute from **authors**.  This relationship is indicated not only by the names we have used for attributes, but also by the foreign key constraint on **books** and **authors**.  To retain only the tuples with matching **author_id** values, we apply a selection operation to the result of our cross product:
+We are typically interested in pairing only certain tuples of a relation with certain tuples of another.  In the above example, we are interested in tuples where the **author_id** attribute from **books** agrees with the **author_id** attribute from **authors**.  This relationship is indicated not only by the names we have used for attributes, but also by the foreign key constraint on **books** and **authors**.  To retain only the tuples with matching **author_id** values, we can apply a selection operation to the result of our cross product:
 
 .. math::
 
@@ -365,31 +365,31 @@ Note that one tuple from **authors** does not contribute to the join.  This tupl
 Theta-join and equijoin
 -----------------------
 
-While an equality condition is typically used in joins, more generally any condition of the form
+While an equality condition is typically used in joins, more generally any condition of the following form can be used:
 
 .. math::
 
     \text{A.x } \Theta \text{ B.y}
 
-where **A.x** is an attribute from one relation, **B.y** is an attribute from the other relation, and :math:`\Theta` is a comparison operator (such as =, <, etc.), can be used.  A condition of this form is known as a *theta condition*, and a join using such a condition or a conjunction (AND) of such conditions is known as a *theta-join*.
+where **A.x** is an attribute from one relation, **B.y** is an attribute from the other relation, and :math:`\Theta` is a comparison operator (such as =, <, etc.).  A condition of this form is known as a *theta condition*, and a join using such a condition or a conjunction (AND) of such conditions is known as a *theta-join*.
 
 A theta-join using only equality comparisons (as in our example above) is further known as an *equijoin*.
 
-This terminology is not especially important in understanding the algebra, but is something you may encounter if you intend a deeper study of the relational algebra.
+This terminology is not especially important in understanding the algebra, but is something you may encounter if you intend a deeper study of  relational algebra.
 
 
 Natural join
 ------------
 
-When we join **books** with **authors** we run into the issue that both relations contain an attribute named **author_id**.  Since a relation cannot have more than one attribute with the same name, joining (or taking a cross product of) these two relations requires us to rename the attributes in some fashion, either by an explicit renaming operation prior to joining, or by prepending the original relation name as we did in our example.  Because our join condition was equality on the **author_id** attributes, both the **books.author_id** and **authors.author_id** in the resulting relation always agree.  This unnecessary redundancy can be removed using projection and renaming.
+When we join **books** with **authors** we run into the issue that both relations contain an attribute named **author_id**.  Since a relation cannot have more than one attribute with the same name, joining (or taking a cross product of) these two relations requires us to rename the attributes in some fashion. This can be done either by an explicit renaming operation prior to joining or by prepending the original relation name (as we did in our example).  Because our join condition was equality on the **author_id** attributes, both the **books.author_id** and **authors.author_id** in the resulting relation always agree.  This unnecessary redundancy can be removed using projection and renaming.
 
-In this special situation in which we wish to join specifically by equating the attributes with the same names in both relations, and subsequently remove the "duplicate" attributes, we can instead do a *natural join*.  We can indicate a natural join using the join operator with no conditions [#]_:
+In this special situation in which we wish to join specifically by equating the attributes with the same names in both relations - subsequently removing the "duplicate" attributes - we can instead do a *natural join*.  We can indicate a natural join using the join operator with no conditions [#]_:
 
 .. math::
 
     \text{books} \Join \text{authors}
 
-yields the simplified relation:
+which yields the simplified relation:
 
 .. table::
     :class: lined-table
@@ -410,7 +410,7 @@ yields the simplified relation:
 Set operations
 ::::::::::::::
 
-Unsurprisingly, given that relations are sets, the relational algebra includes the usual set operations *union*, *intersection*, and *set difference*, with some restrictions.  These binary operations are denoted by:
+Unsurprisingly, given that relations are sets, relational algebra includes the usual set operations - *union*, *intersection*, and *set difference* - with some restrictions.  These binary operations are denoted by:
 
 - :math:`\cup`: union
 - :math:`\cap`: intersection
@@ -488,9 +488,9 @@ Then we have:
 
 Note that union and intersection are commutative, but set difference is not.
 
-The important restriction on set operations in the relational algebra is that the relations must be compatible in terms of their schemas.  The meaning of "compatible" varies, but for our purposes, assume we view the tuples in a relation as ordered lists, where each position in the list is associated with a particular attribute and type domain.  Then, if we have two relations, we require that, for a given position in the tuples in either relation, the attribute and type domain are the same.  For **A** and **B** shown above, we might assert that the first position corresponds to attribute **x** and contains character strings, while the second position (**y**) contains integers.
+The important restriction on set operations in relational algebra is that the relations must be compatible in terms of their schemas.  The meaning of "compatible" varies, but for our purposes, assume we view the tuples in a relation as ordered lists, where each position in the list is associated with a particular attribute and type domain.  Then, if we have two relations, we require that, for a given position in the tuples in either relation, the attribute and type domain are the same.  For **A** and **B** shown above, we might assert that the first position corresponds to attribute **x** and contains character strings, while the second position (**y**) contains integers.
 
-A looser requirement allows attribute names (but not type domains) to differ between relations.  This requirement is less compatible with the second definition of tuple given in the previous chapter, while eliminating the occasional need for renaming operations prior to applying set operations. If the attribute names do not match in the two relations, we adopt the attribute names from the left-hand operand for the result relation.
+A looser requirement allows attribute names (but not type domains) to differ between relations.  This requirement aligns less closely with the second definition of tuple given in the previous chapter, but it eliminates the occasional need for renaming operations prior to applying set operations. If the attribute names do not match in the two relations, we adopt the attribute names from the left-hand operand for the result relation.
 
 While intersection is a useful operation, it is not strictly needed for the algebra, as the same result can be obtained using set difference:
 
@@ -502,7 +502,11 @@ While intersection is a useful operation, it is not strictly needed for the alge
 Division
 ::::::::
 
-The operations described above are sufficient for most query needs.  One other binary operation, *division*, is typically included in the basic relational algebra.
+The operations described above are sufficient for most query needs.  However, one other binary operation, *division*, is typically included in the basic relational algebra.  To divide a relation **P** by another relation **R**, we write:
+
+.. math::
+
+    \text{P} \div \text{R}
 
 Division is the most difficult operation to describe; in a very loose sense it acts as a kind of inverse to a cross product.  That is, if **P**, **Q**, and **R** are relations and
 
@@ -565,7 +569,7 @@ Then :math:`\text{Q} = \text{P} \div \text{R}` is
     | 3  |
     +----+
 
-because only the values 1 and 3 are paired with blue, green, and yellow in **P**.  The value 2 is not paired with green, so it does not appear in the quotient.  The value 3 is paired with red, but red is not in **R** and thus does not affect the result.
+because only the values 1 and 3 are paired with blue, green, and yellow in **P**.  The value 2 is not paired with green, so it does not appear in the quotient.  The value 3 is also paired with red, but red is not in **R** and thus does not affect the result.
 
 For a more tangible example, consider the following relation, named **authors_awards**:
 
@@ -620,7 +624,7 @@ Like the join and set intersection operations, division can be accomplished usin
 
     \text{P} \div \text{R} \equiv \pi_{\text{x}}(\text{P}) - \pi_{\text{x}}((\pi_{\text{x}}(\text{P}) \times \text{R}) - \text{P})
 
-By carefully applying the right-hand side expression above to one of our examples, you can verify that the desired result is obtained, but the basic intuition is that we must first find the values of **x** in **P** which are not paired (in **P**) with one or more **y** values listed in **R**, and then subtract that list of **x** values from the list of all **x** values in **P**:
+By carefully applying the right-hand side expression above to one of our examples, you can verify that the desired result is obtained, but the basic intuition is that we must first find the values of **x** in **P** which are *not* paired (in **P**) with one or more **y** values listed in **R**, and then subtract that list of **x** values from the list of all **x** values in **P**:
 
 1. Create a relation containing every **x** value in **P** paired with every **y** value in **R**:
 
@@ -678,7 +682,10 @@ Finally, we are only interested in the book titles (or possibly titles and publi
 
     \pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors}) \Join \sigma_{\text{year} > 1950}(\text{books}))
 
-This is only one of many possible expressions that yield identical results.  In chapter XXX, we will look at some of the algebraic identities that can be applied to transform an expression into a different but equivalent expression, and explore how these identities can be used by database software to speed up execution of queries.  For now, we provide the following equivalent expressions without discussion:
+This is only one of many possible expressions that yield identical results.  Here are some equivalent expressions:
+
+..
+    In chapter XXX, we will look at some of the algebraic identities that can be applied to transform an expression into a different but equivalent expression, and explore how these identities can be used by database software to speed up the execution of queries.  For now, we provide the following equivalent expressions without discussion:
 
 .. math::
 
@@ -720,7 +727,11 @@ with **R** holding our final result.
 Expression trees
 ----------------
 
-Another representation of relational algebra expressions is in the form of a tree.  Expression trees are a useful visual representation of a query.  We will make use of them again in Chapter XXX, which is concerned with how database software considers different action plans for executin a query.
+Another representation of relational algebra expressions is in the form of a tree.  Expression trees are a useful visual representation of a query.
+
+..
+
+    We will make use of them again in Chapter XXX, which is concerned with how database software considers different action plans for executing a query.
 
 We will again demonstrate using the query:
 
@@ -753,10 +764,10 @@ The tree is:
 
 .. [#] This is consistent with the definition of the Cartesian product of sets of tuples in general mathematics.
 
-.. [#] In fact, Codd's original relational model paper discusses joins and not cross products.  However, the cross product is now recognized as a more fundamental operation in the relational algebra.
+.. [#] In fact, the original paper introducing the relational model discusses joins and not cross products.  However, the cross product is now recognized as a more fundamental operation in relational algebra.
 
-.. [#] Some authors use * instead of the join operator without conditions.
+.. [#] Some authors use * instead to indicate a natural join.
 
-.. [#] More generally, **x** and **y** can stand in for a list of attributes, that is, **x** might be some list of attributes **x1**, **x2**, ... and similarly for **y**.  We only require that **x** and **y** together represent all attributes of **P**, and **x** and **y** do not overlap.
+.. [#] More generally, **x** and **y** can stand in for a list of attributes; that is, **x** might be some list of attributes **x1**, **x2**, ... and similarly for **y**.  We only require that **x** and **y** together represent all attributes of **P**, and that **x** and **y** do not overlap.
 
 |license-notice|

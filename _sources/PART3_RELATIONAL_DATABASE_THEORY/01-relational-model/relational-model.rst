@@ -12,7 +12,7 @@ Given its mathematical foundations, the relational model is most conveniently ex
 Model basics
 ::::::::::::
 
-We start with a working definition of *set*, a mathematical object that we will use in defining other terms.  We then define *relations*, the fundamental objects of the relational model, and related terms.
+We start with a working definition of *set*, a mathematical object that we will use in defining other terms.  We then define *relations*, the fundamental objects of the relational model, and their associated terms.
 
 Sets
 ----
@@ -26,7 +26,7 @@ A *superset* of a set is a set containing all elements from the set, and may con
 Relations
 ---------
 
-In the relational model, data exists in relations.  A relation is often depicted as a tabular data structure:
+In the relational model, data exist in relations.  A relation is often depicted as a tabular data structure:
 
 .. image:: books.svg
     :alt: A tabular illustration of a relation named simple_books, showing a header with attribute names and several rows of data, or tuples.
@@ -42,23 +42,25 @@ A tuple in the relational model is defined in two different ways; which is used 
 
     (*The House of the Spirits*, Isabel Allende, 1982, magical realism)
 
-Each element of a tuple belongs to some set, which we call the *domain* of the element.  In our example tuple, the first element belongs to the domain of book titles.  The domain of the tuple is defined in terms of the domains of each value in the tuple.  Tuples of the **simple_books** relation belong to the domain of tuples with four elements for which the first element belongs to the domain of book titles, the second element the domain of authors, the third element the domain of calendar years, and the fourth element the domain of literary genres.
+Each element of a tuple belongs to some set, which we call the *domain* of the element.  In our example tuple, the first element belongs to the domain of book titles.
+
+The tuple itself also belongs to a domain, which is defined in terms of the domains of each value in the tuple.  Tuples of the **simple_books** relation belong to the domain of tuples with four elements for which the first element belongs to the domain of book titles, the second element is from the domain of authors, the third element belongs to the domain of calendar years, and the fourth element is in the domain of literary genres.
 
 Attributes
 ----------
 
-In an alternate definition of tuple, we can speak of the *attributes* of the tuple.  We can think of attributes as the named properties of the value represented by the tuple.  For example, if a tuple in the **simple_books** relation represents one book, then one attribute of the tuple is the book's **title**.  In our example tuple, the **title** attribute is *The House of the Spirits*.  The other attributes of books in our relation are **author**,  **year**, and **genre**.  In the table illustration above, the attribute names are shown in the header row.
+In an alternate definition of tuple, we can speak of the *attributes* of the tuple.  We can think of attributes as the named properties of the value represented by the tuple.  For example, if a tuple in the **simple_books** relation represents one book, then one attribute of the tuple is the book's **title**.  In our example tuple, the **title** attribute is *The House of the Spirits*.  The other attributes of books in our relation are **author**,  **year**, and **genre**.  Attribute names are shown in the header row of the table in the illustration above.
 
-In this definition of tuple, tuples are not necessarily ordered lists; each value in the tuple is associated not with a position but with an attribute.  Each attribute is associated with a domain; for example, the **title** attribute for any tuple in **simple_books** must be a member of the domain of book titles.  Having names associated with values in a tuple is much more convenient than having to refer to the *n*-th element when we want to query our database.
+In this definition of tuple, tuples are not necessarily ordered lists; each value in the tuple is associated not with a position but with an attribute.  Each attribute is associated with a domain. For example, the **title** attribute for any tuple in **simple_books** must be a member of the domain of book titles.  Having names associated with values in a tuple is much more convenient than having to refer to the *n*-th element when we want to query our database.
 
-The two definitions of tuple are not exclusive.  In the first definition of tuple, each position in the ordered collection also corresponds to a specific attribute - in our example, the first element is the **title** attribute.  While we can think of tuples as having named attributes in no particular order, in practice we typically assign an ordering to the attributes in a relation - both definitions of tuple are used simultaneously.
+The two definitions of tuple are not exclusive.  In the first definition of tuple, each position in the ordered collection also corresponds to a specific attribute - in our example, the first element is the **title** attribute.  While we can think of tuples as having named attributes in no particular order, in practice we typically assign an ordering to the attributes in a relation - so both definitions of tuple are used simultaneously.
 
 Schemas
 -------
 
 A relation's attributes and domains are defined by its *schema*.  A relation (a set of tuples) is considered to be an *instance* of the relation schema if it conforms to the definition given by the schema; that is, if all of the tuples in the relation have the named attributes defined by the schema, and the attribute values are members of the correct domains.  In some definitions, relation schemas also include constraints which relations must conform to, such as *key* constraints, discussed below.
 
-In a typical database, each relation schema is paired with exactly one relation, which is the current relation for the schema.  When a modification is made to the data in the current relation, it produces a new current relation.  Except in some specialized types of databases, there is no history of past relations associated with a relation schema.  Thus it is frequent practice to use the same name for the relation and its schema.
+In a typical database, each relation schema is paired with exactly one relation, which is the current relation for the schema.  When a modification is made to the data in the current relation, it produces a new current relation.  Except in some specialized types of databases, there is no history of past relations associated with a relation schema.  Thus, it is frequent practice to use the same name for the relation and its schema.
 
 A *database* may be defined as a collection of relation schemas and their associated current relations.  The collection of relation schemas is called the database schema.
 
@@ -83,11 +85,11 @@ Constraints
 Keys and primary keys
 ---------------------
 
-In many cases, relations may contain subsets of attributes which uniquely identify tuples.  For example, for our **simple_books** relation, we will assert that the pair of attributes **author** and **title** uniquely identify any book in our relation, or any book we might choose to add to our relation in the future.  On the other hand, neither **author** nor **title** are sufficient on their own to uniquely identify a book - it is possible for two different authors to create books with the same name, and of course, many books may have the same author.  In the relational model, we state that the set {**author**, **title**} is a *key* for the **simple_books** relation.
+In many cases, relations may contain subsets of attributes which uniquely identify tuples.  For example, for our **simple_books** relation, we will assert that the pair of attributes **author** and **title** uniquely identify any book in our relation, or any book we might choose to add to our relation in the future.  On the other hand, neither **author** nor **title** are sufficient on their own to uniquely identify a book - it is possible for two different authors to create books with the same name, and of course, many books may have the same author.  We state that the set {**author**, **title**} is a *key* for the **simple_books** relation.
 
 Keys play an important part in relational theory, as we will see.  One implication that we will explore further in a later chapter is that no two tuples in our **simple_books** relation (now or ever) can share the exact same **author** and **title** values.  In fact, the assertion that no two tuples can share the same **author** and **title** in return implies that **author** and **title** together uniquely identify any book.  The assertions are equivalent.
 
-It is important to emphasize that the key property is a fact we are stating about the world, not a transitory property of the data in a relation.  For example, our current **simple_books** illustration shows no duplicate values for **year**.  For **year** to be a key, though, requires that **year** never contain duplicates *for any collection of books* we might store in the **simple_books** relation.  Since many books are published every year, we should expect **year** to accumulate duplicate values if we add books to the relation.
+It is important to emphasize that the key property is a fact we are stating about the world, not a transitory property of the data in a relation.  For example, our current **simple_books** illustration shows no duplicate values for **year**.  For **year** to be a key, though, requires that **year** never contain duplicates *for any collection of books* we might store in the **simple_books** relation.  Since many books are published every year, we should expect to accumulate duplicate **year** values if we add books to the relation.
 
 Relations may have more than one key.  A common example is that of a table of employees for a company.  In many countries, workers must have a government issued identification (ID) number.  These numbers can be used to uniquely identify an employee.  However, these numbers are often considered sensitive employee data, which should only be shared with certain trusted individuals in the company.  In these cases, companies will generate an internal employee ID number, which is completely independent of the government issued ID.  The company's database will contain both of these unique identifiers.
 
@@ -107,7 +109,7 @@ Consider the relation **simple_authors** represented below:
 
 Our primary key for this relation is the **name** attribute.  Names are generally not a very good choice for keys, as people often share a name with other people, but this is just a simple illustration and not intended to be an example of good database design.
 
-Because every **author** value in **simple_books** matches some **name** value in **simple_authors**, we can connect each book to information about its author.  To assert that it should always be true that any tuple in **simple_books** matches a tuple in **simple_authors**, we declare the **author** attribute of **simple_books** to be a foreign key *referencing* the **name** attribute of **simple_authors**.  This foreign key constraint, also known as a *referential integrity* constraint, applies not only to the current relations, but to any future states of **simple_books** and **simple_authors**.
+Because every **author** value in **simple_books** matches some **name** value in **simple_authors**, we can connect each book to information about its author.  To assert that it should always be true that any tuple in **simple_books** matches a tuple in **simple_authors**, we declare the **author** attribute of **simple_books** to be a foreign key *referencing* the **name** attribute of **simple_authors**.  This foreign key constraint applies not only to the current relations, but to any future states of **simple_books** and **simple_authors**.  Foreign keys are also known as *referential integrity* constraints.
 
 Note that the foreign key is a constraint on both relations; certain changes in either relation could result in a constraint violation.  The constraint is not symmetric, however; we can have authors listed in **simple_authors** for whom no books are listed in **simple_books**.
 
@@ -119,9 +121,12 @@ A database in which constraints are violated is considered *inconsistent*.  A re
 Modification operations
 :::::::::::::::::::::::
 
-The relational model assumes that a relation may be modified with one of three operations: tuples may be added (inserted) into the relation, values within tuples may be modified (updated) without adding or removing the tuple, or tuples may be removed (deleted) from the relation.  The state of the database must be consistent with all constraints after modification, or the operation must be rejected by the database system.  In certain cases (such as the existence of a circular foreign key relationship), it may be necessary to group multiple modifications together with a *transaction*; constraints may be temporarily violated within the context of the transaction, but must be resolved when all operations have been completed, or none of the operations may take effect.  (We discuss transactions as commonly implemented in :numref:`Chapter {number} <transactions-chapter>`.)
+The relational model assumes that a relation may be modified with one of three operations: tuples may be added (inserted) into the relation, values within tuples may be modified (updated) without adding or removing the tuple, or tuples may be removed (deleted) from the relation.  The state of the database must be consistent with all constraints after modification, or the operation must be rejected by the database system.  In certain cases (such as the existence of a circular foreign key relationship), it may be necessary to group multiple modifications together with a *transaction*; constraints may be temporarily violated within the context of the transaction, but must be resolved when all operations have been completed, or none of the operations may take effect.
 
-Insertion operations can violate primary and unique key constraints on a relation, if the tuple being inserted contains values that duplicate values already in the relation.  Insertion operations can also violate foreign key constraints on a relation, if a value is provided for a foreign key attribute that does not exist in the referenced table.  For example, each of the tuples below would violate constraints if added to the **simple_books** relation (assuming the primary and foreign keys discussed in the text above):
+..
+  (We discuss transactions as commonly implemented in :numref:`Chapter {number} <transactions-chapter>`.)
+
+Insertion operations can violate primary and unique key constraints on a relation if the tuple being inserted contains values that duplicate another tuple already in the relation.  Insertion operations can also violate foreign key constraints on a relation if a value is provided for a foreign key attribute that does not exist in the referenced table.  For example, each of the tuples below would violate constraints if added to the **simple_books** relation (assuming the primary and foreign keys discussed in the text above):
 
     (*The House of the Spirits*, Isabel Allende, 1999, history)
 
@@ -143,16 +148,16 @@ NULL
 
 In the **simple_authors** relation shown earlier, two of the entries show no value for the attribute **death**, which is because those two authors are still living.  If we consider the domain of the **death** attribute to be the domain of calendar dates, then there is truly no value we can choose that accurately represents the situation.  Instead, we are using a special placeholder to represent the *absence of information*.  In the relational model, that placeholder is called *NULL*.
 
-The nature of NULL, and in fact, its very presence in the relational model, is controversial.  Some database scholars treat NULL as a special value that is included with every domain.  So we can say that we have put a NULL value in our table for the death attribute for each living author.  However, NULL exhibits special properties that make it problematic as a value, such as the fact that it cannot be compared with other values, including other NULLs - more on this in a bit.  For this reason, other scholars prefer to treat NULL as a special *state* of the attribute; we can say that **death** is in a null state when the author is living.  Finally, some scholars reject NULL entirely as fundamentally incompatible with relational theory.
+The nature of NULL, and in fact, its very presence in the relational model, is controversial.  Some database scholars treat NULL as a special value that is included with every domain.  So we can say that we have put a NULL value in our table for the death attribute for each living author.  However, NULL exhibits special properties that make it problematic as a value, such as the fact that it cannot be compared with other values, including other NULLs - more on this in a bit.  For this reason, other scholars prefer to treat NULL as a special *state* of the attribute; we can say that the **death** attribute for an author is in a null state when the author is living.  Finally, some scholars reject NULL entirely as fundamentally incompatible with relational theory.
 
 The problem NULL was created to solve is the problem of missing information.  Information may be unknown for many reasons: it may be that nobody knows the true value, or it may have been simply overlooked when entering data into the database, or any number of other causes.  Data may be irrelevant or inapplicable, as in the example of the **death** date for living authors.  Researchers have identified many different meanings that can be ascribed to NULL, which has led some scholars to propose additional placeholders instead of just one (although some of those proposals were intended to highlight the problems with NULL, rather than improve the model).  The problem is, the definition of a tuple requires there to be *something* associated with every attribute defined in the relation schema; even if nothing from the domain is appropriate, the tuple cannot simply be incomplete.
 
-While there are alternatives to the use of NULL, the alternatives are problematic in their own ways.  Most database systems based on the relational model implement support for NULL.  For these reasons, NULL is an important part of our discussion of the relational model.
+While there are alternatives to the use of NULL, the alternatives are problematic in their own ways.  Most database systems based on the relational model include support for NULL.  For these reasons, NULL is an important part of our discussion of the relational model.
 
 Three-valued logic
 ------------------
 
-Many operations on relations make use of Boolean logic and the usual operations on logical expressions.  There are only two values in Boolean logic: *true* and *false*.  The basic Boolean operators are easy to understand and apply.  The NOT operation simply inverts the Boolean value: "NOT true" equals false, and "NOT false" equals true [#]_.  Given two Boolean values, *a* and *b*, the expression "a AND b" yields true if and only if *a* is true and *b* is true.  On the other hand, the expression "a OR b" is true if *a* or *b* is true, and is false only if both *a* and *b* are false.
+Many operations on relations make use of Boolean logic and the usual operations on logical expressions.  There are only two values in Boolean logic: *true* and *false*.  The basic Boolean operators are easy to understand and apply.  The NOT operation simply inverts the Boolean value: "NOT true" equals false, and "NOT false" equals true [#]_.  Given two Boolean values, *a* and *b*, the expression "a AND b" yields true if and only if *a* is true and *b* is true.  On the other hand, the expression "a OR b" is true if *a* is true or *b* is true, and is false only if both *a* and *b* are false.
 
 However, when NULL is used in most expressions, it is unknown whether the answer is true or false.  For example, the expression "2 = x", where *x* is assigned NULL (or is in the null state, if you prefer) cannot be determined to be true or false.  The problem is that NULL is not a distinct value of its own, but represents the absence of information altogether.  Thus, we *do not know* if *x* equals 2 or something else.  Even the expression "x = y", where both *x* and *y* are NULL cannot be determined to be true or false!
 
@@ -185,7 +190,7 @@ It is not necessary to memorize these tables, if some common sense is applied.  
 Constraints and NULL
 --------------------
 
-With NULL in our model, we must make some small adjustments to our rules regarding constraints.  First, we must further constrain primary key attributes to never be NULL.  Remember that a primary key should be an identifier for tuples in a relation, and every tuple must have a unique primary key value.  However, if NULL is present in any primary key attribute for some tuple, it is impossible to search for and find the tuple - any attempt to compare the primary key with a lookup value gives an unknown result.  We likewise cannot properly enforce uniqueness, because we cannot compare a tuple with NULL in the primary key with other tuples to determine if they are distinct from one another.
+With NULL in our model, we must make some small adjustments to our rules regarding constraints.  First, we must further constrain all primary key attributes to never be NULL.  Remember that a primary key should be an identifier for tuples in a relation, and every tuple must have a unique primary key value.  However, if NULL is present in any primary key attribute for some tuple, it is impossible to search for and find the tuple - any attempt to compare the primary key with a lookup value gives an unknown result.  We likewise cannot properly enforce uniqueness, because we cannot compare a tuple with NULL in the primary key with other tuples to determine if they are distinct from one another.
 
 Second, we modify the rule for a foreign key.  The new rule is that a foreign key may be NULL, otherwise it must match a value in the referenced table.  Allowing NULL in a foreign key may seem surprising, but considering our example relations, how might we handle a book for whom the author is unknown (anonymous)?  If NULL is not allowed for the author, then we cannot add the book to **simple_books** without some matching record in the **simple_authors** table.  However, what is the meaning of a record in the **simple_authors** table for an unknown author?  (Note also we cannot have a NULL name for the author in **simple_authors** due to the primary key.)  While there are multiple ways to approach this problem, allowing NULL for the author is one possible solution.
 
@@ -240,7 +245,7 @@ This section has some questions you can use to check your understanding of the r
 
         - Tuples in a relation must come from the same domain of tuples; that is, each tuple shares the same definition in terms of attributes and associated domains.
 
-The next four questions concern the two relations pictured below, which map ISO (International Organization for Standardization) country codes to country names and ISO currency codes, and currency codes to the name of the currency.  The primary key for **countries** is **country_code**, and the primary key for **currencies** is **currency_code**.  The **principal_currency_code** column in **countries** is a foreign referencing **currency_code** in **currencies**.  Obviously this represents a subset of available data, for space reasons.
+The next four questions concern the two relations pictured below, which map ISO (International Organization for Standardization) country codes to country names and ISO currency codes, and currency codes to the name of the currency.  The primary key for **countries** is **country_code**, and the primary key for **currencies** is **currency_code**.  The **principal_currency_code** column in **countries** is a foreign key referencing **currency_code** in **currencies**.  Obviously this represents a subset of available data, for space reasons.
 
 .. image:: countries.svg
     :alt: A table showing tuples for the countries relation.  The countries listed are Australia (AU), Somalia (SO), Thailand (TH), Mexico (MX), Kiribati (KI), and Denmark (DK).
