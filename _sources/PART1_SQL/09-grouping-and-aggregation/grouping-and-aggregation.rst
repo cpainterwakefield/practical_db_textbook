@@ -10,7 +10,7 @@ Previous chapters have focused on mechanisms for storing and retrieving data.  S
 Tables used in this chapter
 :::::::::::::::::::::::::::
 
-For this chapter, we will primarily work with the tables **bookstore_inventory** and **bookstore_sales**, which simulate a simple database that a seller of used books might reference.  The **bookstore_inventory** table lists printed books that the bookstore either has in stock or has sold recently, along with the condition of the book and the asking price.  When the bookstore sells a book, a record is added to the **bookstore_sales** table.  This table lists the **stock_number** of the book sold, the date sold, and the type of payment.  The column **stock_number** is a unique identifier for each book, and can be used to join the tables.
+For this chapter, we will primarily work with the tables **bookstore_inventory** and **bookstore_sales**, which simulate a simple database that a seller of used books might reference.  The **bookstore_inventory** table lists printed books that the bookstore either has in stock or has sold recently, along with the condition of the book and the asking price.  When the bookstore sells a book, a record is added to the **bookstore_sales** table.  This table lists the **stock_number** of the book sold, the date sold, and the type of payment.  The column **stock_number** is a unique identifier for each book in the inventory, and can be used to join the tables.
 
 We will also use the **authors** table to illustrate the interaction of ``NULL`` with aggregate functions.
 
@@ -119,7 +119,7 @@ To start with, let's retrieve sales totals by month (here we will use SQLite's s
       JOIN bookstore_inventory AS i ON s.stock_number = i.stock_number
     GROUP BY month;
 
-Note that we can use the alias defined in our **SELECT** clause in our **GROUP BY** clause without having to rewrite the function expression.
+Note that we can use the alias "month" defined in our **SELECT** clause in our **GROUP BY** clause without having to rewrite the function expression.
 
 Now, let's break down our total sales by type of month *and* type of payment:
 
