@@ -91,7 +91,7 @@ As mentioned earlier, SQLite (used in the interactive examples in this book) all
 Creating tables
 :::::::::::::::
 
-Once we have chosen the types for our columns, we can create a table using a **CREATE TABLE** statement.  For our first example, we will create something simple just for demonstration purposes.  As discussed in :numref:`Chapter {number} <basics-chapter>`, you do not need to worry that we are changing the database - we are only working with a copy of the database that is created each time you load the textbook into your browser.  You can reload this page anytime you want to start fresh!
+Once we have chosen the types for our columns, we can create a table using a **CREATE TABLE** statement.  For our first example, we will create something simple just for demonstration purposes.  You do not need to worry that we are changing the database - we are only working with a copy of the database that is created each time you load the textbook into your browser.  You can reload this page anytime you want to start fresh!
 
 Creating a table from scratch
 -----------------------------
@@ -207,7 +207,7 @@ Here is an example, showing the usage of the **DEFAULT** keyword:
 
     SELECT * FROM test2;
 
-As you can see, when we provided a value (or ``NULL``) for the column **greeting**, what we provided was stored.  When we did not provide the value, the default ``'Hello``' was used.
+As you can see, when we provided a value (or ``NULL``) for the column **greeting**, what we provided was stored.  When we did not provide the value, the default ``'Hello'`` was used.
 
 In the simplest case, as above, we can provide a literal value for a column.  More commonly, we will use an expression, typically calling a function of some sort.  A common usage for this is to record the date and time when a record is added to the database.  Here we will use the **CURRENT_TIMESTAMP** function for this purpose:
 
