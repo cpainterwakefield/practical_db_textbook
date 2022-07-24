@@ -48,7 +48,7 @@ master_doc = 'index'
 # General information about the project.
 project = 'A Practical Introduction to Databases'
 copyright = '''
-2021 Christopher Painter-Wakefield.
+2022 Christopher Painter-Wakefield.
 <a style="" rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
     <img style="padding-left: 4px; padding-bottom: 2px; border-width: 0;" alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"/>
 </a>
