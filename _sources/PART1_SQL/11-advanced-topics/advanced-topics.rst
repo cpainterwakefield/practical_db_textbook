@@ -54,7 +54,7 @@ To remove a view, use the **DROP VIEW** statement:
 Common table expressions
 ::::::::::::::::::::::::
 
-Related to both views and subqueries, *common table expressions* (CTEs) let us define a **SELECT** query and assign it a name for use within the context of a larger **SELECT** query.  Multiple CTEs may be used within a query.  Unlike a view, CTEs only exist for the lifetime of the query in which they are defined.  Unlike subqueries, CTEs may not be correlated with the main query (unless used itself in a subquery).  A common use of CTEs is in place of subqueries used in the **FROM** clause of the main query; the CTE effectively moves the subquery out of the body of the main query, which makes it easier to read.  In addition, one CTE can refer to another CTE defined earlier in the query, which eliminates the need to nest subqueries of this type.
+Related to both views and subqueries, *common table expressions* (CTEs) let us define a **SELECT** query and assign it a name for use within the context of a larger **SELECT** query.  Multiple CTEs may be used within a query.  Unlike views, CTEs only exist for the lifetime of the query in which they are defined.  Unlike subqueries, CTEs may not be correlated with the main query (unless used itself in a subquery).  A common use of CTEs is in place of subqueries used in the **FROM** clause of the main query; the CTE effectively moves the subquery out of the body of the main query, which makes it easier to read.  In addition, one CTE can refer to another CTE defined earlier in the query, which eliminates the need to nest subqueries of this type.
 
 CTEs are defined prior to the main **SELECT** clause, using a **WITH** clause:
 
