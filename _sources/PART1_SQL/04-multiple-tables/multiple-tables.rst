@@ -231,7 +231,7 @@ Reserved names (such as SQL keywords) may also need to be put inside double quot
 
 Very rarely, you may encounter a database where table or column names are mixed-case or contain spaces.  This can occur if the database creator used double quotes in the SQL code when creating the tables.  In general, this is not a good practice, as it forces the use of double quotes for any future queries using the table.  Reserved words should also be avoided in general, although this can be difficult when working with multiple databases, as an allowed word in one database may be a reserved word in another database.
 
-(Note for MySQL users: use backticks (\`) instead of double quotes.)
+(Note for MySQL users: use backticks instead of double quotes.  The backtick character looks like an apostrophe, but slanting in the opposite direction.)
 
 
 .. index::
@@ -617,7 +617,7 @@ This section contains some exercises using the books data set (reminder: you can
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query to list the authors who have won author awards (not book awards), together with their awards and the year of the award. Give the output descriptive headers (not just "name" and "name").  Order by author name.
+    Write a query to list the authors who have won author awards, together with their awards and the year of the award. Give the output descriptive headers (not just "name" and "name").  Order by author name.
     ~~~~
 
 .. reveal:: joins_self_test_cross_reference2_hint
@@ -663,7 +663,7 @@ This section contains some exercises using the books data set (reminder: you can
     :language: sql
     :dburl: /_static/textbook.sqlite3
 
-    Write a query listing authors who have *not* won any of the awards listed in our database. Hint: how might you detect the absence of an award in the query above?
+    Write a query listing authors who have *not* won any of the author awards listed in our database. Hint: how might you detect the absence of an award in the query above?
     ~~~~
 
 .. reveal:: joins_self_test_outer_join2_hint
@@ -754,7 +754,7 @@ This section contains some exercises using the books data set (reminder: you can
           JOIN authors AS a ON a.author_id = b2.author_id
         WHERE b1.title = 'The Three-Body Problem';
 
-        SELECT b2.*
+        SELECT a.name, b2.title
         FROM books AS b1, books AS b2, authors AS a
         WHERE b1.publication_year = b2.publication_year
         AND   b2.book_id <> b1.book_id
