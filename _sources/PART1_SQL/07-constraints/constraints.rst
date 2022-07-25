@@ -139,6 +139,8 @@ As with primary keys, there are multiple ways to create a foreign key constraint
 
 Note that although the foreign key constraint only appears in the referencing table definition, the constraint affects both tables.  The code above ensures that values in the **xx** column of **referencing** are either ``NULL`` or contained in the **x** column of **referenced**.
 
+(Note for MySQL users: MySQL does not recognize the single column syntax for creating foreign keys.  Use instead the explicit constraint syntax below.)
+
 We can also create a foreign key constraint with a separate **FOREIGN KEY** entry in the table definition.  This form must be used for multi-column foreign keys:
 
 ::
