@@ -56,7 +56,7 @@ The SQL script below can be used to create the equivalent of the textbook's tabl
 
 - :download:`mysql.sql`
 
-This SQL script was verified to work correctly using version 8.0.29 of the MySQL Shell (``mysqlsh.exe``) program on Windows 10 and with version 12.11 of the ``psql`` program running on linux (Linux Mint 20.3 with kernel version 5.15.0-41), loading into a MySQL version 8.0.26 server running on linux (Linux Mint 20 with kernel version 5.4.0-86).
+This SQL script was verified to work correctly using version 8.0.29 of the MySQL Shell (``mysqlsh.exe``) program on Windows 10 and with version 8.0.29 of the ``mysql`` program running on linux (Linux Mint 20.3 with kernel version 5.15.0-41), loading into a MySQL version 8.0.26 server running on linux (Linux Mint 20 with kernel version 5.4.0-86).
 
 Notable differences from the textbook:
 
