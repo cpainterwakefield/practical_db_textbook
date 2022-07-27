@@ -9,16 +9,167 @@ Appendix A: Example datasets used in this book
    :depth: 2
    :backlinks: none
 
+   The books dataset
+   :::::::::::::::::
+
+   asdfasd
+
+   The bookstore dataset
+   :::::::::::::::::::::
+
+   asdfasdfasd
+
+   Other tables in the database
+   ::::::::::::::::::::::::::::
+
+   adsfasdfdsa
+
+   Data collection notes
+   :::::::::::::::::::::
+
+   asdfsad
+
+   ..
+     Below are interactive SQL interfaces for all of the various databases used in this book, organized by chapter.  Remember that you query the **sqlite_master** table to see the specifications of objects in a given database, e.g.:
+
+     ::
+
+         SELECT sql FROM sqlite_master WHERE type = 'table';
+
+     to see the specifications of the tables in a given database.
+
+     Chapter 2: Basic SELECT queries
+     :::::::::::::::::::::::::::::::
+
+     Books and authors database
+     --------------------------
+
+     This database is the simplest form of the books database, containing a **books** table and an **authors** table.
+
+     .. activecode:: appendix_a_ch2_books
+         :language: sql
+         :dburl: /_static/simple_books.sqlite3
+
+         SELECT * FROM books;
+
+     Fruit stand database
+     --------------------
+
+     Though an interactive block for this database was not included in chapter 2, this database contains the **fruit_stand** table shown.
+
+     .. activecode:: appendix_a_ch2_fruit_stand
+         :language: sql
+         :dburl: /_static/fruit_stand.sqlite3
+
+         SELECT * FROM fruit_stand;
+
+     The expanded books database
+     :::::::::::::::::::::::::::
+
+     We are now ready to describe the database we will be using for the rest of this book.  The new database is still centered around **book** and **authors** tables, modified to use id columns as described above, but also adds several other tables.  All of the tables and their basic relationships to each other are described below, after which we will discuss some basic join queries using the tables.  The descriptions below are also repeated in `Appendix A`_ for future reference.
+
+     .. container:: data-dictionary
+
+         Table **authors** records persons who have authored books:
+
+         ========== ================= ===================================
+         column     type              description
+         ========== ================= ===================================
+         author_id  integer           unique identifier for author
+         name       character string  full name of author
+         birth      date              birth date of author, if known
+         death      date              death date of author, if known
+         ========== ================= ===================================
+
+     .. container:: data-dictionary
+
+         Table **books** records works of fiction, non-fiction, poetry, etc. by a single author:
+
+         ================ ================= ===================================
+         column           type              description
+         ================ ================= ===================================
+         book_id          integer           unique identifier for book
+         author_id        integer           author_id of book's author from **authors** table
+         title            character string  book title
+         publication_year integer           year book was first published
+         ================ ================= ===================================
+
+
+     .. container:: data-dictionary
+
+         Table **editions** records specific publications of a book:
+
+         ================== ================= ===================================
+         column             type              description
+         ================== ================= ===================================
+         edition_id         integer           unique identifier for edition
+         book_id            integer           book_id of book (from **books** table) published as edition
+         publication_year   integer           year this edition was published
+         publisher          character string  name of the publisher
+         publisher_location character string  city or other location(s) where the publisher is located
+         title              character string  title this edition was published under
+         pages              integer           number of pages in this edition
+         isbn10             character string  10-digit international standard book number
+         isbn13             character string  13-digit international standard book number
+         ================== ================= ===================================
+
+
+     .. container:: data-dictionary
+
+         Table **awards** records various author and/or book awards:
+
+         ================== ================= ===================================
+         column             type              description
+         ================== ================= ===================================
+         award_id           integer           unique identifier for award
+         name               character string  name of award
+         sponsor            character string  name of organization giving the award
+         criteria           character string  what the award is given for
+         ================== ================= ===================================
+
+
+     .. container:: data-dictionary
+
+         Table **authors_awards** is a *cross-reference* table (explained below) relating **authors** and **awards**; each entry in the table records the giving of an award to an author (not for any particular book) in a particular year:
+
+         ================== ================= ===================================
+         column             type              description
+         ================== ================= ===================================
+         author_id          integer           author_id of the author receiving the award
+         award_id           integer           award_id of the award received
+         year               integer           year the award was given
+         ================== ================= ===================================
+
+
+     .. container:: data-dictionary
+
+         Table **books_awards** is a *cross-reference* table (explained below) relating **books** and **awards**; each entry in the table records the giving of an award to an author for a specific book in a particular year:
+
+         ================== ================= ===================================
+         column             type              description
+         ================== ================= ===================================
+         book_id            integer           book_id of the book for which the award was given
+         award_id           integer           award_id of the award given
+         year               integer           year the award was given
+         ================== ================= ===================================
+
+
+     Data models
+     :::::::::::
+
+     ERD and other notations
+
+
 Getting the data
 ::::::::::::::::
 
 :numref:`Part {number} <sql-part>` of this book includes interactive elements allowing the reader to work directly with a relational database.  This functionality lets students immediately try example code on a real database system.  As the database available on each page is actually a copy (in memory) of a fixed database, changes to the database do not persist over time - refreshing the browser window will return the database to the same initial state each time.  This is useful in that students can safely experiment with destructive SQL commands, knowing that no changes are permanent.  On the other hand, it means that students cannot use the system for longer-term projects.
 
-The database system used in this textbook is `SQLite`_.  While SQLite is a powerful and popular relational database system, it lacks some features of the client-server database systems commonly used in industry.  It also differs in significant ways from the SQL standard (particularly with its use of dynamic typing).
+The database system used in this textbook is `SQLite`_.  While SQLite is a powerful and popular relational database system, it lacks some features of the client-server database systems commonly used in industry.  It also differs in significant ways from the SQL standard (notably with its use of dynamic typing).
 
 .. _`SQLite`: https://www.sqlite.org/
 
-For these reasons, users of this textbook may wish to set up their own database system.  There exist many different database systems, each with their own system requirements and installation procedures.  There are likewise many ways to access and query each database system.  Instructions for setting up and accessing different systems are therefore out of the scope of this textbook.  However, in the interest of providing a transition from the textbook's database to the users' systems of choice, we provide scripts and data files below, which can be used to re-create the book's database on selected database systems.
+For these reasons, users of this textbook may wish to set up their own database system.  Many different database systems are available, each with their own system requirements and installation procedures.  There are likewise many ways to access and query each database system.  Instructions for setting up and accessing different systems are therefore out of the scope of this textbook.  However, in the interest of providing a transition from the textbook's database to the users' systems of choice, we provide scripts and data files below, which can be used to re-create the book's database on selected database systems.
 
 SQLite
 ------
@@ -39,9 +190,7 @@ The SQL script below can be used to create the equivalent of the textbook's tabl
 
 - :download:`postgresql.sql`
 
-This SQL script was verified to work correctly using version 12.5 of the ``psql.exe`` program on Windows 10 and with version 12.11 of the ``psql`` program running on linux (Linux Mint 20.3 with kernel version 5.15.0-41), loading into a PostgreSQL version 12.8 server running on linux (Linux Mint 20 with kernel version 5.4.0-86).
-
-Note: on Windows 10, running psql under Command Prompt or Powershell, the data can be loaded correctly only if you first issue the command ``\encoding utf8`` (at the ``psql`` command line); however, even with this setting, some text in query results may not display correctly (at least on the English-language version of Windows).  To see characters printed correctly, before running ``psql.exe``, try issuing the command ``chcp 65001`` (some characters may still not print correctly).
+This SQL script was verified to work correctly using version 12.5 of the ``psql.exe`` program on Windows 10 and with version 12.11 of the ``psql`` program running on linux (Linux Mint 20.3 with kernel version 5.15.0-41), loading into a PostgreSQL version 12.8 instance running on linux (Linux Mint 20 with kernel version 5.4.0-86).  Note: on Windows 10, you may need to first issue the command ``\encoding utf8`` (at the ``psql`` command line) before loading or querying the data.  This setting may not be sufficient to ensure all characters can be viewed correctly when returned by a query, but the data can be loaded correctly.
 
 Notable differences from the textbook:
 
@@ -56,7 +205,7 @@ The SQL script below can be used to create the equivalent of the textbook's tabl
 
 - :download:`mysql.sql`
 
-This SQL script was verified to work correctly using version 8.0.29 of the MySQL Shell (``mysqlsh.exe``) program on Windows 10 and with version 8.0.29 of the ``mysql`` program running on linux (Linux Mint 20.3 with kernel version 5.15.0-41), loading into a MySQL version 8.0.26 server running on linux (Linux Mint 20 with kernel version 5.4.0-86).
+This SQL script was verified to work correctly using version 8.0.29 of the MySQL Shell (``mysqlsh.exe``) program on Windows 10 and with version 8.0.29 of the ``mysql`` program running on linux (Linux Mint 20.3 with kernel version 5.15.0-41), loading into a MySQL version 8.0.26 instance running on linux (Linux Mint 20 with kernel version 5.4.0-86).
 
 Notable differences from the textbook:
 
@@ -71,164 +220,28 @@ The SQL script below can be used to create the equivalent of the textbook's tabl
 
 - :download:`oracle.sql`
 
-This SQL script was verified to work correctly using Oracle's SQLcl utility (release 22.2) running on linux (Linux Mint 20.3 with kernel version 5.15.0-41) with OpenJDK version 11.0.15, loading into an Oracle Database XE 18c instance running on linux (openSUSE Leap 15.2 with kernel version 5.3.18).  On Windows 10, the script will run without errors in SQLcl, but some Unicode character values may be corrupted.  Note: if you run this script with SQLcl or SQL\*Plus, you *must* uncomment the command ``SET DEFINE OFF`` at the top of the script.  Otherwise, the program will interpret any \& characters to imply a variable substitution sequence, which will halt the script and prevent the data from loading correctly.
+This SQL script was verified to work correctly using Oracle's SQLcl utility (release 22.2) running on linux (Linux Mint 20.3 with kernel version 5.15.0-41) with OpenJDK version 11.0.15, loading into an Oracle Database XE 18c instance running on linux (openSUSE Leap 15.2 with kernel version 5.3.18).  On Windows 10 with SQLcl (release 22.2), the script ran without reporting errors, but some character values were loaded incorrectly.  Note: if you run this script with SQLcl or SQL\*Plus, you *must* uncomment the command ``SET DEFINE OFF`` at the top of the script.  Otherwise, the program will interpret any \& characters to imply a variable substitution sequence, which will halt the script and prevent the data from loading correctly.
 
 Notable differences from the textbook:
 
 - As described in the text, SQLite does not use a standard SQL approach to automatically generate sequential ID values.  The **AUTOINCREMENT** option used in the SQLite database (in **bookstore_sales** and **bookstore_inventory**) is not available in Oracle, but the standard SQL **GENERATED BY DEFAULT AS IDENTITY** option is.  Accordingly, the Oracle script uses the standard approach.  The two options behave slightly differently.
 
+SQL Server
+----------
+
+The SQL script below can be used to create the equivalent of the textbook's tables in a Microsoft SQL Server database.  The SQL script primarily contains **CREATE TABLE** and **INSERT** statements, and should not replace existing tables within the database.  The **USE** statement at the top of the script assumes that data will be loaded into an existing database named "textbook".  This statement is needed for use with the ``sqlcmd`` utility and possibly other software, and should be edited to indicate the correct database as needed.  The statement may not be needed in other client software programs.
+
+- :download:`sqlserver.sql`
+
+This SQL script was verified to work correctly using the ``sqlcmd`` program (version 17.10.0001.1) running on linux (Linux Mint 20.3 with kernel version 5.15.0-41), loading into a SQL Server 2019 instance running on linux (Linux Mint 20 with kernel version 5.4.0-86).  On Windows 10 with version 15.0.2000.5 of ``sqlcmd.exe``, the script ran without reporting errors, but some character values were loaded incorrectly.  Note that a collation supporting UTF8 must be used (this can be set on the database using an **ALTER DATABASE** statement); the test system used the "Latin1_General_100_CI_AS_SC_UTF8" collation.
+
+Notable differences from the textbook:
+
+- SQL Server generates sequential integer values for columns with the **IDENTITY** property, which differs in behavior compared to both the standard SQL **GENERATED BY...** and SQLite's **AUTO_INCREMENT**.
+
 Raw data files
 --------------
 
-The books dataset
-:::::::::::::::::
-
-asdfasd
-
-The bookstore dataset
-:::::::::::::::::::::
-
-asdfasdfasd
-
-Other tables in the database
-::::::::::::::::::::::::::::
-
-adsfasdfdsa
-
-Data collection notes
-:::::::::::::::::::::
-
-asdfsad
-
-..
-  Below are interactive SQL interfaces for all of the various databases used in this book, organized by chapter.  Remember that you query the **sqlite_master** table to see the specifications of objects in a given database, e.g.:
-
-  ::
-
-      SELECT sql FROM sqlite_master WHERE type = 'table';
-
-  to see the specifications of the tables in a given database.
-
-  Chapter 2: Basic SELECT queries
-  :::::::::::::::::::::::::::::::
-
-  Books and authors database
-  --------------------------
-
-  This database is the simplest form of the books database, containing a **books** table and an **authors** table.
-
-  .. activecode:: appendix_a_ch2_books
-      :language: sql
-      :dburl: /_static/simple_books.sqlite3
-
-      SELECT * FROM books;
-
-  Fruit stand database
-  --------------------
-
-  Though an interactive block for this database was not included in chapter 2, this database contains the **fruit_stand** table shown.
-
-  .. activecode:: appendix_a_ch2_fruit_stand
-      :language: sql
-      :dburl: /_static/fruit_stand.sqlite3
-
-      SELECT * FROM fruit_stand;
-
-  The expanded books database
-  :::::::::::::::::::::::::::
-
-  We are now ready to describe the database we will be using for the rest of this book.  The new database is still centered around **book** and **authors** tables, modified to use id columns as described above, but also adds several other tables.  All of the tables and their basic relationships to each other are described below, after which we will discuss some basic join queries using the tables.  The descriptions below are also repeated in `Appendix A`_ for future reference.
-
-  .. container:: data-dictionary
-
-      Table **authors** records persons who have authored books:
-
-      ========== ================= ===================================
-      column     type              description
-      ========== ================= ===================================
-      author_id  integer           unique identifier for author
-      name       character string  full name of author
-      birth      date              birth date of author, if known
-      death      date              death date of author, if known
-      ========== ================= ===================================
-
-  .. container:: data-dictionary
-
-      Table **books** records works of fiction, non-fiction, poetry, etc. by a single author:
-
-      ================ ================= ===================================
-      column           type              description
-      ================ ================= ===================================
-      book_id          integer           unique identifier for book
-      author_id        integer           author_id of book's author from **authors** table
-      title            character string  book title
-      publication_year integer           year book was first published
-      ================ ================= ===================================
-
-
-  .. container:: data-dictionary
-
-      Table **editions** records specific publications of a book:
-
-      ================== ================= ===================================
-      column             type              description
-      ================== ================= ===================================
-      edition_id         integer           unique identifier for edition
-      book_id            integer           book_id of book (from **books** table) published as edition
-      publication_year   integer           year this edition was published
-      publisher          character string  name of the publisher
-      publisher_location character string  city or other location(s) where the publisher is located
-      title              character string  title this edition was published under
-      pages              integer           number of pages in this edition
-      isbn10             character string  10-digit international standard book number
-      isbn13             character string  13-digit international standard book number
-      ================== ================= ===================================
-
-
-  .. container:: data-dictionary
-
-      Table **awards** records various author and/or book awards:
-
-      ================== ================= ===================================
-      column             type              description
-      ================== ================= ===================================
-      award_id           integer           unique identifier for award
-      name               character string  name of award
-      sponsor            character string  name of organization giving the award
-      criteria           character string  what the award is given for
-      ================== ================= ===================================
-
-
-  .. container:: data-dictionary
-
-      Table **authors_awards** is a *cross-reference* table (explained below) relating **authors** and **awards**; each entry in the table records the giving of an award to an author (not for any particular book) in a particular year:
-
-      ================== ================= ===================================
-      column             type              description
-      ================== ================= ===================================
-      author_id          integer           author_id of the author receiving the award
-      award_id           integer           award_id of the award received
-      year               integer           year the award was given
-      ================== ================= ===================================
-
-
-  .. container:: data-dictionary
-
-      Table **books_awards** is a *cross-reference* table (explained below) relating **books** and **awards**; each entry in the table records the giving of an award to an author for a specific book in a particular year:
-
-      ================== ================= ===================================
-      column             type              description
-      ================== ================= ===================================
-      book_id            integer           book_id of the book for which the award was given
-      award_id           integer           award_id of the award given
-      year               integer           year the award was given
-      ================== ================= ===================================
-
-
-  Data models
-  :::::::::::
-
-  ERD and other notations
 
 
 ----
