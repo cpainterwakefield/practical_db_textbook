@@ -4,7 +4,7 @@
 Relational algebra
 ==================
 
-In the last chapter, we introduced the relational model of the database, and defined the fundamental mathematical object in the model, the *relation*.  In this chapter, we discuss *relational algebra*, which is the set of algebraic operations that can be performed on relations.  Relational algebra can be viewed as one mechanism for expressing queries on data stored in relations, and an understanding of relational algebra is important in understanding how relational databases represent and optimize queries.  We will cover only basic relational algebra, ignoring later extensions such as those for group and aggregate operations and those for outer joins.
+In the last chapter, we introduced the relational model of the database, and defined the fundamental mathematical object in the model, the *relation*.  In this chapter, we discuss *relational algebra*, which is the set of algebraic operations that can be performed on relations.  Relational algebra can be viewed as one mechanism for expressing queries on data stored in relations, and an understanding of relational algebra is important in understanding how relational databases represent and optimize queries.  We will cover only basic relational algebra, excluding later extensions such as those for group and aggregate operations and those for outer joins.
 
 A related topic, which we do not cover in this book, is *relational calculus*.  Relational calculus provides another mathematical expression of queries on relations, and is equivalent in expressiveness to relational algebra.
 

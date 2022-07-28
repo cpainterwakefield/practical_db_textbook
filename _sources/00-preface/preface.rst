@@ -2,6 +2,10 @@
 Preface
 =======
 
+    *In God we trust, all others bring data.*
+
+    -- attributed to W. Edwards Deming
+
 What this book is about
 :::::::::::::::::::::::
 

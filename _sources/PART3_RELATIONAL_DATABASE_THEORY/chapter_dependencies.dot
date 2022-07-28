@@ -1,0 +1,18 @@
+// To build:
+// 1. install graphviz
+// 2. run 'dot -Tsvg chapter_dependencies.dot > chapter_dependencies.svg' in this directory
+
+digraph {
+  node [ fontname="sans-serif" ]
+
+  p1 [ label="Part 1 - SQL\nChapters 1.1 - 1.7" style=dotted]
+  c1 [ label="Chapter 3.1\nThe relational model of the database" ]
+  c2 [ label="Chapter 3.2\nRelational algebra" ]
+  c3 [ label="Chapter 3.3\nNormalization" ]
+  c4 [ label="Chapter 3.4\nDifferences between SQL and the relational model" ]
+
+  c1 -> c2
+  c2 -> c4
+  c2 -> c3
+  p1 -> c3 [style=dotted]
+}

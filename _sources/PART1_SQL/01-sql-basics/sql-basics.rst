@@ -8,6 +8,26 @@ Part 1 of this book is all about SQL, the most popular language used for interac
 
 
 .. index::
+    single: database; defined
+    single: database management system
+    see: DBMS; database management system
+    see: database system; database management system
+
+Databases and database systems
+::::::::::::::::::::::::::::::
+
+Before we start, we should define these two terms:
+
+database
+    An organized collection of data.
+
+database management system (DBMS)
+    The software that manages the storage of data in a database and provides facilities for searching, retrieving, and modifying data in a database.
+
+The word "database" is frequently used as shorthand to mean both a database and the DBMS managing it, and both usages can be found in this textbook.  Also, "database system" is generally used as a synonym for DBMS.
+
+
+.. index::
     single: table; defined
     single: column; defined
 
@@ -24,7 +44,6 @@ We can visualize a simple table as, well, a table:
 The illustration above shows a table named "fruit_stand" with three columns named "item", "price", and "unit".  Although the illustration does not show the data types, we might infer that the **item** and **unit** columns contain text and the **price** column contains decimal numbers.  Each row of **fruit_stand** contains information about one kind of fruit sold at the fruit stand.
 
 
-
 .. index::
     single: SQL
     see: Structured Query Language; SQL
@@ -33,7 +52,7 @@ The illustration above shows a table named "fruit_stand" with three columns name
 Structured Query Language (SQL)
 :::::::::::::::::::::::::::::::
 
-An important characteristic of modern databases is that they abstract low-level operations on files, tables, indexes and so forth into high-level requests to the database management system (DBMS).  Requests to the database are typically expressed in a *query language*.  Query languages are a type of programming language, but are different from most in that query languages tend to be declarative rather than imperative.  Whereas imperative languages require the programmer to specify exactly what steps to take to perform a task, declarative languages simply describe a desired outcome.
+An important characteristic of modern databases is that they abstract low-level operations on files, tables, indexes and so forth into high-level requests to the database management system.  Requests to the database are typically expressed in a *query language*.  Query languages are a type of programming language, but are different from most in that query languages tend to be declarative rather than imperative.  Whereas imperative languages require the programmer to specify exactly what steps to take to perform a task, declarative languages simply describe a desired outcome.
 
 Structured query language (SQL) is the most popular query language for relational databases, and is an example of a declarative language.  SQL was developed by engineers at IBM in the 1970s and was standardized by standards organizations ANSI and ISO in 1986, with regular updates following.  New features continue to be added to SQL as relational database technology and applications evolve.
 
@@ -57,7 +76,6 @@ SQLite examples can be run directly inside this online textbook (more on this be
 The basic element of SQL is the *statement* or *query*.  While a distinction can be made between these two (statements act to change the state of the database, while queries act to retrieve data), it is common to use the terms interchangeably.  Statements in SQL read much like English sentences, although with very strict rules.
 
 SQL is often pronounced as "sequel", although it is equally valid to simply say each letter.
-
 
 
 .. index:: SELECT, FROM, clause
