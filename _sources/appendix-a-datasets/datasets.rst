@@ -180,12 +180,64 @@ Use the query tool below to view the expanded books data.  Note that the query t
 The bookstore dataset
 ---------------------
 
-asdfasdfasd
+The bookstore dataset consists of the tables **bookstore_inventory** and **bookstore_sales**.  These tables simulate a very simple database that a seller of used books might use.  The **bookstore_inventory** table represents books that the bookseller is selling.  The table actually includes some books that have already been sold - when a book is sold, an entry is added to the companion table, **bookstore_sales**.  The bookseller thus has to look at both tables to determine which books are actually available to be sold.  The bookseller may choose to periodically remove old records from the tables.
+
+While students should feel free to modify any data within the textbook database (secure in the knowledge that any changes will be reverted when they reload the page in their browser), the bookstore dataset was specifically designed with data modification in mind.  To avoid complications in introducing data modification queries, there are no foreign key constraints on the tables.  However, the tables as provided have a one-to-one relationship: each record in **bookstore_sales** matches exactly record in **bookstore_inventory**, while each record in **bookstore_inventory** matches at most one record in **bookstore_sales**.
+
+This dataset is used briefly to illustrate one-to-one relationships in :numref:`Chapter {number} <joins-chapter>`.  In :numref:`Chapter {number} <data-modification-chapter>`, the tables are used to demonstrate data modification queries.  The tables are used in examples of grouping and aggregations in :numref:`Chapter {number} <grouping-chapter>`.
+
+.. container:: data-dictionary
+
+    The **bookstore_inventory** table contains information on new and used books for sale.
+
+    ============= ================= ==================================================
+    column        type              description
+    ============= ================= ==================================================
+    stock_number  integer           unique key identifying a particular copy of a book
+    author        character string  the author of the book
+    title         character string  the title of the book
+    condition     character string  the condition of the book (new, good, fair, etc.)
+    price         fixed-point       the price of the book, in some unit of currency
+    ============= ================= ==================================================
+
+.. container:: data-dictionary
+
+    The **bookstore_sales** table gives information about the sales of books from **bookstore_inventory**.
+
+    =============== ================= =================================================================
+    column          type              description
+    =============== ================= =================================================================
+    receipt_number  integer           unique key identifying this sale
+    stock_number    integer           key of the book copy (from **bookstore_inventory**) that was sold
+    date_sold       date              the date on which the books was sold
+    payment         character string  the method of payment used in the sale (case, credit card, etc.)
+    =============== ================= =================================================================
+
+Use the query tool below to view the data.
+
+.. activecode:: appendix_a_bookstore_dataset
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
+
+    SELECT * FROM bookstore_inventory;
+    SELECT * FROM bookstore_sales;
 
 Other tables in the database
 ----------------------------
 
-adsfasdfdsa
+In addition to the above, the database contains some very small tables which are used to illustrate various points in the text: **fruit_stand**, **s**, **s2**, **s3**, **t**, **t2**, and **t3**.  As these tables are give in full in the text, we do not further explain them here.  However, you can use the interactive query tool below to view the data.
+
+.. activecode:: appendix_a_miscellaneous_tables
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
+
+    SELECT * FROM fruit_stand;
+    SELECT * FROM s;
+    SELECT * FROM s2;
+    SELECT * FROM s3;
+    SELECT * FROM t;
+    SELECT * FROM t2;
+    SELECT * FROM t3;
 
 Data collection notes
 :::::::::::::::::::::
