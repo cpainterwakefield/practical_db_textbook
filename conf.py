@@ -81,8 +81,13 @@ release = '0.0'
 # directories to ignore when looking for source files.
 exclude_patterns = [
     '**/*.tex',
+    '**/*.drawio',
     '**/Makefile',
-    '_static/theme-overrides.css'
+    '_static/theme-overrides.css',
+    'appendix-a-datasets/*.sql',
+    'appendix-a-datasets/textbook.sqlite3',
+    'PART4*/*',
+    'PART5*/*'
 ]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
