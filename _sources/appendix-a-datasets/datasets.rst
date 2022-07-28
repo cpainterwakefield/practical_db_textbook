@@ -184,7 +184,7 @@ The bookstore dataset consists of the tables **bookstore_inventory** and **books
 
 While students should feel free to modify any data within the textbook database (secure in the knowledge that any changes will be reverted when they reload the page in their browser), the bookstore dataset was specifically designed with data modification in mind.  To avoid complications in introducing data modification queries, there are no foreign key constraints on the tables.  However, the tables as provided have a one-to-one relationship: each record in **bookstore_sales** matches exactly record in **bookstore_inventory**, while each record in **bookstore_inventory** matches at most one record in **bookstore_sales**.
 
-This dataset is used briefly to illustrate one-to-one relationships in :numref:`Chapter {number} <joins-chapter>`.  In :numref:`Chapter {number} <data-modification-chapter>`, the tables are used to demonstrate data modification queries.  The tables are used in examples of grouping and aggregations in :numref:`Chapter {number} <grouping-chapter>`.
+This dataset is used briefly to illustrate one-to-one relationships in :numref:`Chapter {number} <joins-chapter>`.  In :numref:`Chapter {number} <data-modification-chapter>`, the tables are used to demonstrate data modification queries.  The tables are used in examples of grouping and aggregation in :numref:`Chapter {number} <grouping-chapter>`.
 
 .. container:: data-dictionary
 
