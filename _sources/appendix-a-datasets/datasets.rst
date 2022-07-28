@@ -4,161 +4,193 @@
 Appendix A: Example datasets used in this book
 ==============================================
 
+This appendix contains descriptions of the tables in the textbook database as well as SQL scripts and data files that can be used to recreate the book's database in other database systems.
+
 .. contents:: Quick links
    :local:
    :depth: 2
    :backlinks: none
 
-   The books dataset
-   :::::::::::::::::
+Dataset descriptions
+::::::::::::::::::::
 
-   asdfasd
+In this section we provide descriptions of each dataset or group of related tables.  The tables are described in detail in tabular format. Entity-relationship diagrams (ERDs) and logical models using crow's foot notation (as described in :numref:`Part {number} <data-modeling-part>`) are also provided for some datasets.  Finally, each dataset section contains an interactive query tool set up to retrieve the data from all of the tables in the dataset (note that the interactive query tool limits results to 100 rows, and some tables have more than that number of rows).
 
-   The bookstore dataset
-   :::::::::::::::::::::
+The simple books dataset
+------------------------
 
-   asdfasdfasd
+The simple books dataset consists of the tables **simple_books** and **simple_authors**.  The **simple_books** table contains data about 12 books, each by a different author, while the **simple_authors** table contains data on each of the 12 authors appearing in **simple_books**.
 
-   Other tables in the database
-   ::::::::::::::::::::::::::::
+This dataset is used in the early chapters of :numref:`Part {number} <sql-part>` of the text to introduce SQL, and is not intended as an example of good database design.  The rows in **simple_books** are implicitly identified by unique book titles, and the rows in **simple_authors** are implicitly identified by author names, but neither table has a primary key.  Similarly, the rows in **simple_books** are in one-to-one correspondence with the rows in **simple_authors**, however, there is no explicit relationship between the tables via a foreign key constraint.
 
-   adsfasdfdsa
+.. container:: data-dictionary
 
-   Data collection notes
-   :::::::::::::::::::::
+    The **simple_books** table records works of fiction, non-fiction, poetry, etc. by a single author.
 
-   asdfsad
+    ================ ================= ===================================
+    column           type              description
+    ================ ================= ===================================
+    author           character string  the book's author
+    title            character string  the book's title
+    publication_year integer           year the book was first published
+    genre            character string  a genre describing the book
+    ================ ================= ===================================
 
-   ..
-     Below are interactive SQL interfaces for all of the various databases used in this book, organized by chapter.  Remember that you query the **sqlite_master** table to see the specifications of objects in a given database, e.g.:
+.. container:: data-dictionary
 
-     ::
+    The **simple_authors** table records persons who have authored books.
 
-         SELECT sql FROM sqlite_master WHERE type = 'table';
+    ========== ================= ===================================
+    column     type              description
+    ========== ================= ===================================
+    name       character string  full name of the author
+    birth      date              birth date of the author, if known
+    death      date              death date of the author, if known
+    ========== ================= ===================================
 
-     to see the specifications of the tables in a given database.
+Use the query tool below to view the data.
 
-     Chapter 2: Basic SELECT queries
-     :::::::::::::::::::::::::::::::
+.. activecode:: appendix_a_simple_books_dataset
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
 
-     Books and authors database
-     --------------------------
+    SELECT * FROM simple_books;
+    SELECT * FROM simple_authors;
 
-     This database is the simplest form of the books database, containing a **books** table and an **authors** table.
+To see the **CREATE TABLE** code for a table, you can use the query tool above to query the **sqlite_master** table, e.g.:
 
-     .. activecode:: appendix_a_ch2_books
-         :language: sql
-         :dburl: /_static/simple_books.sqlite3
+::
 
-         SELECT * FROM books;
-
-     Fruit stand database
-     --------------------
-
-     Though an interactive block for this database was not included in chapter 2, this database contains the **fruit_stand** table shown.
-
-     .. activecode:: appendix_a_ch2_fruit_stand
-         :language: sql
-         :dburl: /_static/fruit_stand.sqlite3
-
-         SELECT * FROM fruit_stand;
-
-     The expanded books database
-     :::::::::::::::::::::::::::
-
-     We are now ready to describe the database we will be using for the rest of this book.  The new database is still centered around **book** and **authors** tables, modified to use id columns as described above, but also adds several other tables.  All of the tables and their basic relationships to each other are described below, after which we will discuss some basic join queries using the tables.  The descriptions below are also repeated in `Appendix A`_ for future reference.
-
-     .. container:: data-dictionary
-
-         Table **authors** records persons who have authored books:
-
-         ========== ================= ===================================
-         column     type              description
-         ========== ================= ===================================
-         author_id  integer           unique identifier for author
-         name       character string  full name of author
-         birth      date              birth date of author, if known
-         death      date              death date of author, if known
-         ========== ================= ===================================
-
-     .. container:: data-dictionary
-
-         Table **books** records works of fiction, non-fiction, poetry, etc. by a single author:
-
-         ================ ================= ===================================
-         column           type              description
-         ================ ================= ===================================
-         book_id          integer           unique identifier for book
-         author_id        integer           author_id of book's author from **authors** table
-         title            character string  book title
-         publication_year integer           year book was first published
-         ================ ================= ===================================
+        SELECT sql FROM sqlite_master WHERE name = 'simple_books';
 
 
-     .. container:: data-dictionary
+The expanded books dataset
+--------------------------
 
-         Table **editions** records specific publications of a book:
+The expanded books dataset includes information on 200 books (in the **books** table) and their authors (76 authors in total in the **authors** table).  An **awards** table lists some major awards given to authors for their body of work or for specific books.  Two cross-reference tables associate authors with their awards (**authors_awards**) and specific books with their awards (**books_awards**).  Finally, the **editions** table contains publication data related to just four books by author J.R.R. Tolkien.  (Only four books were included to reduce the size of the database file, which must be downloaded and held in the web browser's memory.)  The publication data is particularly "dirty" in the sense that it contains numerous inaccuracies, omissions, and redundancies; see the section title `Data collection notes`_, below.
 
-         ================== ================= ===================================
-         column             type              description
-         ================== ================= ===================================
-         edition_id         integer           unique identifier for edition
-         book_id            integer           book_id of book (from **books** table) published as edition
-         publication_year   integer           year this edition was published
-         publisher          character string  name of the publisher
-         publisher_location character string  city or other location(s) where the publisher is located
-         title              character string  title this edition was published under
-         pages              integer           number of pages in this edition
-         isbn10             character string  10-digit international standard book number
-         isbn13             character string  13-digit international standard book number
-         ================== ================= ===================================
+This dataset is introduced in :numref:`Chapter {number} <joins-chapter>` and is used throughout much of the rest of :numref:`Part {number} <sql-part>` of the text.  While the dataset represents a highly simplified model of books (e.g., books are assumed to always have a single author), the schema attempts to emulate best practices in database design while illustrating fundamental SQL database concepts.  The design makes use of primary key constraints (using synthetic unique identifiers), foreign key constraints, and cross-reference tables implementing many-to-many relationships.
 
+We provide below detailed descriptions of each table in the dataset, an entity-relationship diagram (ERD) modeling the data, and a logical model in crow's foot notation showing the tables and their relationships.
 
-     .. container:: data-dictionary
+.. container:: data-dictionary
 
-         Table **awards** records various author and/or book awards:
+    The **authors** table records persons who have authored books.  Every author corresponds to at least one book in the database.
 
-         ================== ================= ===================================
-         column             type              description
-         ================== ================= ===================================
-         award_id           integer           unique identifier for award
-         name               character string  name of award
-         sponsor            character string  name of organization giving the award
-         criteria           character string  what the award is given for
-         ================== ================= ===================================
+    ========== ================= ===================================
+    column     type              description
+    ========== ================= ===================================
+    author_id  integer           unique identifier for the author
+    name       character string  full name of the author
+    birth      date              birth date of the author, if known
+    death      date              death date of the author, if known
+    ========== ================= ===================================
 
+.. container:: data-dictionary
 
-     .. container:: data-dictionary
+    The **books** table records works of fiction, non-fiction, poetry, etc. by a single author.  Each book corresponds to a single author from the **authors** table, and may correspond to many editions of the book listed in the **editions** table.
 
-         Table **authors_awards** is a *cross-reference* table (explained below) relating **authors** and **awards**; each entry in the table records the giving of an award to an author (not for any particular book) in a particular year:
+    ================ ================= =================================================
+    column           type              description
+    ================ ================= =================================================
+    book_id          integer           unique identifier for the book
+    author_id        integer           author_id of book's author from **authors** table
+    title            character string  the book's title
+    publication_year integer           year the book was first published
+    ================ ================= =================================================
 
-         ================== ================= ===================================
-         column             type              description
-         ================== ================= ===================================
-         author_id          integer           author_id of the author receiving the award
-         award_id           integer           award_id of the award received
-         year               integer           year the award was given
-         ================== ================= ===================================
+.. container:: data-dictionary
 
+    The **editions** table records specific publications of a book.  Each edition corresponds to a single book from the **books** table.  For space reasons, the **editions** table only includes data on four books by J.R.R. Tolkien.
 
-     .. container:: data-dictionary
+    ================== ================= ====================================================================
+    column             type              description
+    ================== ================= ====================================================================
+    edition_id         integer           unique identifier for the edition
+    book_id            integer           book_id of the book (from **books** table) published as this edition
+    publication_year   integer           year this edition was published
+    publisher          character string  name of the publisher
+    publisher_location character string  city or other location(s) where the publisher is located
+    title              character string  title this edition was published under
+    pages              integer           number of pages in this edition
+    isbn10             character string  10-digit international standard book number
+    isbn13             character string  13-digit international standard book number
+    ================== ================= ====================================================================
 
-         Table **books_awards** is a *cross-reference* table (explained below) relating **books** and **awards**; each entry in the table records the giving of an award to an author for a specific book in a particular year:
+.. container:: data-dictionary
 
-         ================== ================= ===================================
-         column             type              description
-         ================== ================= ===================================
-         book_id            integer           book_id of the book for which the award was given
-         award_id           integer           award_id of the award given
-         year               integer           year the award was given
-         ================== ================= ===================================
+    The **awards** table records various author and/or book awards.
 
+    ========= ================= =========================================
+    column    type              description
+    ========= ================= =========================================
+    award_id  integer           unique identifier for the award
+    name      character string  name of the award
+    sponsor   character string  name of the organization giving the award
+    criteria  character string  what the award is given for
+    ========= ================= =========================================
 
-     Data models
-     :::::::::::
+.. container:: data-dictionary
 
-     ERD and other notations
+    The **authors_awards** table is a *cross-reference* table (explained in :numref:`Chapter {number} <joins-chapter>`) relating **authors** and **awards**; each entry in the table records the giving of an award to an author (not for any particular book) in a particular year.
 
+    =========== =========== ===========================================
+    column      type        description
+    =========== =========== ===========================================
+    author_id   integer     author_id of the author receiving the award
+    award_id    integer     award_id of the award received
+    year        integer     year the award was given
+    =========== =========== ===========================================
+
+.. container:: data-dictionary
+
+    The **books_awards** table is a cross-reference table relating **books** and **awards**; each entry in the table records the giving of an award to an author for a specific book in a particular year.
+
+    =========== =========== =================================================
+    column      type        description
+    =========== =========== =================================================
+    book_id     integer     book_id of the book for which the award was given
+    award_id    integer     award_id of the award given
+    year        integer     year the award was given
+    =========== =========== =================================================
+
+Here is the data model for the expanded books dataset, as an ERD:
+
+.. image:: books_ERD.svg
+    :alt: A data model of the books dataset given as an entity-relationship diagram.
+
+A logical model of the expanded books dataset is shown below.  In this crow's foot diagram, primary keys are shown underlined and in boldface, while foreign keys are italicized.
+
+.. image:: books_logical.svg
+    :alt: A crow's foot diagram showing the logical model of the books dataset.
+
+Use the query tool below to view the expanded books data.  Note that the query tool limits results to 100 rows, but the **books** and **editions** tables have more than 100 rows each.
+
+.. activecode:: appendix_a_expanded_books_dataset
+    :language: sql
+    :dburl: /_static/textbook.sqlite3
+
+    SELECT * FROM authors;
+    SELECT * FROM books;
+    SELECT * FROM editions;
+    SELECT * FROM awards;
+    SELECT * FROM authors_awards;
+    SELECT * FROM books_awards;
+
+The bookstore dataset
+---------------------
+
+asdfasdfasd
+
+Other tables in the database
+----------------------------
+
+adsfasdfdsa
+
+Data collection notes
+:::::::::::::::::::::
+
+asdfasd
 
 Getting the data
 ::::::::::::::::
@@ -242,7 +274,7 @@ Notable differences from the textbook:
 Raw data files
 --------------
 
-If you wish to use a database other than one of those listed above, you can likely adapt one of the above scripts for use with your database, using the find/replace function of a text editor and some trial and error.  Alternatively, you may create the desired tables manually, and load the data from the data files in the zip archive linked below - most database systems provide mechanisms to load data from formatted files.  The files available below are in comma-separated value (CSV) format, and are encoded in UTF-8.  These files include a header row with labels matching the column names from the textbook database.  If your database system does not support this file format, it is likely that you can read the files into a spreadsheet program and export a format that is supported by your system.
+If you wish to use a database other than one of those listed above, you can likely adapt one of the above scripts for use with your database, using the find/replace function of a text editor and some trial and error.  Alternatively, you may create the desired tables manually, and load the data from the data files in the zip archive linked below - most database systems provide mechanisms to load data from formatted files.  The data files are in comma-separated value (CSV) format, and are encoded in UTF-8.  Each file includes a header row with labels matching the column names from the textbook database.  If your database system does not support this file format, you may be able to open the files with a spreadsheet program and then export a format that is supported by your system.
 
 - :download:`practical_db_data_files.zip`
 
