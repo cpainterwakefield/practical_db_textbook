@@ -242,7 +242,21 @@ In addition to the above, the database contains some very small tables which are
 Data collection notes
 :::::::::::::::::::::
 
-asdfasd
+The selection of books in the simple and expanded books datasets was driven by several interests.  First, the textbook's author is a fan of science fiction and fantasy - these genres are thus perhaps overrepresented in the dataset.  Second, an attempt was made to include a diverse set of authors, in hopes of providing some common points of reference for students everywhere.  (There is nevertheless a strong bias towards English-language literature, reflecting the context of the textbook's author.) Lastly, the selection favored books by authors who have received literary awards.  To keep things manageable, the number of books was capped at 200.
+
+Authors were handpicked, based on the textbook author's knowledge and on internet searches of major literary awards. `Wikipedia`_ was extremely helpful in collecting data such as authors' birth and death dates.  (Note that the dataset was finalized in 2022; it is very possible that some authors in the dataset have died since the data was entered.  This inaccuracy is regrettable but unavoidable under the circumstances.)
+
+Some authors are represented by a single work (typically an award winning or at least widely acclaimed book), while in other cases many books by the author were included.  There was no consistent decision process used to decide how many books to include by each author.  Many choices were made in support of specific examples in the text.  Most of the data regarding individual books was hand collected from Wikipedia and other freely available sources on the internet.  Some publication year values were extracted from the freely available `Open Library`_ dataset.
+
+Data on author and book awards was hand collected from Wikipedia and the websites representing the awards.  Data on the many editions of works comes entirely from the Open Library.
+
+To the best of the author's knowledge, all of the data in the simple and expanded books datasets is in the public domain.
+
+The bookstore dataset uses books from the expanded books dataset, but is otherwise entirely fabricated, as are the fruit stand and other abstract example tables.
+
+
+.. _`Wikipedia`: https://www.wikipedia.org/
+.. _`Open Library`: https://openlibrary.org/
 
 Getting the data
 ::::::::::::::::
