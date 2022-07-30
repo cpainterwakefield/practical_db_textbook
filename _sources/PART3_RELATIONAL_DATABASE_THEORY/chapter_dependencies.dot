@@ -15,4 +15,5 @@ digraph {
   c2 -> c4
   c2 -> c3
   p1 -> c3 [style=dotted]
+  p1 -> c4 [style=dotted]
 }
