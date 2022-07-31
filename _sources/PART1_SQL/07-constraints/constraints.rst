@@ -11,12 +11,16 @@ Tables used in this chapter
 
 Some examples in this chapter will use the **books** table and related tables (see :ref:`Appendix A <appendix-a>` for a full description of these tables).  Other examples will use tables created just for the example, then discarded.
 
+.. index:: constraint, constraint; domain
+
 Constraints
 :::::::::::
 
 As data is critical to so many organizations and applications, it is worth doing everything possible to ensure the correctness and consistency of the data in databases.  This can be achieved in many ways: application software can do checks to ensure data is entered and maintained correctly, separate programs can test and report on data consistency, and databases can enforce correctness using constraints and triggers.  (Triggers are actions the database can perform when certain events, such as an update to a row, occur; in some databases, the actions can even be complete small programs using implementation-specific programming languages.  This book does not cover triggers.)  We focus in this chapter on database constraints.
 
 Constraints are properties of the database that restrict data in various ways.  One of the simplest types of constraints are *domain* constraints: data entered into a column is constrained to be of the type defined for the column.  (Domain constraints are not enforced in SQLite, so we cannot demonstrate using the book's database.)  Below we discuss constraints that enforce data properties for entire tables - primary and foreign key constraints - and those that apply to individual rows: not null, uniqueness, and check constraints.
+
+.. index:: primary key - SQL, key - SQL; primary, constraint; primary key
 
 Primary keys
 ::::::::::::
@@ -37,6 +41,8 @@ Some examples can be found in our books database.  The table **authors**, for ex
 Because we need to compare primary key values to ensure uniqueness, it is also forbidden to insert ``NULL`` values into a primary key column.  (SQLite varies from this standard behavior, though. If you insert a ``NULL`` into an integer primary key column, SQLite will generate a unique value for you.  For other primary key column types, or multi-column primary keys, ``NULL`` values are permitted in SQLite.)
 
 An example of a multi-column primary key can be found in the table **authors_awards**.  For this table, the primary key is the pair (**author_id**, **award_id**).  This does not mean that each column is a primary key, e.g., that each column is independently unique.  Instead, it is the pair of values which must be unique.  That is, you may not insert the pair ``(4, 10)`` twice, but you may insert all of ``(4, 10)``, ``(4, 11)``, and ``(5, 10)`` (assuming none of those pairs is already in the table).
+
+.. index:: PRIMARY KEY, ALTER TABLE
 
 Creating a primary key
 -----------------------
@@ -69,6 +75,9 @@ You can also create the primary key as a separate entry in the table definition;
     );
 
 Some database systems also allow the addition of a primary key to an existing table using the **ALTER TABLE** command, as long as the existing data would conform to the constraint.  **ALTER TABLE** can also be used to remove (drop) constraints from a table.  (SQLite does not support this usage.)
+
+.. index:: foreign key, key - SQL; foreign, constraint; foreign key - SQL, constraint; referential integrity, referential integrity constraint, table; referencing, table; referenced
+
 
 Foreign keys
 ::::::::::::
@@ -118,6 +127,8 @@ We similarly cannot drop the **authors** table without first dropping any refere
 The **books** and **authors** examples demonstrate a common pattern, which is that foreign key constraints relate columns that we are likely to want to use in a join query (:numref:`Chapter {number} <joins-chapter>`).  This does not mean that a foreign key is a necessary condition for a join; one of the strengths of a relational database is that relationships between data do not have to be predetermined.  However, the presence of a foreign key is an indication that there exists a natural relationship between the data in the referencing and referenced tables.
 
 Foreign key constraints are also known as *referential integrity constraints*.
+
+.. index:: REFERENCES, FOREIGN KEY
 
 Creating a foreign key constraint
 ---------------------------------
@@ -175,6 +186,7 @@ Note that it is possible (and sometimes useful) to create a foreign key constrai
 
 As with primary keys, some database systems allow the addition or removal of foreign key constraints using the **ALTER TABLE** command.  (This usage is not supported by SQLite.)
 
+.. index:: constraint; violation, ON [UPDATE|DELETE] CASCADE, ON [UPDATE|DELETE] SET NULL, ON [UPDATE|DELETE] RESTRICT
 
 Enforcement mechanisms
 ----------------------
@@ -226,6 +238,8 @@ Other constraints
 
 SQL provides some additional constraints you may find useful, which are described in this section.
 
+.. index:: constraint; uniqueness, UNIQUE
+
 UNIQUE
 ------
 
@@ -257,6 +271,8 @@ You can also create a **UNIQUE** constraint as a separate entry in the table def
 
 Note that a primary key constraint on a set of columns already implies something stronger than **UNIQUE**, thus there is no need to specify **UNIQUE** if **PRIMARY KEY** is already in place.
 
+.. index:: constraint; not null, NOT NULL
+
 NOT NULL
 --------
 
@@ -265,6 +281,8 @@ NOT NULL
 It can be valuable, then, to constrain columns to not allow ``NULL`` values at all, using the **NOT NULL** constraint.  In our database, one example is the **authors** table, which has a **NOT NULL** constraint on the **name** column - we always want a value in the **name** column [#]_.  You can find other examples in the books-related tables.
 
 Note that **NOT NULL** is implied on all columns in a primary key, so there is no need to specify **NOT NULL** for those columns.
+
+.. index:: constraint; check, CHECK
 
 CHECK
 -----

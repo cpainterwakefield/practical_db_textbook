@@ -11,6 +11,7 @@ Tables used in this chapter
 
 For this chapter we will be using the books dataset (with tables **books**, **authors**, etc.), a description of which can be found in :ref:`Appendix A <appendix-a>`.
 
+.. index:: view, CREATE VIEW, DROP VIEW
 
 Views
 :::::
@@ -50,6 +51,7 @@ To remove a view, use the **DROP VIEW** statement:
 
     DROP VIEW book_editions;
 
+.. index:: common table expression, CTE, WITH
 
 Common table expressions
 ::::::::::::::::::::::::
@@ -97,6 +99,7 @@ Here is an example listing books along with some additional pieces of informatio
       LEFT JOIN ec ON ec.book_id = b.book_id
     ;
 
+.. index:: window function, PARTITION BY
 
 Window functions
 ::::::::::::::::

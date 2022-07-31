@@ -6,6 +6,8 @@ ERD alternatives and variations
 
 In this chapter we explore alternatives to Chen notation entity-relationship data modeling as well as other variations.  We start with *crow's foot* notation, a popular notation for entity-relationship modeling.  We will show how the basic crow's foot notation can be used to model relational databases at lower levels of abstraction.  We will finish with an overview of some of the more common variations you are likely to encounter in both Chen and crow's foot notation.  The examples used throughout correspond to the computer manufacturer data model developed in :numref:`Chapter {number} <erd-chapter>`.
 
+.. index:: crow's foot notation
+
 Crow's foot notation
 ::::::::::::::::::::
 
@@ -65,6 +67,7 @@ Some database designers prefer crow's foot notation over Chen's notation for ent
 
 Ultimately which notation you use will depend on your preferences and the preferences of the people you are working with on a given project.
 
+.. index:: logical model, physical model
 
 Lower level models
 ------------------
@@ -99,9 +102,13 @@ Each level of abstraction has value, but whether or not you create models at a p
 Common variations
 ::::::::::::::::::
 
+.. index:: UML, unified modeling language
+
 Most visual languages for data modeling derive in greater or lesser degree from Chen's notation or crow's foot notation, although alternatives exist.  One popular alternative is the *unified modeling language* (UML).  While UML is not specifically intended for database design, it has been adapted for the purpose.  UML is especially applicable in more advanced settings involving inheritance hierarchies for entities.  Chen's notation has also been extended for these settings.  We do not cover inheritance in this book.
 
 All data modeling languages share certain commonalities, such as entities, attributes, keys, relationships, and cardinality ratios.  Most have some notion of participation or minimum cardinality.  The basic concepts are the same, but the notations vary.  We give an overview of the most common variations you are likely to encounter below.
+
+.. index:: cardinality ratio; alternate notation
 
 Cardinality ratios and participation
 ------------------------------------

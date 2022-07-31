@@ -3,6 +3,7 @@
 ==============
 Set operations
 ==============
+.. index:: set operation - SQL
 
 Relational database theory is based on mathematical set theory.  Even though relational database implementations stray from the theory in some important regards, the notion of sets remains important.  In this chapter, we examine the three set operations available to us in SQL.
 
@@ -11,6 +12,7 @@ Tables used in this chapter
 
 For this chapter we will be using the books dataset (tables **books**, **authors**, etc.), which is described in :ref:`Appendix A <appendix-a>`.
 
+.. index:: set; defined
 
 Sets refresher
 ::::::::::::::
@@ -33,6 +35,7 @@ While union and intersection are commutative - the sets involved in an operation
 
 It may be difficult to imagine all of the amazing applications of sets in both mathematics and computer science from this simple example.  However, set theory is a very powerful tool.  As we will discuss in :numref:`Part {number} <relational-theory-part>`, relational databases resulted from the application of set theory to the problems of data management.
 
+.. index:: multiset
 
 Tables as sets
 ::::::::::::::
@@ -46,6 +49,8 @@ Mathematically, sets are collections of distinct values.  In the original concep
 The term used to describe tables and query results in SQL is *multiset*.  A multiset is a collection of values from the same domain of values, but values can appear more than once in the set.  This difference between relational databases in practice and in theory results in some complications, as we will soon see.
 
 The three basic set operations that SQL supports are union, intersection, and set difference.
+
+.. index:: UNION, set operation - SQL; union
 
 Union
 -----
@@ -99,6 +104,8 @@ If you run the union query above, you will see that column names for the result 
 
 In some cases, **UNION** may be your only choice - such as when you are combining results from different tables.  One example of this might occur when a company wishes to create an email list for everyone related to the company in some way: the company's database might contain one table for employees, another for customers, and a third for vendors  A union query would easily create one mailing list from these three tables, and eliminate duplicates (since, for example, employees might also be customers).
 
+.. index:: UNION ALL
+
 Multiset complication
 #####################
 
@@ -109,6 +116,8 @@ Used by itself, **UNION** results in the removal of all duplicates from the resu
     SELECT * FROM books WHERE title LIKE 'W%'
     UNION ALL
     SELECT * FROM books WHERE publication_year = 1995;
+
+.. index:: INTERSECT, set operation - SQL; intersection
 
 Intersection
 ------------
@@ -135,6 +144,8 @@ However, as with **UNION**, you can use **INTERSECT** to perform queries against
 The SQL standard allows the keyword **ALL** after **INTERSECT**, but most databases (including SQLite) do not support this usage.
 
 (Note for MySQL users: MySQL does not implement **INTERSECT**.)
+
+.. index:: EXCEPT, set operation - SQL; difference
 
 Set difference
 --------------

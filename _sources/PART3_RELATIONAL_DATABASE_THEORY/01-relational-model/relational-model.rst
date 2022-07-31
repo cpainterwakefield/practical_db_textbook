@@ -4,6 +4,8 @@
 The relational model of the database
 ====================================
 
+.. index:: database; relational model of, relational model of databases
+
 In this chapter we introduce the mathematical model that relational databases are based on.  The *relational model* of the database provides a mathematical foundation for describing and reasoning about databases.  While most relational database systems in practice vary in small ways from the mathematical model (see :numref:`Chapter {number} <sql-vs-theory-chapter>`), understanding the model facilitates a deeper understanding of these systems.
 
 Given its mathematical foundations, the relational model is most conveniently expressed using at least some mathematical notation and terminology.  In the interests of keeping this book accessible to as wide an audience as possible, however, we will give the basics of the model using a minimum of notation and explain terms as we use them.
@@ -23,6 +25,8 @@ A *subset* of a set is a set containing zero or more elements from the set and o
 
 A *superset* of a set is a set containing all elements from the set, and may contain elements not from the set.  For the set {1, 2, 3, 4}, supersets include {1, 2, 3, 4}, {1, 2, 3, 4, 5}, and {0, 1, 2, 3, 4, 5, 7}.  Note that any set is a superset of itself; a superset which contains elements not in the set is termed a *proper superset* of the set.
 
+.. index:: relation
+
 Relations
 ---------
 
@@ -35,6 +39,8 @@ This illustration is just one possible way of depicting the relation **simple_bo
 
 Formally, a relation is a set of *tuples* that share the same *domain*.
 
+.. index:: tuple, domain
+
 Tuples
 ------
 
@@ -46,6 +52,8 @@ Each element of a tuple belongs to some set, which we call the *domain* of the e
 
 The tuple itself also belongs to a domain, which is defined in terms of the domains of each value in the tuple.  Tuples of the **simple_books** relation belong to the domain of tuples with four elements for which the first element belongs to the domain of book titles, the second element is from the domain of authors, the third element belongs to the domain of calendar years, and the fourth element is in the domain of literary genres.
 
+.. index:: tuple; attribute
+
 Attributes
 ----------
 
@@ -54,6 +62,8 @@ In an alternate definition of tuple, we can speak of the *attributes* of the tup
 In this definition of tuple, tuples are not necessarily ordered lists; each value in the tuple is associated not with a position but with an attribute.  Each attribute is associated with a domain. For example, the **title** attribute for any tuple in **simple_books** must be a member of the domain of book titles.  Having names associated with values in a tuple is much more convenient than having to refer to the *n*-th element when we want to query our database.
 
 The two definitions of tuple are not exclusive.  In the first definition of tuple, each position in the ordered collection also corresponds to a specific attribute - in our example, the first element is the **title** attribute.  While we can think of tuples as having named attributes in no particular order, in practice we typically assign an ordering to the attributes in a relation - so both definitions of tuple are used simultaneously.
+
+.. index:: schema, relation schema
 
 Schemas
 -------
@@ -82,6 +92,8 @@ Constraints
 
 *Constraints* are statements about relations which are required to be true at all times.  Some constraints are implicit in the definitions above; for example, the attribute values in a tuple are constrained to be members of the associated domain.  The relational model also incorporates two types of explicit constraint: keys and foreign keys.
 
+.. index:: key - relational model, key - relational model; primary, primary key - relational model, key - relational model; candidate, candidate key, key - relational model; unique, unique key
+
 Keys and primary keys
 ---------------------
 
@@ -96,6 +108,8 @@ Relations may have more than one key.  A common example is that of a table of em
 The keys of a relation are also known as *candidate keys*.  One candidate key is chosen as the *primary key* for the relation.  The remaining keys are sometimes called *unique keys*.
 
 In the relational model, all keys are constrained to be unique.  If a set of tuples contains duplicate values for some key according to some relation schema (e.g., the same **author** and **title** per the **simple_books** schema), we do not consider that a valid relation of the schema.
+
+.. index:: key - relational model; foreign, foreign key - relational model
 
 Foreign keys
 ------------
@@ -112,6 +126,8 @@ Our primary key for this relation is the **name** attribute.  Names are generall
 Because every **author** value in **simple_books** matches some **name** value in **simple_authors**, we can connect each book to information about its author.  To assert that it should always be true that any tuple in **simple_books** matches a tuple in **simple_authors**, we declare the **author** attribute of **simple_books** to be a foreign key *referencing* the **name** attribute of **simple_authors**.  This foreign key constraint applies not only to the current relations, but to any future states of **simple_books** and **simple_authors**.  Foreign keys are also known as *referential integrity* constraints.
 
 Note that the foreign key is a constraint on both relations; certain changes in either relation could result in a constraint violation.  The constraint is not symmetric, however; we can have authors listed in **simple_authors** for whom no books are listed in **simple_books**.
+
+.. index:: database; consistency, consistency, inconsistent
 
 Consistency
 -----------
@@ -142,6 +158,7 @@ This author has a book in the **simple_books** table.
 
 Updates can create any of the constraint violations described above.  For example, an update which changes the value of a primary key must not change the value such that it would duplicate another tuple's primary key.  Similarly, if a foreign key value in another relation depends on the primary key value being updated, then the update cannot proceed.  Finally, an update may not change a foreign key value to something which is not in the referenced table.
 
+.. index:: NULL - relational model
 
 NULL
 ::::
@@ -153,6 +170,8 @@ The nature of NULL, and in fact, its very presence in the relational model, is c
 The problem NULL was created to solve is the problem of missing information.  Information may be unknown for many reasons: it may be that nobody knows the true value, or it may have been simply overlooked when entering data into the database, or any number of other causes.  Data may be irrelevant or inapplicable, as in the example of the **death** date for living authors.  Researchers have identified many different meanings that can be ascribed to NULL, which has led some scholars to propose additional placeholders instead of just one (although some of those proposals were intended to highlight the problems with NULL, rather than improve the model).  The problem is, the definition of a tuple requires there to be *something* associated with every attribute defined in the relation schema; even if nothing from the domain is appropriate, the tuple cannot simply be incomplete.
 
 While there are alternatives to the use of NULL, the alternatives are problematic in their own ways.  Most database systems based on the relational model include support for NULL.  For these reasons, NULL is an important part of our discussion of the relational model.
+
+.. index:: three-value logic - relational model
 
 Three-valued logic
 ------------------

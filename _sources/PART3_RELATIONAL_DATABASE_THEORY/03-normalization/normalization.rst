@@ -4,16 +4,22 @@
 Normalization
 =============
 
+.. index:: normalization
+
 In this chapter we discuss some aspects of how a database is structured - what relation schemas should we use to store our data?  While the material in this chapter is deeply rooted in relational database theory, the basic concepts can be understood without the theoretical foundation, and are important for all database practitioners.  If you are reading this chapter without having read earlier chapters on the relational model of the database, note we use the terms relation, attribute, and tuple in discussing the objects in our database; these terms closely correspond to the terms table, column, and row in relational database systems.
 
 Introduction
 ::::::::::::
+
+.. index:: redundancy
 
 Normalization is the process of modifying a database structure to meet certain requirements. These requirements are defined by a series of *normal forms*, which we will define shortly.
 
 A primary goal of normalization is to make it easier to maintain a correct collection of data.  Correct data is complete and self-consistent.  The database should not contain data contradicting what we understand to be true.
 
 There are a few clues that can indicate a database is susceptible to common kinds of data corruption.  A very big clue is when a database exhibits redundancy, that is, when the same facts are recorded multiple times.  Another clue is when the database contains NULL in many places.  When these issues are present in a relation, it is usually also the case that the relation is doing too many things.  Relations work best when they contain data regarding a single thing or concept.  It can sometimes be difficult to detect that a relation is doing too much, though, which is why redundancy and excessive NULLs are such useful clues.
+
+.. index:: modification anomaly
 
 Modification anomalies
 ----------------------
@@ -37,15 +43,21 @@ There are three common types of errors that we can consider to better understand
 
 This relation also exhibits redundancy.  We are given the facts that Mr. Reyes is in the Math department and his office is in room 124 multiple times, for example.  Note that Mr. Reyes appearing multiple times is not itself redundancy, as each appearance is a new fact: Mr. Reyes teaches Algebra I, and Mr. Reyes teaches Geometry.  We do not have any NULLs in this example, but we will see shortly how they might appear when we add or remove data.
 
+.. index:: insert anomaly
+
 Insert anomaly
 ##############
 
 Consider what happens when a new instructor joins the faculty at the school.  Mr. Hassan is a new faculty member in the department of Math, but he has not yet been assigned any classes to teach.  How should we add Mr. Hassan to the database?  There are a few options, but none of them are good - whatever we do, we must provide values for **class_name**, **classroom**, and **time** in our new tuple.  We might think that NULL is the best choice for each of these attributes, as otherwise we must create fake class information.  Either way, we are making trouble for ourselves later on - our database now contains a tuple that must be handled in a special fashion, different from the other tuples in the relation.
 
+.. index:: delete anomaly
+
 Delete anomaly
 ##############
 
 Now, consider what happens when Ms. Tan takes a job at another school.  If we are incautious, we will delete the tuple for Ms. Tan - removing World History from our list of classes altogether.  Similarly, we cannot remove English Literature from the list of classes without removing all information about Ms. Larsen.  The only way to avoid these issues with our current database design is to replace the existing values with NULLs.  As with the insert anomaly example, this leaves us with tuples that require special handling.
+
+.. index:: update anomaly
 
 Update anomaly
 ##############
@@ -89,6 +101,8 @@ Informally, in a normalized relation, some thing or concept is uniquely identifi
 
 Note how we have eliminated redundancy through this decomposition.  If we need to update office information for an instructor, there is exactly one tuple to update.  We also no longer need to worry about modification anomalies.  Adding or removing an instructor is completely independent of adding or removing classes; this also removes any need for excessive NULLs in the **classes** relation [#]_.
 
+.. index:: normal form
+
 Normal forms
 ::::::::::::
 
@@ -99,6 +113,8 @@ When a database meets the requirement for a normal form, we say that the databas
 To explain most of the normal forms, we first need to provide some additional foundation, covered in the next few sections.  However, we can explain 1NF immediately.  1NF requires that the domain of an attribute of a relation contains *atomic* values only.  Atomic here simply means that we cannot usefully break the value down into smaller parts.  Non-atomic elements include compound values, arrays of values, and relations.  For example, a character string containing an author's name may be atomic [#]_, but a string identifying a book by author and title is probably compound; a list of authors would be an array; and a table of values giving a book's publication history (including publisher, year, ISBN, etc. for each publication) would be a relation.  To meet the 1NF requirements, compound values should be broken into separate attributes, while arrays and relations should be broken out into their own relations (with a foreign key referencing the original relation).
 
 1NF is often described as simply part of the definition of a relational database, and early relational database systems indeed provided no capabilities that would permit violations of 1NF.  Some modern database systems now provide support for compound values, in the form of user-defined types, and array values.  While 1NF technically remains a requirement for all higher normal forms, for certain applications these violations of 1NF may be highly useful.  Some authors have argued for permitting relation-valued attributes as well.
+
+.. index:: key - normalization; superkey
 
 Keys and superkeys
 ::::::::::::::::::
@@ -134,6 +150,8 @@ We can further state that any subset of attributes of the relation which is a su
 A *key* of a relation is a superkey of the relation from which we cannot subtract any attributes and get a superkey.  For the **library** relation, we assert that {**author**, **title**} is a superkey of the relation; furthermore, both **author** and **title** are needed.  That is, neither {**author**} nor {**title**} is a superkey of **library**.  Therefore, {**author**, **title**} is a key of **library**; the set {**author**, **title**, **year**} is a superkey but not a key because we can remove **year** and still have a superkey [#]_.
 
 Identifying the keys of a relation is a key step in analyzing whether or not a relation is already normalized with respect to 2NF or higher.
+
+.. index:: functional dependency
 
 Functional dependencies
 :::::::::::::::::::::::
@@ -173,6 +191,8 @@ A trivial FD is one in which the right-hand side of the FD is a subset of the le
 A non-trivial FD is one in which some part of the right-hand side of the FD is not in the left-hand side.  The intersection of the left-hand side and the right-hand side is not empty, but the right-hand side is not a subset of the left-hand side.  The fourth FD above is a non-trival FD.  These FDs convey some new information.  Identifying non-trivial FDs in our relations is a crucial step in normalization.
 
 As you might guess by now, a completely non-trivial FD is one for which there is no overlap between the left-hand side and the right-hand side - the intersection of the two sets is the empty set.  The first three FDs above are completely non-trivial.
+
+.. index:: functional dependency; inference rules
 
 Inference rules
 ---------------
@@ -319,6 +339,8 @@ We present these without proof, but the intuition behind these should be clear. 
 
 While any FDs that can be inferred from a given collection of FDs on a relation can be inferred using the above rules, there is unfortunately no way of deciding that some collection of FDs is, in fact, *complete* - that is, that the collection of FDs lets us infer every possible true FD on the relation.  FDs come from the minds of the database designer and others involved in analysis and design, a process which requires some "trial and error", i.e., iterative improvement.
 
+.. index:: closure
+
 Closure
 -------
 
@@ -369,6 +391,7 @@ We previously asserted that the set {author, title} is a superkey for our exampl
 
 Thus, {author, title}\ :sup:`+` = {author, title, year, genre, author_birth, author_death, section}.
 
+.. index:: second normal form, 2NF, third normal form, 3NF, Boyce-Codd normal form, BCNF
 
 Second, third, and Boyce-Codd normal forms
 ::::::::::::::::::::::::::::::::::::::::::
@@ -414,6 +437,8 @@ Boyce-Codd [#]_ normal form is a slightly stronger version of third normal form;
 It may not be obvious from this definition that relations in BCNF are also in 2NF and 3NF.  We will demonstrate that this is true for 2NF; a similar argument holds for 3NF.  Recall that 2NF requires we have no non-key attributes functionally dependent on a proper subset of the key.  By the definition of key, a proper subset of the key cannot be a key or superkey; therefore, an FD forbidden by 2NF must have a left-hand side that is not a superkey.  On the other hand, non-key attributes cannot be part of the key at all.  The right-hand side of an FD forbidden by 2NF can have no intersection with the left-hand side, so the FD is completely non-trivial.  Thus any FDs that would violate 2NF also meet the criteria for violating BCNF.
 
 The difference between 3NF and BCNF is simply that 3NF permits FDs for which the right-hand side is a subset of a key.  This situation is fairly uncommon, which is why most relations in 3NF are also in BCNF.  We will explore this difference further in a later section.
+
+.. index:: decomposition, normalization; decomposition
 
 Decomposition
 :::::::::::::
@@ -614,6 +639,7 @@ Since the Hugo award is given to multiple works in a given year (just for differ
 
 In this particular case, it would be preferable to leave the original relation in 3NF and preserve the constraint with a primary key composed of {award, year, format}.  The redundancy involved is small, given that works can appear at most twice in the relation (since we only have the two awards).  If you encounter such a situation, however, you must determine the best way forward for your particular case.  If you leave the relation in 3NF, then you must manage the modification anomalies implied implied by the BCNF violation (in the application software, or some other mechanism).  If you move the relation to BCNF, then you must enforce the lost constraint in some other fashion.
 
+.. index:: multivalued dependency, fourth normal form, 4NF
 
 Multivalued dependencies and fourth normal form
 :::::::::::::::::::::::::::::::::::::::::::::::

@@ -4,6 +4,8 @@
 Subqueries
 ==========
 
+.. index:: subquery, subquery expression, nested query
+
 A subquery is simply a **SELECT** query enclosed with parentheses and nested within another query or statement.  This *subquery expression* evaluates to a scalar, a row, a column, or a table, depending on the query results and the context in which the subquery appears.  In this chapter we discuss the many ways in which we can use the result of a query within another query.
 
 
@@ -12,6 +14,7 @@ Tables used in this chapter
 
 For this chapter we will be using the books dataset (tables **books**, **authors**, etc.), described in :ref:`Appendix A <appendix-a>`.
 
+.. index:: scalar value, row value, row value constructor, table value
 
 Scalars, rows, and tables
 :::::::::::::::::::::::::
@@ -49,12 +52,12 @@ We will see more useful applications of row expressions in the following section
 
 Beyond rows, we can also think in terms of *tables* as values.  Here we are using "tables" to mean a collection of rows, not necessarily the named object living in the database.  The result from a **SELECT** query is a table in this sense.
 
+.. index:: subquery; used in Boolean expression
 
-Boolean subquery expressions
-::::::::::::::::::::::::::::
+Boolean expressions using subqueries
+::::::::::::::::::::::::::::::::::::
 
 To start with, we will examine Boolean expressions using subqueries.  These are appropriate for use within the **WHERE** clause of another query or statement.
-
 
 Scalar or row result
 --------------------
@@ -116,6 +119,8 @@ Table or column result
 
 When a query can return multiple rows (a column or table), we have a different set of operators to work with.  In this section, we discuss the **IN** operator and the use of comparison operators with **ALL**, **ANY**, and **SOME**.  Another Boolean operator, **EXISTS**, will wait until we discuss correlated subqueries later in the chapter.  All of the operators that work with multiple rows also work on subqueries which return zero rows or one row.
 
+.. index:: IN, NOT IN
+
 IN
 ####
 
@@ -172,6 +177,7 @@ If we want to compare multiple values (i.e., row expressions), we must use paren
 
     (expr1, expr2, ...) IN ((test11, test12, ...), (test21, test22, ...), ...)
 
+.. index:: ALL, ANY, SOME
 
 ALL, ANY, and SOME
 ##################
@@ -199,6 +205,7 @@ Note here we have used a subquery inside another subquery!  We can nest subqueri
 
 The **NOT IN** operator is equivalent to **<> ALL**.
 
+.. index:: subquery; used in statement
 
 Use in statements
 -----------------
@@ -213,6 +220,7 @@ Subqueries do not have to be used only within other **SELECT** queries.  The use
 
 There are no rows matching this condition in the database (unless you add them), so the above query does not remove any rows, although it runs successfully.
 
+.. index:: correlated subquery, subquery; correlated
 
 Correlated subqueries
 :::::::::::::::::::::
@@ -257,6 +265,8 @@ As you can see, we can no longer run the subquery independent of the outer query
 
 As in this example, correlated subqueries tend to be most useful when both the outer query and the subquery work with the same table.  When the outer query and subquery work with different tables, it is typically possible to write the query as uncorrelated.
 
+.. index:: EXISTS, NOT EXISTS
+
 EXISTS
 ------
 
@@ -287,6 +297,8 @@ Subqueries in other clauses
 
 We have seen numerous examples of subqueries used in **WHERE** clauses.  However, subquery expressions can be used in other contexts.  In particular, subqueries returning scalars can be useful in **SELECT** clauses and in the **SET** clauses of **UPDATE** statements.  Subqueries returning tables can also be used in place of named tables in the **FROM** clause of a **SELECT** clause.
 
+.. index:: subquery; used in SELECT clause
+
 SELECT
 ------
 
@@ -307,6 +319,9 @@ For example, in a listing of books, we might want to include the total number of
       authors AS a
       JOIN books AS b1 ON b1.author_id = a.author_id
     ;
+
+
+.. index:: subquery; used in update
 
 SET
 ---
@@ -337,6 +352,7 @@ Note: if you run the statement above, you will update most books to have a ``NUL
       (SELECT 1 FROM editions WHERE books.book_id = editions.book_id)
     ;
 
+.. index:: subquery; used in FROM clause
 
 FROM
 ----
@@ -359,6 +375,7 @@ Subqueries can also be used within the **FROM** clause of a **SELECT** query, in
         ON c.author_id = a.author_id
     ;
 
+.. index:: subquery; compared to join, join; compared to subquery
 
 Comparison with joins
 :::::::::::::::::::::

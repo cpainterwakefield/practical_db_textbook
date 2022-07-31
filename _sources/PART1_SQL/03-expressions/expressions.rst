@@ -32,7 +32,7 @@ The use of a column name in a SQL statement produces a special expression which 
 the query execution examines each row of the table **simple_books** in turn to evaluate the expression ``author = 'J.R.R. Tolkien'``.  This expression compares the value of the **author** column to the literal value ``'J.R.R. Tolkien'`` using the **=** operator.  If the two are the same, the overall expression evaluates to ``True``, and the row is included in the output; otherwise, the row is excluded.
 
 
-.. index:: literal; numeric, literal; character string, literal; Boolean
+.. index:: literal; number, literal; character string, literal; Boolean
 
 Literals
 ::::::::
@@ -68,7 +68,7 @@ Operators and functions
 SQL defines a number of useful operations on its various types.  Some of these use simple operators, as in mathematical expressions, while others take the form of functions.  :ref:`Appendix B <appendix-b>` provides extensive lists of the operators and functions defined by the SQL standard, but we will discuss some of the most commonly used ones here, along with examples of their use.
 
 
-.. index:: operators; comparison
+.. index:: operator; comparison
 
 Comparison operators
 --------------------
@@ -86,7 +86,7 @@ Though it is non-standard, most databases also recognize **!=** as an inequality
 We can also test to see if a value is less than (**\<**), greater than (**\>**), less than or equal to (**\<=**), or greater than or equal to (**\>=**) some other value.  There is also a ternary operator, **BETWEEN**, that tests if a value is between two other values (see Appendix B - :ref:`appendix-b-comparison-operators` for details).
 
 
-.. index:: operators; mathematics, functions; mathematics
+.. index:: operator; mathematics, function; mathematics
 
 Mathematics
 -----------
@@ -128,7 +128,7 @@ Note the use of parentheses to enforce an order of operations: the addition oper
 See Appendix B - :ref:`appendix-b-math-operators` for a complete list of standard operators and functions.
 
 
-.. index:: operators; string, functions; string, string concatenation, LIKE
+.. index:: operator; character string, function; character string, string concatenation, LIKE, pattern matching
 
 Character string operators and functions
 ----------------------------------------
@@ -186,7 +186,7 @@ You can also use them when pattern matching if you aren't sure of the capitaliza
 SQL also provides functions for tasks such as substring extraction or replacement, finding the location of a substring, trimming whitespace (or other characters) from the front and/or back of a string, and many more.  See Appendix B - :ref:`appendix-b-string-operators` for these.
 
 
-.. index:: operators; Boolean, AND, OR, NOT
+.. index:: operator; Boolean, AND, OR, NOT
 
 Boolean operators
 -----------------
@@ -264,7 +264,7 @@ The first of these queries returns *any* science fiction books, along with fanta
 For a fuller discussion of Boolean operators, we need to know more about ``NULL`` values, which will be discussed below.  See Appendix B - :ref:`appendix-b-boolean-operators` for complete documentation on the SQL Boolean operators.
 
 
-.. index:: operators; date and time, functions; date and time
+.. index:: operator; date and time, function; date and time, CURRENT_DATE, CURRENT_TIME, CURRENT_TIMESTAMP
 
 Date and time operators and functions
 -------------------------------------
@@ -282,7 +282,7 @@ One useful SQL function that most databases implement is the **CURRENT_DATE** fu
 We will see in :numref:`Chapter {number} <table-creation-chapter>` how this function can be used to automatically record the date in a newly created row.
 
 
-.. index:: NULL, three value logic
+.. index:: NULL - SQL, three value logic - SQL
 
 NULL
 ::::

@@ -15,6 +15,8 @@ When the bookstore sells a book, a record is added to the **bookstore_sales** ta
 
 A full description of these tables can be found in :ref:`Appendix A <appendix-a>`.
 
+.. index:: INSERT INTO, INSERT, data; adding
+
 Adding data using INSERT
 ::::::::::::::::::::::::
 
@@ -69,6 +71,8 @@ While it is perfectly valid to do multiple **INSERT** statements to add multiple
 
 (Note for Oracle users: Oracle does not permit multiple rows in an **INSERT**.)
 
+.. index:: INSERT INTO ... SELECT
+
 Inserting query results
 -----------------------
 
@@ -87,6 +91,7 @@ The syntax is the same as a regular **INSERT**, but with the **VALUES** clause r
       JOIN bookstore_sales AS s ON s.stock_number = i.stock_number
     WHERE s.date_sold BETWEEN '2021-08-01' AND '2021-08-31';
 
+.. index:: DELETE, data; removing
 
 Removing data with DELETE
 :::::::::::::::::::::::::
@@ -117,6 +122,8 @@ If the **WHERE** clause is omitted in a **DELETE** query, then all data from the
 As with any data modification statement, the effects of a **DELETE** statement are immediate and permanent.  To some extent, you can undo the result of an **INSERT** with a **DELETE** if you know which rows you inserted; however, it is impossible to restore deleted rows unless you have a backup of the data.  Thus, it is very important to be sure you are deleting only what you want to delete.  A simple way to test this before you perform a delete is to replace **DELETE** with **SELECT \*** in your statement - this will show you exactly the rows that your statement would delete.
 
 Remember that with our interactive examples, any changes you make to this book's database only last for the current viewing session, so if you wish to restore the deleted data, you may do so by refreshing the page in your browser.
+
+.. index:: UPDATE, SET, data; modifying
 
 Modifying data with UPDATE
 ::::::::::::::::::::::::::
@@ -163,6 +170,8 @@ The real power of **UPDATE**, though, is that the right hand side of the assignm
     SET price = price + 0.25;
 
 This would raise the price of every book by 0.25.
+
+.. index:: TRUNCATE, MERGE
 
 Other data modification statements
 ::::::::::::::::::::::::::::::::::

@@ -15,7 +15,7 @@ We will use several collections of tables in this chapter, starting with some ab
 You may wish to spend some time doing **SELECT** queries on each new table as it is introduced, to get a sense of what the data looks like.  Understanding your database is key!
 
 
-.. index:: join
+.. index:: join - SQL, JOIN, join - sql; inner, join condition
 
 Simple joins
 ::::::::::::
@@ -157,7 +157,7 @@ Such expressions using both the table name and the column name are known as *qua
 
 When doing a join, it is good practice to qualify all of your column names.  This will make it easier for anyone reading or maintaining your code to understand what your query is doing.
 
-.. index:: alias, AS
+.. index:: aliasing, AS
 
 Aliasing
 --------
@@ -235,10 +235,10 @@ Very rarely, you may encounter a database where table or column names are mixed-
 
 
 .. index::
-    single: column; identity,
-    single: universally unique identifier,
-    see: id; column; identity
-    see: UUID; universally unique identifier
+    single: column; identity
+    single: id column
+    single: universally unique identifier
+    single: UUID
 
 Identity columns
 ::::::::::::::::
@@ -289,6 +289,10 @@ A well structured database usually gives some indication of likely places to joi
 
 Your database might also come with a data model diagram, discussed in :numref:`Part {number} <data-modeling-part>` of this book.  (Data models for the data sets in our database can be found in :ref:`Appendix A <appendix-a>`.)  The data model will typically make the relationships between tables explicit.  While data can be related to each other in very complex ways, there are some basic relationship types that capture the important aspects of most relationships.  These relationships are commonly called "one-to-one", "one-to-many", and "many-to-many".  Below, we discuss these common relationships and where they appear in our database.
 
+.. index::
+    single: relationship - tables; one-to-one
+    single: one-to-one relationship - tables
+
 One-to-one
 ----------
 
@@ -302,6 +306,11 @@ A few rows from each table are illustrated below.
 
     Some example rows from the **bookstore_inventory** and **bookstore_sales** tables: two inventory items have corresponding sales records, but the third has not been sold yet.
 
+.. index::
+    single: relationship - tables; one-to-many
+    single: one-to-many relationship - tables
+    single: relationship - tables; many-to-one
+    single: many-to-one relationship - tables
 
 One-to-many
 -----------
@@ -318,6 +327,11 @@ To connect rows from one table to rows in another table where a one-to-many rela
 
 Similarly, the **books** table has a one-to-many relationship with the **editions** table in our database.  In this case, the **editions** table has a **book_id** column, which, as you might guess, contains values from the **book_id** column of **books**.  (The **editions** table contains information about the printed editions of books: publisher information, title as printed, year printed, and so forth. [#]_)
 
+.. index::
+    single: relationship - tables; many-to-many
+    single: many-to-many relationship - tables
+    single: table; cross-reference
+    single: cross-reference table
 
 Many-to-many
 ------------
@@ -351,6 +365,7 @@ Looking at the query above, think of the first join as adding award ids from the
 
 In addition to winning awards for specific books, an author can win awards for their entire body of work.  Awards of this type are also stored in the **awards** table; however, we need another table to connect authors with these awards (since the **books_awards** table connects to specific books only).  The cross-reference table **authors_awards** exists for this purpose.
 
+.. index:: join - SQL; outer, outer join, INNER JOIN, RIGHT [OUTER] JOIN, LEFT [OUTER] JOIN, FULL [OUTER] JOIN
 
 Inner and outer joins
 :::::::::::::::::::::
@@ -409,6 +424,7 @@ Here is one more example of the use of an outer join, this time using our bookst
         ON inv.stock_number = sales.stock_number
     ;
 
+.. index:: join - SQL; implicit, cross product - SQL, CROSS JOIN
 
 Implicit join syntax
 ::::::::::::::::::::

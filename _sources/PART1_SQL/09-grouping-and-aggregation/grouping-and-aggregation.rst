@@ -16,6 +16,7 @@ We will also use the **authors** table to illustrate the interaction of ``NULL``
 
 A full description of these tables can be found in :ref:`Appendix A <appendix-a>`.
 
+.. index:: aggregate statistic, aggregate function, COUNT, SUM, AVG, MIN, MAX
 
 Aggregate statistics
 ::::::::::::::::::::
@@ -75,6 +76,7 @@ In addition to ignoring ``NULL`` values, it is possible to indicate that duplica
 
     SELECT COUNT(title), COUNT(DISTINCT title) FROM bookstore_inventory;
 
+.. index:: grouping, GROUP BY
 
 Grouping
 ::::::::
@@ -136,6 +138,8 @@ Now, let's break down our total sales by type of month *and* type of payment:
     ORDER BY month, s.payment;
 
 Here we have sorted by our grouping expressions as well, just to ensure that our groups come out in a consistent fashion.
+
+.. index:: HAVING
 
 Filtering grouped data
 ----------------------

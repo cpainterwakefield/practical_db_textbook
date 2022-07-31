@@ -4,12 +4,16 @@
 Relational algebra
 ==================
 
+.. index:: relational algebra; relational calculus
+
 In the last chapter, we introduced the relational model of the database, and defined the fundamental mathematical object in the model, the *relation*.  In this chapter, we discuss *relational algebra*, which is the set of algebraic operations that can be performed on relations.  Relational algebra can be viewed as one mechanism for expressing queries on data stored in relations, and an understanding of relational algebra is important in understanding how relational databases represent and optimize queries.  We will cover only basic relational algebra, excluding later extensions such as those for group and aggregate operations and those for outer joins.
 
 A related topic, which we do not cover in this book, is *relational calculus*.  Relational calculus provides another mathematical expression of queries on relations, and is equivalent in expressiveness to relational algebra.
 
 Unary operations
 ::::::::::::::::
+
+.. index:: selection, projection, renaming, relational algebra operations; selection, relational algebra operations; projection, relational algebra operations; renaming
 
 The unary operations in relational algebra act on one relation and result in another relation.  The unary operations are *selection*, *projection*, and *renaming*, and their associated operators are typically written as the Greek letters which match the starting letters of the operation:
 
@@ -224,6 +228,8 @@ We can optionally leave out either the relation name or the list of attributes. 
     \rho_{\text{(year} \rightarrow \text{publication_year)}}(\text{books})
 
 
+
+
 Cross products and joins
 ::::::::::::::::::::::::
 
@@ -245,6 +251,8 @@ We now turn our attention to operations which extend tuples in one relation with
     ========== ================== =========== ============
 
 The **authors** relation has a primary key of **author_id**.  The **books** relation is related to **authors** via a foreign key on **author_id**.
+
+.. index:: cross product - relational algebra, relational algebra operations; cross product
 
 Cross product
 -------------
@@ -297,6 +305,8 @@ which gives us the relation containing every pairing of a tuple from **S** with 
     == === ======= ======== =======
 
 From the definition, it is trivial to determine that the size of the cross product is the product of the sizes of the operands.
+
+.. index:: join - relational algebra, relational algebra operations; join
 
 Join
 ----
@@ -362,6 +372,8 @@ or, you can instead format the expression as:
 
 Note that one tuple from **authors** does not contribute to the join.  This tuple's **author_id** matches none of the tuples in **books**, and thus no combined tuple using it can appear in the join result.  We call this tuple a *dangling tuple*.  Dangling tuples may be an indication of a problem in the data; in this example, it may suggest that we are missing information about books by one author.
 
+.. index:: equijoin, theta join
+
 Theta-join and equijoin
 -----------------------
 
@@ -377,6 +389,7 @@ A theta-join using only equality comparisons (as in our example above) is furthe
 
 This terminology is not especially important in understanding the algebra, but is something you may encounter if you intend a deeper study of  relational algebra.
 
+.. index:: relational algebra operations; natural join, natural join
 
 Natural join
 ------------
@@ -406,6 +419,7 @@ which yields the simplified relation:
     7       5         *A Wizard of Earthsea*       1968  Ursula K. Le Guin  1929-10-21  2018-01-22
     ======= ========= ============================ ===== ================== =========== ============
 
+.. index:: set operation - relational algebra, set operation - relational algebra; union, set operation - relational algebra; intersection, set operation - relational algebra; difference, relational algebra operations; union, relational algebra operations; intersection, relational algebra operations; set difference
 
 Set operations
 ::::::::::::::
@@ -498,6 +512,7 @@ While intersection is a useful operation, it is not strictly needed for the alge
 
     \text{A} \cap \text{B} \equiv \text{A} - (\text{A} - \text{B})
 
+.. index:: division, relational algebra operations; division
 
 Division
 ::::::::
@@ -723,6 +738,8 @@ Using variables, we can write this as a sequence of operations:
     \end{eqnarray*}
 
 with **R** holding our final result.
+
+.. index:: query trees
 
 Expression trees
 ----------------

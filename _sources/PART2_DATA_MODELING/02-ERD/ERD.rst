@@ -4,6 +4,8 @@
 Entity-relationship diagrams
 ============================
 
+.. index:: entity-relationship diagram, ERD, Chen notation
+
 This chapter introduces *entity-relationship diagrams*, or ERDs.  ERDs define a graphical language for data modeling at a high level of abstraction.  ERDs map well to relational databases at a high level, but can also be used as a precursor to building non-relational databases.
 
 ERDs were conceived of by Peter Chen and described in a :ref:`1976 paper <data-modeling-references>`.  While various approaches to data modeling existed before the ERD, Chen's ERD has stood the test of time to become one of the preferred methods and is in wide use today.  Many authors have expanded upon Chen's basic model, extending the notation in different directions.  As a result, there are many different ERD notations in use.  For this book, we adopt the notation of :ref:`Elmasri and Navathe <data-modeling-references>`.
@@ -15,6 +17,8 @@ Basic model
 
 As the name suggests, ERDs are concerned with *entities* and the *relationships* between them.  Each of these elements and its related elements are denoted using simple shapes containing text labels and connected with straight lines.
 
+.. index:: entity, entity; regular
+
 Entities
 --------
 
@@ -24,6 +28,8 @@ Entities represent things or objects with independent existence; persons, produc
     :alt: A rectangle containing the word "employee"
 
 It is important to distinguish between an entity, which represents the type of the thing or object being modeled, and instances of the entity, e.g., a particular thing or object.  The entity **employee** models all employees, not a specific employee of a company.
+
+.. index:: entity attribute
 
 Attributes
 ----------
@@ -35,6 +41,8 @@ Entities are further described by their properties, or *attributes*.  Attributes
 
 You can attach as many attributes as necessary to an entity.
 
+.. index:: entity attribute; key
+
 Keys
 ----
 
@@ -45,6 +53,8 @@ Every entity has at least one attribute that uniquely identifies instances of th
 
 ERDs allow for multiple key attributes: for example, we might wish to also store a government issued identification number (such as the SSN used in the United States) for each employee.  In this case, we would have two attributes with underlined labels.  Note that this is not the same as a key attribute composed of multiple parts!  An employee can be uniquely identified by either their company ID or by their government issued identification number - you do not need to know both.  Composite keys will be discussed in a later section.
 
+.. index:: relationship - ERD
+
 Relationships
 -------------
 
@@ -54,6 +64,8 @@ Two or more entities may participate in a relationship.  Relationships act like 
     :alt: A diamond containing the words "works at", connected to the entities employee and factory
 
 This diagram reads like a sentence: "employee works at factory".  Note that no direction is implied by the layout of the diagram; you have to use your knowledge of the data domain to know that the diagram probably does not mean "factory works at employee".
+
+.. index:: relationship - ERD; cardinality ratio, relationship - ERD; participation, cardinality ratio, relationship - ERD; one-to-one, relationship - ERD; one-to-many, relationship - ERD; many-to-one, relationship - ERD; many-to-many, one-to-one relationship - ERD, one-to-many relationship - ERD, many-to-one relationship - ERD, many-to-many relationship - ERD, participation, participation; total, participation; partial, partial participation, total participation
 
 Cardinality ratios and participation
 -------------------------------------
@@ -104,6 +116,8 @@ More complex modeling options
 
 This section will look at some cases not covered in the examples above, and will also reveal some additional notation covering situations not addressed by the basic model above.
 
+.. index:: relationship - ERD; recursive, recursive relationship
+
 Recursive relationships
 -----------------------
 
@@ -113,6 +127,8 @@ Relationships can exist between an entity and itself.  This is frequently useful
     :alt: The one-to-many relationship supervises connecting twice to employee
 
 For added clarity, we have annotated the lines connecting the relationship with the roles that employees play in the relationship: one supervisor supervises many supervisees.
+
+.. index:: entity; weak, weak entity, identifying relationship, partial key, weak key
 
 Weak entities
 -------------
@@ -128,6 +144,8 @@ Here is the diagram of our assembly line example:
 .. image:: weak_entity.svg
     :alt: The weak entity assembly line and the entity factory and their attributes, connected by the one-to-many relationship contains; assembly line has attributes number and throughput
 
+.. index:: entity attribute; composite
+
 Composite attributes
 --------------------
 
@@ -139,6 +157,8 @@ In our computer manufacturer example, each type of computer (or "model") that th
 
 .. image:: composite_attribute.svg
     :alt: Ovals containing the words "name" and "number" connecting to the key attribute designation of the entity model
+
+.. index:: entity attribute; multivalued
 
 Multivalued attributes
 ----------------------
@@ -152,6 +172,8 @@ In our example, computer models may be designed or marketed for particular appli
 
 An alternative to making a multivalued attribute is modeling the possible attribute values as a separate entity, which is connected to the original entity with a many-to-many relationship.  The separate entity would have only the single attribute, and its instances would represent the possible values that can be associated with the original entity.
 
+.. index:: entity attribute; derived
+
 Derived attributes
 ------------------
 
@@ -162,6 +184,8 @@ In our computer manufacturer example, we are interested in the total throughput 
 .. image:: derived_attribute.svg
     :alt: The weak entity assembly line and the entity factory and their attributes, connected by the relationship contains; the diagram now shows a dashed outline oval containing the word "throughput" connected to the factory entity
 
+.. index:: relationship - ERD; attribute
+
 Relationship attributes
 -----------------------
 
@@ -171,6 +195,8 @@ Our fictional computer manufacturer buys computer parts from multiple vendors.  
 
 .. image:: relationship_attribute.svg
     :alt: The entities vendor and part connected by the man-to-many relationship supplies; supplies has a price attribute; vendor has attributes part number (key) and description, while vendor has the key attribute name
+
+.. index:: relationship - ERD; higher-arity
 
 Higher-arity relationships
 --------------------------

@@ -10,8 +10,8 @@ Part 1 of this book is all about SQL, the most popular language used for interac
 .. index::
     single: database; defined
     single: database management system
-    see: DBMS; database management system
-    see: database system; database management system
+    single: DBMS
+    single: database system
 
 Databases and database systems
 ::::::::::::::::::::::::::::::
@@ -30,6 +30,7 @@ The word "database" is frequently used as shorthand to mean both a database and 
 .. index::
     single: table; defined
     single: column; defined
+    single: row
 
 Tables
 ::::::
@@ -44,10 +45,7 @@ We can visualize a simple table as, well, a table:
 The illustration above shows a table named "fruit_stand" with three columns named "item", "price", and "unit".  Although the illustration does not show the data types, we might infer that the **item** and **unit** columns contain text and the **price** column contains decimal numbers.  Each row of **fruit_stand** contains information about one kind of fruit sold at the fruit stand.
 
 
-.. index::
-    single: SQL
-    see: Structured Query Language; SQL
-    single: query language
+.. index:: SQL, Structured Query Language, query language, statement, query
 
 Structured Query Language (SQL)
 :::::::::::::::::::::::::::::::
@@ -78,7 +76,7 @@ The basic element of SQL is the *statement* or *query*.  While a distinction can
 SQL is often pronounced as "sequel", although it is equally valid to simply say each letter.
 
 
-.. index:: SELECT, FROM, clause
+.. index:: SELECT, FROM, clause, data; retrieving
 
 Retrieving data using SELECT
 ::::::::::::::::::::::::::::

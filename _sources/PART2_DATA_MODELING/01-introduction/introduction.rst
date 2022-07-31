@@ -4,6 +4,8 @@
 Introduction to data modeling
 =============================
 
+.. index:: data; modeling, data model, analysis, database; design
+
 When beginning a project that requires a database, it is useful to expend some effort thinking about an appropriate database structure.  Unless your database will be very small (involving only one or two tables), if you simply sit down and start creating tables, you will likely run into trouble fairly quickly.  It is quite easy to create a database that - even though it stores the necessary data - is difficult to understand, update, and query.
 
 Much like software creation, database creation benefits from the activities of *analysis* and *design*.  Analysis can include discussions with people who have a thorough understanding of the data to be stored, discussions with the intended users of the database, and an examination of representative data.  Design uses the insights gained from analysis to produce a database structure that can correctly store the necessary data and meet user requirements.  Analysis and design are complementary activities; analysis informs design, which in turn uncovers new questions for further analysis.  The back-and-forth interaction between analysis and design works to eliminate the kinds of problems that otherwise result from partial understanding and incorrect assumptions.

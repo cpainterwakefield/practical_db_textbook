@@ -6,6 +6,8 @@ Converting ERD to a relational model
 
 .. |right-arrow| unicode:: U+2192
 
+.. index:: ERD; conversion to SQL
+
 In this chapter we explain the process of creating a relational database from an entity-relationship model.  While many steps are largely mechanical, a number of decisions need to be made along the way.  We will explore the trade-offs for each decision.  We will use the computer manufacturer data model from :numref:`Chapter {number} <erd-chapter>` as our example.
 
 This chapter assumes you are familiar with the basics of the relational model of the database, including tables and primary and foreign key constraints.  The necessary foundations are covered in either Part I (Chapters :numref:`{number} <basics-chapter>` and :numref:`{number} <constraints-chapter>`) or Part III (:numref:`Chapter {number} <relational-model-chapter>`).

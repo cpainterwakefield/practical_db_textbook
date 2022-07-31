@@ -4,7 +4,11 @@
 Data types and table creation
 =============================
 
+.. index:: table; creation
+
 This chapter will discuss basic table creation, starting with an explanation of SQL data types.
+
+.. index:: data; types, data type
 
 Data types
 ::::::::::
@@ -16,10 +20,14 @@ Numbers
 
 SQL provides support for several different types of numbers, each with different applications and limitations.  However, actual implementation of the standard varies quite a bit; see Appendix B - :ref:`appendix-b-number-types` for a full discussion of number types.
 
+.. index:: data type; integer, INTEGER, INT, SMALLINT, BIGINT
+
 Integers
 ########
 
 SQL defines three integer types: **INTEGER**, **SMALLINT**, and **BIGINT**.  Implementations of these types vary, but it is not uncommon for **INTEGER** (often abbreviated as **INT**) to store 32-bit integers, **SMALLINT** 16-bit integers, and **BIGINT** 64-bit integers.  Not all databases recognize all of these types, but **INTEGER** is recognized by all of the databases considered for this book.  Additional integer types may be available for your database system.
+
+.. index:: data type; exact decimal number, NUMERIC, DECIMAL, precision, scale
 
 Exact decimal numbers
 #####################
@@ -36,6 +44,8 @@ Different implementations behave differently when an attempt is made to store va
 
 Decimal number types are particularly important for the storage of monetary data, where exact addition, subtraction, and multiplication is necessary.
 
+.. index:: data type; floating point number, FLOAT, REAL, DOUBLE, DOUBLE PRECISION
+
 Floating point numbers
 ######################
 
@@ -43,6 +53,7 @@ Floating point number types allow for a possibly inexact storage of real numbers
 
 .. _`IEEE 754`: https://en.wikipedia.org/wiki/IEEE_754
 
+.. index:: data type; character string, CHARACTER, CHAR, CHARACTER VARYING, VARCHAR, TEXT
 
 Character string types
 ----------------------
@@ -60,6 +71,7 @@ Examples:
 
 One disadvantage to **VARCHAR** is the need to predict the maximum length of string that you might need to store.  Many databases now implement some type of arbitrary-length character string type, often named **TEXT**.  Some databases impose limitations on this type (such as not allowing its use for indexed columns).  Be sure to read your database implementation's documentation to understand these limitations before using **TEXT**; if you need portability between databases, it may be best to use **VARCHAR** with a generous size allocation.
 
+.. index:: data type; date, data type; time, data type; timestamp
 
 Date and time types
 -------------------
@@ -70,6 +82,7 @@ There is no standard syntax for date and time literals in SQL.  In most cases, s
 
 .. _`ISO 8601`: https://en.wikipedia.org/wiki/ISO_8601
 
+.. index:: data type; Boolean, BOOLEAN, True, False
 
 Additional data types
 ---------------------
@@ -87,6 +100,7 @@ Types in SQLite
 
 As mentioned earlier, SQLite (used in the interactive examples in this book) allows the storage of arbitrary types of data into any column; no type checking is performed.  Essentially, a value in SQLite can be ``NULL``, an integer, a floating point number, or a character string.  However, SQLite supports standard SQL syntax for table creation, including specifying data types for columns; this type information can be viewed as a hint to the database user as to what kind of data should be stored.  We will consistently use types that you might find in other databases, and store data appropriate to those types in our examples.
 
+.. index:: CREATE TABLE
 
 Creating tables
 :::::::::::::::
@@ -132,6 +146,7 @@ All database tools provide some mechanism for seeing the definition of tables in
 
     SELECT sql FROM sqlite_master WHERE name = 'test';
 
+.. index:: table; removal, DROP TABLE
 
 Dropping tables
 ---------------
@@ -152,6 +167,7 @@ This statement will cause an error if you do it when there is no table named **t
 
 Note that dropping a table also destroys all data stored in the table, and this action is irrevocable (there is no "undo" operation).  This is one reason that database-modifying programs are usually developed and thoroughly tested by using a copy of a database before they are ever used on the "real" database.
 
+.. index:: CREATE TABLE ... AS SELECT
 
 Creating a table from a query
 -----------------------------
@@ -182,6 +198,7 @@ From the perspective of SQL, the result of a **SELECT** query is essentially the
 
 (Note for SQL server users: SQL server does not support the above syntax.  The equivalent statement in SQL server looks like: ``SELECT ... INTO new_table FROM ... WHERE ...;``.)
 
+.. index:: default, auto increment, sequence, DEFAULT, GENERATED ... AS IDENTITY
 
 Defaults and auto increments
 ----------------------------
