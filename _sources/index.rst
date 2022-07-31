@@ -1,6 +1,6 @@
 .. meta::
    :description: A Practical Introduction to Databases, an open educational resource textbook.
-   :keywords: sql, nosql, database, computer science
+   :keywords: sql, database, relational database, computer science
 
 .. raw:: html
 
