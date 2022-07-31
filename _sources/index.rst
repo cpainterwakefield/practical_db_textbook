@@ -36,7 +36,7 @@ Table of contents
 .. toctree::
    :maxdepth: 1
 
-   00-preface/preface
+   front-matter/preface
 
 .. toctree::
    :numbered:
@@ -60,21 +60,18 @@ Table of contents
 * :ref:`genindex`
 * :ref:`search`
 
+.. toctree::
+   :maxdepth: 1
 
-Acknowledgements
-::::::::::::::::
-
-Coming soon
-
+   front-matter/acknowledgments
 
 Cover photo
 -----------
 
 Photo of the library of Trinity College by `Henry Be <https://unsplash.com/@henry_be?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText>`_ on `Unsplash <https://unsplash.com/s/photos/library?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText>`_.
 
-
 License
-:::::::
+-------
 
 .. raw:: html
 
@@ -91,3 +88,8 @@ License
    is licensed under a
    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
   </div>
+
+Version
+-------
+
+This is release 0.1 of *A Practical Introduction to Databases*, committed 2022-07-30.
