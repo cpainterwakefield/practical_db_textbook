@@ -2,6 +2,12 @@
 @import url('https://fonts.googleapis.com/css?family=Noto+Sans:wght@700');
 @import url('https://fonts.googleapis.com/css?family=Sora:wght@600');
 
+:root {
+    --componentBgColor: #CED5DD;
+    --questionBgColor: #CED5DD;
+    --contentWidthWide: 90%;
+}
+
 body {
     font-family: 'Noto Serif', serif !important;
     font-size: 1.66rem !important;
@@ -99,30 +105,8 @@ span.caption-text {
 
 /* Runestone elements and page layout */
 
-.container .section>*:not(.section):not(.ac_section) {
-    max-width: 600pt !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-}
-    font-size: 1.66rem !important;
-
-#main-content>* {
-    max-width: 600pt !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-}
-
-#main-content {
-    padding-bottom: 24pt !important;
-}
-
-#scprogresscontainer {
-    margin-top: 40px !important;
-}
-
 .CodeMirror {
     height: auto !important;
-    border-width: 0px !important;
 }
 
 .ac_sql_result {
@@ -133,16 +117,6 @@ span.caption-text {
     min-height: 0px;
     background-color: #B2B4B3 !important;
     display: contents;
-}
-
-.ac_section.alert-warning {
-    background-color: #CED5DD !important;
-    border-color: #FFF !important;
-}
-
-.ac_section p.runestone_caption {
-    margin-top: 1.5rem !important;
-    margin-bottom: 1rem !important;
 }
 
 ::-webkit-scrollbar {
