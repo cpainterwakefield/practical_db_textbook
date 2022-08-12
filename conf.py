@@ -351,4 +351,4 @@ setup.custom_css_files = ['theme-overrides.css',]
 
 key_words = ''
 course_description = ''
-shelf_section = 'Advanced Topics'
+shelf_section = 'Database Textbooks'
