@@ -567,9 +567,9 @@ This section contains some exercises using the same books and authors database u
     ::
 
         SELECT title, author,
-            CASE WHEN publication_year >= 1900 AND publication_year < 2000
+            CASE WHEN publication_year > 1900 AND publication_year <= 2000
                    THEN 'Twentieth Century'
-                 WHEN publication_year >= 2000 AND publication_year < 2100
+                 WHEN publication_year > 2000 AND publication_year <= 2100
                    THEN 'Twenty-first Century'
             END
             AS century
