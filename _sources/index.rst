@@ -92,4 +92,4 @@ License
 Version
 -------
 
-This is release 0.1.1 of *A Practical Introduction to Databases*, committed 2022-08-01.
+This is release 0.1.2 of *A Practical Introduction to Databases*, committed 2023-08-26.
