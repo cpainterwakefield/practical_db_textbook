@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <pretext xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en-US">
+        <xi:include href="./bookinfo.ptx"/>
+        <book xml:id= "practical_db_textbook" permid="pra">
+            <title>A Practical Introduction to Databases</title>
+            <subtitle>The PreTeXt Interactive Edition</subtitle> 
+            <frontmatter>
+                <titlepage/>
+                <xi:include href="./front-matter/preface.ptx"/>
+                <xi:include href="./front-matter/acknowledgments.ptx"/>
+            </frontmatter>
+            <xi:include href="./PART1_SQL/index.ptx"/>
+            <xi:include href="./PART1_SQL/01-sql-basics/sql-basics.ptx"/>
+            <xi:include href="./PART1_SQL/02-data-retrieval/data-retrieval.ptx"/>
+            <xi:include href="./PART1_SQL/03-expressions/expressions.ptx"/>
+            <xi:include href="./PART1_SQL/04-multiple-tables/multiple-tables.ptx"/>
+            <xi:include href="./PART1_SQL/05-data-modification/data-modification.ptx"/>
+            <xi:include href="./PART1_SQL/06-table-creation/table-creation.ptx"/>
+            <xi:include href="./PART1_SQL/07-constraints/constraints.ptx"/>
+            <xi:include href="./PART1_SQL/08-subqueries/subqueries.ptx"/>
+            <xi:include href="./PART1_SQL/09-grouping-and-aggregation/grouping-and-aggregation.ptx"/>
+            <xi:include href="./PART1_SQL/10-set-operations/set-operations.ptx"/>
+            <xi:include href="./PART1_SQL/11-advanced-topics/advanced-topics.ptx"/>
+            <xi:include href="./PART2_DATA_MODELING/index.ptx"/>
+            <xi:include href="./PART2_DATA_MODELING/01-introduction/introduction.ptx"/>
+            <xi:include href="./PART2_DATA_MODELING/02-ERD/ERD.ptx"/>
+            <xi:include href="./PART2_DATA_MODELING/03-ERD-to-relational/ERD-to-relational.ptx"/>
+            <xi:include href="./PART2_DATA_MODELING/04-other-notations/other-notations.ptx"/>
+            <xi:include href="./PART3_RELATIONAL_DATABASE_THEORY/index.ptx"/>
+            <xi:include href="./PART3_RELATIONAL_DATABASE_THEORY/01-relational-model/relational-model.ptx"/>
+            <xi:include href="./PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra.ptx"/>
+            <xi:include href="./PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization.ptx"/>
+            <xi:include href="./PART3_RELATIONAL_DATABASE_THEORY/04-sql-vs-theory/sql-vs-theory.ptx"/>
+            <backmatter>
+                <xi:include href="./references/references.ptx"/>
+                <xi:include href="./appendix-a-datasets/datasets.ptx"/>
+                <xi:include href="./appendix-b-reference/reference.ptx"/>
+                <index>
+                    <index-list/>
+                </index>
+            </backmatter>
+        </book>
+    </pretext>

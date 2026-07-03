@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<section xml:id="references_references-id1">
+  <title>References</title>
+  <subsection xml:id="references_sql">
+    <title>SQL</title>
+    <p>International Organization for Standardization and International Electrotechnical
+                Commission. (2016). <em>Information technology &#x2014; Database languages &#x2014; SQL &#x2014; Part 2: Foundation (SQL/Foundation)</em> (ISO/IEC 9075-2, Fifth Edition).</p>
+    <p>SQLite Documentation. Retrieved from <url href="https://www.sqlite.org/docs.html" visual="https://www.sqlite.org/docs.html">https://www.sqlite.org/docs.html</url>.</p>
+    <p>PostgreSQL 12 Documentation. Retrieved from <url href="https://www.postgresql.org/docs/12/index.html" visual="https://www.postgresql.org/docs/12/index.html">https://www.postgresql.org/docs/12/index.html</url>.</p>
+    <p>MySQL 8.0 Reference Manual. Retrieved from <url href="https://dev.mysql.com/doc/refman/8.0/en/" visual="https://dev.mysql.com/doc/refman/8.0/en/">https://dev.mysql.com/doc/refman/8.0/en/</url>.</p>
+    <p>Oracle Database SQL Language Reference 18c. (April, 2020).  Retrieved from <url href="https://docs.oracle.com/en/database/oracle/oracle-database/18/sqlrf/" visual="https://docs.oracle.com/en/database/oracle/oracle-database/18/sqlrf/">https://docs.oracle.com/en/database/oracle/oracle-database/18/sqlrf/</url>.</p>
+    <p>Transact-SQL Reference. (April 29, 2020).  Retrieved from <url href="https://docs.microsoft.com/en-us/sql/t-sql/language-reference?view=sql-server-ver15" visual="https://docs.microsoft.com/en-us/sql/t-sql/language-reference?view=sql-server-ver15">https://docs.microsoft.com/en-us/sql/t-sql/language-reference?view=sql-server-ver15</url>.</p>
+  </subsection>
+  <subsection xml:id="references_data-modeling-data-modeling-references">
+    <title>Data modeling</title>
+    <p>Chen, Peter Pin-Shan. <q>The entity-relationship model&#x2014;toward a unified view of data.</q> <em>ACM transactions on database systems (TODS)</em> 1.1 (1976): 9-36.</p>
+    <p>Elmasri, Ramez, and Sham Navathe. <em>Fundamentals of Database Systems.</em> 7th edition, Pearson, 2016.</p>
+    <p>Everest, Gordon C. <q>Basic data structure models explained with a common example.</q> <em>Proc. Fifth Texas Conference on Computing Systems</em>. 1976.</p>
+  </subsection>
+  <subsection xml:id="references_relational-database-theory-relational-theory-references">
+    <title>Relational database theory</title>
+    <p>Childs, David L. <q>Feasibility of a set-theoretic data structure: a general structure based on a reconstituted definition of relation.</q> <em>Proc. IFIP Cong.</em> (1968).</p>
+    <p>Codd, Edgar Frank. <q>A relational model of data for large shared data banks.</q> <em>Communications of the ACM</em> 26.1 (1983): 64-69.</p>
+    <p> </p>
+  </subsection>
+</section>

@@ -1,0 +1,707 @@
+<?xml version="1.0"?>
+<section xml:id="_08-subqueries_subqueries-subqueries-chapter">
+  <title>Subqueries</title>
+  <p xml:id="_08-subqueries_index-0">A subquery is simply a <term>SELECT</term> query enclosed with parentheses and nested within another query or statement.  This <em>subquery expression</em> evaluates to a scalar, a row, a column, or a table, depending on the query results and the context in which the subquery appears.  In this chapter we discuss the many ways in which we can use the result of a query within another query.</p>
+  <subsection xml:id="_08-subqueries_tables-used-in-this-chapter">
+    <title>Tables used in this chapter</title>
+    <p>For this chapter we will be using the books dataset (tables <term>books</term>, <term>authors</term>, etc.), described in <xref ref="appendix-a-datasets_datasets"/>.</p>
+  </subsection>
+  <subsection xml:id="_08-subqueries_scalars-rows-and-tables-index-1">
+    <title>Scalars, rows, and tables</title>
+    <p>Before we discuss the uses of subqueries, it is useful to talk about some additional types of data that come up in SQL.  So far we have assumed that all expressions evaluate to a <em>scalar</em> value.  Scalar values are simple values of a single type, such as <c>42</c> or <c>'hello'</c>.  We can also work with <em>row</em> values in SQL.  A row is just an ordered list of values.  We can write down a literal row (SQL calls these <q>row value constructors</q>) by putting a comma-separated list of expressions between parentheses:</p>
+    <program language="sql">
+      <input>
+(1, 'hello', 3.1415)
+</input>
+    </program>
+    <p>In most databases (but not SQLite), you can <term>SELECT</term> the above expression as a literal, with the result showing as a single column.</p>
+    <p>Rows can be used in comparison expressions. The two queries below are equivalent (although the second is probably preferred as a matter of style):</p>
+    <program xml:id="subqueries_example_row_expressions" interactive="activecode" language="sql">
+      <input>
+SELECT b.title
+FROM
+  books AS b
+  JOIN authors AS a ON a.author_id = b.author_id
+WHERE
+  (a.name, b.publication_year) = ('V. S. Naipaul', 1961);
+
+SELECT b.title
+FROM
+  books AS b
+  JOIN authors AS a ON a.author_id = b.author_id
+WHERE a.name = 'V. S. Naipaul'
+AND b.publication_year = 1961;
+        </input>
+      <tests>
+
+
+</tests>
+    </program>
+    <p>We will see more useful applications of row expressions in the following sections.</p>
+    <p>Beyond rows, we can also think in terms of <em>tables</em> as values.  Here we are using <q>tables</q> to mean a collection of rows, not necessarily the named object living in the database.  The result from a <term>SELECT</term> query is a table in this sense.</p>
+  </subsection>
+  <subsection xml:id="_08-subqueries_boolean-expressions-using-subqueries-index-2">
+    <title>Boolean expressions using subqueries</title>
+    <p>To start with, we will examine Boolean expressions using subqueries.  These are appropriate for use within the <term>WHERE</term> clause of another query or statement.</p>
+    <subsubsection xml:id="_08-subqueries_scalar-or-row-result">
+      <title>Scalar or row result</title>
+      <p>We can use a subquery in place of a scalar expression as long as we know the subquery will return a single row and column.  Let us return to an example from <number_reference internal="True" refuri="../04-multiple-tables/multiple-tables#joins-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.4</inline></number_reference> using our <term>books</term> table: how can we find all books published in the same year as <em>The Three-Body Problem</em>?  We will use a subquery (the <term>SELECT</term> query inside the parentheses below) to first obtain the <term>publication_year</term> of <em>The Three-Body Problem</em>, and then we will use that result to get our list of books:</p>
+      <program xml:id="subqueries_example_single_row" interactive="activecode" language="sql">
+        <input>
+SELECT * FROM books WHERE publication_year =
+  (SELECT publication_year
+   FROM books
+   WHERE title = 'The Three-Body Problem')
+;
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+      <p>To see what is happening in this query, first execute the subquery on its own:</p>
+      <program language="sql">
+        <input>
+SELECT publication_year
+FROM books
+WHERE title = 'The Three-Body Problem';
+</input>
+      </program>
+      <p>Since this particular query returns exactly one row and one column, we treat the result (the integer <c>2008</c>) as a scalar value, and simply substitute the scalar in place of the subquery:</p>
+      <program language="sql">
+        <input>
+SELECT * FROM books WHERE publication_year = 2008;
+</input>
+      </program>
+      <p>Note that this only works because we only have one book with the title <em>The Three-Body Problem</em>.  In general, it is not a good idea to assume a query will return a single row unless you use a <term>WHERE</term> clause condition on a column known to hold unique values, or unless you are computing an aggregate statistic over a set of rows (we will discuss aggregates in <number_reference internal="True" refuri="../09-grouping-and-aggregation/grouping-and-aggregation#grouping-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.9</inline></number_reference>).  If multiple rows are returned by the subquery, the query will result in an error.  However, if zero rows are returned from the subquery, the result is considered to be <c>NULL</c>, rather than an error.</p>
+      <p>This same approach works with row expressions, although the syntax is perhaps a bit inconsistent.  If a subquery would return multiple columns, then you need to use a row expression on the left-hand side of your comparison only.  That is, the below is correct SQL:</p>
+      <program language="sql">
+        <input>
+SELECT * FROM books
+WHERE (author_id, publication_year) =
+  (SELECT author_id, publication_year
+   FROM books
+   WHERE title = 'The Hundred Thousand Kingdoms')
+;
+</input>
+      </program>
+      <p>Putting parentheses around the columns in the <term>SELECT</term> clause of the subquery will cause an error.</p>
+      <p>Comparisons with scalar results do not have to be equality; you can use any comparison operator instead:</p>
+      <program language="sql">
+        <input>
+SELECT * FROM books
+WHERE publication_year &gt;
+  (SELECT publication_year FROM books
+   WHERE title = 'Americanah')
+;
+</input>
+      </program>
+    </subsubsection>
+    <subsubsection xml:id="_08-subqueries_table-or-column-result">
+      <title>Table or column result</title>
+      <p>When a query can return multiple rows (a column or table), we have a different set of operators to work with.  In this section, we discuss the <term>IN</term> operator and the use of comparison operators with <term>ALL</term>, <term>ANY</term>, and <term>SOME</term>.  Another Boolean operator, <term>EXISTS</term>, will wait until we discuss correlated subqueries later in the chapter.  All of the operators that work with multiple rows also work on subqueries which return zero rows or one row.</p>
+      <remark xml:id="_08-subqueries_in-index-3">
+        <title>IN</title>
+        <p>The <term>IN</term> operator lets us compare some expression to every row returned from a subquery.  If the expression equals any result from the subquery, then the <term>IN</term> expression evaluates to <c>True</c>.  For example, we can ask our database for a list of books which have won awards (books with book ids matching some book id in the <term>books_awards</term> table):</p>
+        <program xml:id="subqueries_example_multiple_rows" interactive="activecode" language="sql">
+          <input>
+SELECT * FROM books WHERE book_id IN
+  (SELECT book_id FROM books_awards)
+;
+        </input>
+          <tests>
+
+
+</tests>
+        </program>
+        <p>SQL also provides the <term>NOT IN</term> operator as simply the Boolean inverse of <term>IN</term>.  We can get a list of books that did not win any of the awards listed in our database by a simple modification of the above query:</p>
+        <program language="sql">
+          <input>
+SELECT * FROM books WHERE book_id NOT IN
+  (SELECT book_id FROM books_awards)
+;
+</input>
+        </program>
+        <p>The <term>IN</term> operator also works with row expressions, when we want to compare against multiple column subquery results.  Here is a query that asks for books published in the same year as the author's death.  (We are using the <term>substring</term> function as implemented by SQLite to get just the first four characters of each author's death date.  Although the substring is a character string and book publication years are stored as integers, SQLite is able to do an appropriate type conversion to make the comparison.)</p>
+        <program language="sql">
+          <input>
+SELECT a.name AS author, b.title, b.publication_year
+FROM
+  authors AS a
+  JOIN books AS b ON a.author_id = b.author_id
+WHERE
+  (a.author_id, b.publication_year) IN
+    (SELECT author_id, substring(death, 1, 4) FROM authors)
+;
+</input>
+        </program>
+        <p>As always, it can be helpful to execute the subquery separately to see what values it returns in order to better understand what the entire query is doing.</p>
+        <p><term>IN</term> also has a useful application that does not involve a subquery.  If we follow <term>IN</term> with a comma-separated list of expressions inside parentheses, the operator will test the expression to the left of <term>IN</term> against every expression listed in the parentheses. Note that while the expression list looks like a row expression, it is very different; every expression in the list after <term>IN</term> should have a type compatible with the expression being compared.</p>
+        <p>For example, we might be interested in books by a few different authors:</p>
+        <program language="sql">
+          <input>
+SELECT a.name AS author, b.title
+FROM
+  books AS b
+  JOIN authors AS a ON a.author_id = b.author_id
+WHERE author IN
+  ('Virginia Woolf', 'Kazuo Ishiguro', 'Iris Murdoch');
+</input>
+        </program>
+        <p>If we want to compare multiple values (i.e., row expressions), we must use parentheses for each expression.  In this case, the general form of the expression is</p>
+        <program language="sql">
+          <input>
+(expr1, expr2, ...) IN ((test11, test12, ...), (test21, test22, ...), ...)
+</input>
+        </program>
+      </remark>
+      <remark xml:id="_08-subqueries_all-any-and-some-index-4">
+        <title>ALL, ANY, and SOME</title>
+        <p>We can alternately use comparison operators in conjunction with the <term>ALL</term> or <term>ANY</term> or <term>SOME</term> keywords to compare an expression against the results of a subquery.  For example, we can ask again for books which have won awards by using the equality operator together with the <term>ANY</term> keyword as follows (note that the <term>ALL</term>/<term>ANY</term>/<term>SOME</term> keywords are not supported by SQLite, so you cannot test this within the textbook's interactive tools):</p>
+        <program language="sql">
+          <input>
+SELECT * FROM books WHERE book_id = ANY
+  (SELECT book_id FROM books_awards);
+</input>
+        </program>
+        <p><term>SOME</term> is just a synonym for <term>ANY</term>.  The <term>IN</term> operator when used with subqueries is equivalent to <term>= ANY</term>.  However, <term>ANY</term> cannot be used with an expression list in the same way <term>IN</term> can.</p>
+        <p>In contrast, <term>ALL</term> requires that every row returned the subquery passes the comparison test.  For example, to find books published before all books by the author Willa Cather:</p>
+        <program language="sql">
+          <input>
+SELECT * FROM books WHERE publication_year &lt; ALL
+  (SELECT publication_year FROM books WHERE author_id =
+    (SELECT author_id FROM authors WHERE name = 'Willa Cather')
+  )
+;
+</input>
+        </program>
+        <p>Note here we have used a subquery inside another subquery!  We can nest subqueries in this fashion; we can also use multiple subqueries within a compound Boolean expression.</p>
+        <p>The <term>NOT IN</term> operator is equivalent to <term>&lt;&gt; ALL</term>.</p>
+      </remark>
+    </subsubsection>
+    <subsubsection xml:id="_08-subqueries_use-in-statements-index-5">
+      <title>Use in statements</title>
+      <p>Subqueries do not have to be used only within other <term>SELECT</term> queries.  The use of subqueries within the <term>WHERE</term> clause of <term>DELETE</term> or <term>UPDATE</term> statements can be very powerful, often making up for the fact that we cannot do joins within those types of statements.  For example, we could use a subquery to remove any authors from our database for whom we have no books:</p>
+      <program language="sql">
+        <input>
+DELETE FROM authors
+WHERE author_id NOT IN
+  (SELECT author_id FROM books);
+</input>
+      </program>
+      <p>There are no rows matching this condition in the database (unless you add them), so the above query does not remove any rows, although it runs successfully.</p>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_08-subqueries_correlated-subqueries-index-6">
+    <title>Correlated subqueries</title>
+    <p>In all of our examples so far, we used subqueries which are executable on their own as separate <term>SELECT</term> queries.  The subquery can be executed once, with the result of the subquery substituted in its place in the outer query.  It is possible, however, to construct subqueries that are dependent on the outer query.  When a subquery references some attribute from the outer query in an expression, we say that the subquery is <em>correlated</em> with the outer query.</p>
+    <p>For example, consider the problem of finding books published after the author's death (posthumous books).  We previously saw a way of using a subquery to get books published in the same year as the author's death:</p>
+    <program language="sql">
+      <input>
+SELECT a.name AS author, b.title, b.publication_year
+FROM
+  authors AS a
+  JOIN books AS b ON a.author_id = b.author_id
+WHERE
+  (a.author_id, b.publication_year) IN
+    (SELECT author_id, substring(death, 1, 4) FROM authors)
+;
+</input>
+    </program>
+    <p>It is not clear how we can modify this query's <term>WHERE</term> clause to find books published <em>after</em> the author's death.  We want the author ids to match (equality), but we need a different operator (greater than) to compare the publication year with the author's death year.  What we want to do is, for each book in the outer query, compare its publication year to the death year of <em>its author only</em>.  To do this, we need our subquery to only return results relevant for the current row in the outer query - in this case, the subquery should return the scalar value representing the book's author's death year.</p>
+    <p>Here is the solution:</p>
+    <program xml:id="subqueries_example_correlated" interactive="activecode" language="sql">
+      <input>
+SELECT
+  a1.name AS author, a1.death, b.title, b.publication_year
+FROM
+  authors AS a1
+  JOIN books AS b ON a1.author_id = b.author_id
+WHERE b.publication_year &gt;
+  (SELECT substring(death, 1, 4)
+   FROM authors AS a2
+   WHERE a2.author_id = a1.author_id)
+;
+        </input>
+      <tests>
+
+
+</tests>
+    </program>
+    <p>Note that we have a situation where ambiguity must be resolved using aliasing - we have two instances of the <term>authors</term> table, one used in the outer query and one in the subquery.  If we simply refer to <term>author_id</term> in the subquery, SQL assumes we mean the subquery's <term>authors</term> table.  To refer to the outer query's <term>authors</term> table, we must give it an alias (<term>a1</term>) to distinguish it.  While not necessary, we have chosen to alias the subquery's table (<term>a2</term>) as well, to avoid any chance of confusion.</p>
+    <p>As you can see, we can no longer run the subquery independent of the outer query.  In effect, we are running the subquery over and over again, once for each row we encounter in the outer query.</p>
+    <p>As in this example, correlated subqueries tend to be most useful when both the outer query and the subquery work with the same table.  When the outer query and subquery work with different tables, it is typically possible to write the query as uncorrelated.</p>
+    <subsubsection xml:id="_08-subqueries_exists-index-7">
+      <title>EXISTS</title>
+      <p>The <term>EXISTS</term> operator precedes a subquery, which is the only operand.  An <term>EXISTS</term> expression evaluates to <c>True</c> only if the subquery returns one or more rows.  The actual data from the subquery is ignored, so you can put anything you want in the <term>SELECT</term> clause.  We will use a constant <c>1</c> in our examples, just to emphasize that the data we are returning is unimportant.</p>
+      <p>Many uncorrelated subqueries can be rewritten as correlated subqueries using <term>EXISTS</term>.  For example, to find all books that have won awards, we can either write</p>
+      <program language="sql">
+        <input>
+SELECT * FROM books WHERE book_id IN
+  (SELECT book_id FROM books_awards)
+;
+</input>
+      </program>
+      <p>as we did earlier, or, using <term>EXISTS</term>:</p>
+      <program language="sql">
+        <input>
+SELECT * FROM books AS b WHERE EXISTS
+  (SELECT 1
+   FROM books_awards AS ba
+   WHERE ba.book_id = b.book_id)
+;
+</input>
+      </program>
+      <p>You can also use <term>NOT EXISTS</term>, which evaluates to the Boolean inverse of <term>EXISTS</term>.</p>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_08-subqueries_subqueries-in-other-clauses">
+    <title>Subqueries in other clauses</title>
+    <p>We have seen numerous examples of subqueries used in <term>WHERE</term> clauses.  However, subquery expressions can be used in other contexts.  In particular, subqueries returning scalars can be useful in <term>SELECT</term> clauses and in the <term>SET</term> clauses of <term>UPDATE</term> statements.  Subqueries returning tables can also be used in place of named tables in the <term>FROM</term> clause of a <term>SELECT</term> clause.</p>
+    <subsubsection xml:id="_08-subqueries_select-index-8">
+      <title>SELECT</title>
+      <p>Used in a <term>SELECT</term> clause, subqueries can be used to retrieve values that are not easily obtained from the tables used in the outer query.  Used in this way, the subquery must return a scalar.  These subqueries are almost always correlated, as we want to return a value that is specific to each row.</p>
+      <p>For example, in a listing of books, we might want to include the total number of books written by the author.  For this we will use the aggregate expression <term>COUNT(*)</term>, which simply counts the number of rows matching the <term>WHERE</term> clause in a <term>SELECT</term> query <footnote_reference auto="1" docname="PART1_SQL/08-subqueries/subqueries" xml:id="_08-subqueries_id1" refid="id2">1</footnote_reference>.  (Aggregates are discussed fully in <number_reference internal="True" refuri="../09-grouping-and-aggregation/grouping-and-aggregation#grouping-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.9</inline></number_reference>.)</p>
+      <program xml:id="subqueries_example_other_clauses" interactive="activecode" language="sql">
+        <input>
+SELECT
+  a.name AS author,
+  (SELECT COUNT(*) FROM books AS b2 WHERE b2.author_id = a.author_id)
+    AS author_total,
+  b1.title
+FROM
+  authors AS a
+  JOIN books AS b1 ON b1.author_id = a.author_id
+;
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </subsubsection>
+    <subsubsection xml:id="_08-subqueries_set-index-9">
+      <title>SET</title>
+      <p>Used in the <term>SET</term> clause of an <term>UPDATE</term> statement, subqueries provide a way to work around the issue that we cannot use joins in an <term>UPDATE</term>.  If we want to update rows in some table with data from a second table, we can simply use a subquery to obtain the proper value.</p>
+      <p>As an example, in preparation of this book's database, a statement was run to populate the <term>publication_year</term> column of <term>books</term> using book edition information.  (The <term>editions</term> table in the database only has entries for a few books, to keep the size manageable, but the original database had complete data.)  This statement uses another aggregate expression to obtain the earliest publication year from the editions table for each book:</p>
+      <program language="sql">
+        <input>
+UPDATE books
+SET publication_year =
+  (SELECT MIN(publication_year)
+   FROM editions
+   WHERE books.book_id = editions.book_id)
+;
+</input>
+      </program>
+      <p>Note: if you run the statement above, you will update most books to have a <c>NULL</c> publication year - when the subquery returns zero rows, the result is interpreted as <c>NULL</c>.  (Do not worry if you executed this statement - changes are only made to a copy of the data.  You can obtain an unmodified copy of the database by refreshing your browser window.)  You can modify the statement to only update rows for which we have editions data using another subquery:</p>
+      <program language="sql">
+        <input>
+UPDATE books
+SET publication_year =
+  (SELECT MIN(publication_year)
+   FROM editions
+   WHERE books.book_id = editions.book_id)
+WHERE EXISTS
+  (SELECT 1 FROM editions WHERE books.book_id = editions.book_id)
+;
+</input>
+      </program>
+    </subsubsection>
+    <subsubsection xml:id="_08-subqueries_from-index-10">
+      <title>FROM</title>
+      <p>Subqueries can also be used within the <term>FROM</term> clause of a <term>SELECT</term> query, in which case the subquery result acts like a table containing exactly the data returned by the subquery.  In this usage, the subquery expression <em>must</em> be given a name using aliasing.  The subquery cannot be correlated!  The subquery expression can be used to obtain computed data not available in any table in the database.  For example, above we used a correlated subquery to retrieve author's book counts on a row-by-row basis to go with each book title.  We could instead compute all author totals using an uncorrelated subquery, and then join each to the result as if it were a table.  (Here the subquery uses both grouping and aggregation, covered in <number_reference internal="True" refuri="../09-grouping-and-aggregation/grouping-and-aggregation#grouping-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.9</inline></number_reference>.)</p>
+      <program language="sql">
+        <input>
+SELECT
+  a.name AS author,
+  c.count AS author_total,
+  b.title
+FROM
+  authors AS a
+  JOIN books AS b ON b.author_id = a.author_id
+  JOIN
+    (SELECT author_id, COUNT(*) AS count
+     FROM books
+     GROUP BY author_id) AS c
+    ON c.author_id = a.author_id
+;
+</input>
+      </program>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_08-subqueries_comparison-with-joins-index-11">
+    <title>Comparison with joins</title>
+    <p>Subqueries are comparable to joins in the sense that they both involve multiple tables.  There are many cases in which a subquery can substitute for a join or vice-versa.  However, there are some subtle differences.</p>
+    <p>First, of course, is that short of using <term>SELECT</term> clause subqueries, you can only return data that actually appears in the outer query's tables.  If you need your result to contain data contained in multiple tables, it is generally best to join the tables rather than using <term>SELECT</term> clause subqueries.  (The example used above of a <term>SELECT</term> clause subquery is an exception, since the data we pulled in was not actually stored in any table.)  Using a separate subquery for each column needed is unwieldy, hard to read, and probably inefficient.</p>
+    <p>On the other hand, if you are retrieving data from one table only, it is sometimes advantageous to use a subquery.  Consider these two queries to retrieve books that have won awards:</p>
+    <program xml:id="subqueries_example_comparison" interactive="activecode" language="sql">
+      <input>
+SELECT * FROM books WHERE book_id IN
+  (SELECT book_id FROM books_awards)
+ORDER BY title;
+
+SELECT b.*
+FROM
+  books AS b
+  JOIN books_awards AS ba ON ba.book_id = b.book_id
+ORDER BY b.title;
+        </input>
+      <tests>
+
+
+</tests>
+    </program>
+    <p>Both queries return the same data, but the second query has duplicate rows - each book appears once for each award it has won.  In the first query, the <term>IN</term> operator merely tests for the presence of a book in the awards table, not how many times it appears, so duplicates are avoided.</p>
+    <p>The <term>NOT EXISTS</term> and <term>NOT IN</term> operators are particularly interesting in that they can provide clean solutions to questions that otherwise require an outer join, such as listing the books which have <em>not</em> won awards.</p>
+    <p>In many cases, though, you have choices in how you approach a query.  Which you use depends on your personal preference and style.  Here are three different queries for finding books published in the same year as the author's death - one using an uncorrelated subquery (repeated from above), one using a correlated subquery with <term>EXISTS</term>, and one using a join:</p>
+    <program language="sql">
+      <input>
+SELECT a.name AS author, b.title, b.publication_year
+FROM
+  authors AS a
+  JOIN books AS b ON a.author_id = b.author_id
+WHERE
+  (a.author_id, b.publication_year) IN
+    (SELECT author_id, substring(death, 1, 4) FROM authors)
+;
+
+SELECT a1.name AS author, b.title, b.publication_year
+FROM
+  authors AS a1
+  JOIN books AS b ON a1.author_id = b.author_id
+WHERE EXISTS
+  (SELECT 1
+   FROM authors AS a2
+   WHERE a2.author_id = a1.author_id
+   AND substring(a2.death, 1, 4) = b.publication_year)
+;
+
+SELECT a1.name AS author, b.title, b.publication_year
+FROM
+  authors AS a1
+  JOIN books AS b ON a1.author_id = b.author_id
+  JOIN authors AS a2 ON
+    a2.author_id = a1.author_id
+    AND substring(a2.death, 1, 4) = b.publication_year
+;
+</input>
+    </program>
+  </subsection>
+  <subsection xml:id="_08-subqueries_self-check-exercises">
+    <title>Self-check exercises</title>
+    <p>This section contains some exercises using the books data set (reminder: you can get full descriptions of all tables in <xref ref="appendix-a-datasets_datasets"/>).  If you get stuck, click on the <q>Show answer</q> button below the exercise to see a correct answer.  There are many ways to answer these questions; try to use at least one subquery for each.</p>
+    <exercise label="subqueries_self_test_scalar_1">
+      <statement>
+        <p>Write a query to list books (title, publication_year) by the author Viet Thanh Nguyen.</p>
+      </statement>
+      <program xml:id="subqueries_self_test_scalar_1_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT title FROM books WHERE author_id =
+  (SELECT author_id FROM authors WHERE name = 'Viet Thanh Nguyen')
+;
+</input>
+      </program>
+    </hint>
+    <exercise label="subqueries_self_test_scalar_2">
+      <statement>
+        <p>Write a query giving the author of <em>How We Became Human</em>.</p>
+      </statement>
+      <program xml:id="subqueries_self_test_scalar_2_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT name FROM authors WHERE author_id =
+  (SELECT author_id FROM books WHERE title = 'How We Became Human')
+;
+</input>
+      </program>
+    </hint>
+    <exercise label="subqueries_self_test_scalar_3">
+      <statement>
+        <p>Write a query to list authors born after the death of author Albert Camus.</p>
+      </statement>
+      <program xml:id="subqueries_self_test_scalar_3_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT name FROM authors WHERE birth &gt;
+  (SELECT death FROM authors WHERE name = 'Albert Camus')
+;
+</input>
+      </program>
+    </hint>
+    <exercise label="subqueries_self_test_in_1">
+      <statement>
+        <p>Write a query to list books for which we have editions information.</p>
+      </statement>
+      <program xml:id="subqueries_self_test_in_1_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT * FROM books WHERE book_id IN
+  (SELECT book_id FROM editions)
+;
+</input>
+      </program>
+    </hint>
+    <exercise label="subqueries_self_test_in_2">
+      <statement>
+        <p>Write a query to list the titles of books by living authors (assume a <c>NULL</c> death date means the author is living).</p>
+      </statement>
+      <program xml:id="subqueries_self_test_in_2_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT title FROM books WHERE author_id IN
+  (SELECT author_id FROM authors WHERE death IS NULL)
+;
+</input>
+      </program>
+    </hint>
+    <exercise label="subqueries_self_test_challenge_1">
+      <statement>
+        <p>Write a query to list the authors who have won the Nobel Prize in Literature (an author award).</p>
+      </statement>
+      <program xml:id="subqueries_self_test_challenge_1_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT name FROM authors WHERE author_id IN
+  (SELECT author_id FROM authors_awards WHERE award_id =
+    (SELECT award_id FROM awards WHERE name = 'Nobel Prize in Literature'))
+;
+</input>
+      </program>
+    </hint>
+    <exercise label="subqueries_self_test_challenge_2">
+      <statement>
+        <p>Write a query to list the authors whose books have won any kind of Pulitzer prize (a book award starting with the string &#x2018;Pulitzer').</p>
+      </statement>
+      <program xml:id="subqueries_self_test_challenge_2_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT name FROM authors WHERE author_id IN
+  (SELECT author_id FROM books WHERE book_id IN
+    (SELECT book_id FROM books_awards WHERE award_id IN
+      (SELECT award_id FROM awards WHERE name LIKE 'Pulitzer%')))
+;
+</input>
+      </program>
+    </hint>
+    <exercise label="subqueries_self_test_challenge_3">
+      <statement>
+        <p>Write a query to list authors who have won book awards but not author awards.</p>
+      </statement>
+      <program xml:id="subqueries_self_test_challenge_3_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT name
+FROM authors
+WHERE author_id IN
+  (SELECT author_id FROM books WHERE book_id IN
+    (SELECT book_id FROM books_awards))
+AND author_id NOT IN
+  (SELECT author_id FROM authors_awards)
+;
+</input>
+      </program>
+    </hint>
+    <exercise label="subqueries_self_test_challenge_4">
+      <statement>
+        <p>Write a query to find books by authors with only one book (according to our database).  <em>Hint</em>: one way is to ask, for each book, whether there exist <em>other</em> books by the same author.</p>
+      </statement>
+      <program xml:id="subqueries_self_test_challenge_4_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT a.name, b1.title
+FROM
+  authors AS a
+  JOIN books AS b1 ON a.author_id = b1.author_id
+WHERE NOT EXISTS
+  (SELECT 1
+   FROM books AS b2
+   WHERE b2.author_id = b1.author_id
+   AND b2.book_id &lt;&gt; b1.book_id)
+ORDER BY a.name;  -- to make it easier to verify
+</input>
+      </program>
+    </hint>
+    <exercise label="subqueries_self_test_challenge_5">
+      <statement>
+        <p>Write a query to list all awards (either author awards or book awards) won by author J. M. Coetzee.</p>
+      </statement>
+      <program xml:id="subqueries_self_test_challenge_5_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT name
+FROM awards
+WHERE award_id IN
+  (SELECT award_id FROM authors_awards WHERE author_id =
+    (SELECT author_id FROM authors WHERE name = 'J. M. Coetzee'))
+OR award_id IN
+  (SELECT award_id FROM books_awards WHERE book_id IN
+    (SELECT book_id FROM books WHERE author_id =
+      (SELECT author_id FROM authors WHERE name = 'J. M. Coetzee')))
+;
+</input>
+      </program>
+    </hint>
+    <p>&#x274F;</p>
+    <transition/>
+    <p>
+      <term>Notes</term>
+    </p>
+    <footnote auto="1" backrefs="id1" docname="PART1_SQL/08-subqueries/subqueries" xml:id="_08-subqueries_id2" names="1">
+      <label>1</label>
+      <p>For this particular problem, we could instead use something called a <em>window function</em>, which will be discussed briefly in <number_reference internal="True" refuri="../11-advanced-topics/advanced-topics#advanced-sql-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.11</inline></number_reference>.</p>
+    </footnote>
+    <p> </p>
+  </subsection>
+</section>

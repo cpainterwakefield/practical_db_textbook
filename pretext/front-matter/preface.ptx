@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<section xml:id="front-matter_preface">
+  <title>Preface</title>
+  <blockquote>
+    <p>
+      <em>In God we trust, all others bring data.</em>
+    </p>
+    <attribution>attributed to W. Edwards Deming</attribution>
+  </blockquote>
+  <p>This book, <em>A Practical Introduction to Databases</em>, was created to fill the need for a low-cost, up-to-date textbook suitable for an introductory course on databases:</p>
+  <p>
+    <ul>
+      <li>
+        <p>The book is free to students and instructors (although we encourage you to support the Runestone Academy platform to help ensure its future sustainability and growth).</p>
+      </li>
+      <li>
+        <p>The book is open. <footnote_reference auto="1" docname="front-matter/preface" xml:id="front-matter_id1" refid="id3">1</footnote_reference>  Its contents are licensed under the <url href="https://creativecommons.org/licenses/by-sa/4.0/" visual="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</url>, meaning that anyone is free to share, adapt, and redistribute them for any purpose whatsoever, as long as appropriate credit is given and the license terms persist.  The  source for this book is available on github; you may fork, extend, and re-release this book in any form you wish (pull requests welcome!).  This book is intended as a living document, to be updated and expanded regularly as technology changes, by any interested author.</p>
+      </li>
+      <li>
+        <p>The book is oriented to students encountering databases for the first time, with a focus on key skills needed by future software engineers.</p>
+      </li>
+    </ul>
+  </p>
+  <p>In this first release, the book covers three core topics: SQL, data modeling, and relational database theory. <footnote_reference auto="1" docname="front-matter/preface" xml:id="front-matter_id2" refid="id4">2</footnote_reference>  In determining which material to include or exclude, choices were made to prefer material with high impact and practical application over exhaustive coverage.  Instructors may therefore wish to use this book as a foundation, supplemented with additional material as required for their course.  Instructors of more advanced courses in databases may also find value in providing this book as a supplement for students encountering the subject for the first time.  To the extent possible, the content is presented in a way that allows different orderings of topics, although some dependencies are unavoidable.</p>
+  <p>In keeping with the applied focus of the book, SQL is offered as the starting point in <number_reference internal="True" refuri="../PART1_SQL/index#sql-part" title="Part {number}"><inline classes="std std-numref">Part 1</inline></number_reference> of the text.  At a time when academia and industry alike are developing new advances in database technology seemingly on a daily basis, the relational database model as mediated by SQL remains the gravitational center for practitioners.  SQL is the common point of reference used to evaluate job applicants on their database skills.  The online book uses an embedded SQLite database engine to provide interactive examples and facilitate exploration (scripts are provided in <xref ref="appendix-a-datasets_datasets"/> to create the textbook's database on several other major database systems, if preferred).</p>
+  <p><number_reference internal="True" refuri="../PART2_DATA_MODELING/index#data-modeling-part" title="Part {number}"><inline classes="std std-numref">Part 2</inline></number_reference> discusses data modeling.  Here, the emphasis is on database design using entity-relationship diagrams (ERDs) and related tools.  The coverage includes a detailed example demonstrating ERD construction along with step-by-step instructions for converting ERDs to a relational database schema.</p>
+  <p>Finally, <number_reference internal="True" refuri="../PART3_RELATIONAL_DATABASE_THEORY/index#relational-theory-part" title="Part {number}"><inline classes="std std-numref">Part 3</inline></number_reference> of the text provides coverage of relational database theory, including relational algebra and normalization (through fourth normal form).</p>
+  <p>&#x274F;</p>
+  <transition/>
+  <p>
+    <term>Notes</term>
+  </p>
+  <footnote auto="1" backrefs="id1" docname="front-matter/preface" xml:id="front-matter_id3" names="1">
+    <label>1</label>
+    <p>This book is an Open Education Resource (OER), and is aligned with the goals laid out in the <url href="https://www.unesco.org/en/legal-affairs/recommendation-open-educational-resources-oer" visual="https://www.unesco.org/en/legal-affairs/recommendation-open-educational-resources-oer">UNESCO Recommendation on Open Educational Resources</url>, among others.</p>
+  </footnote>
+  <footnote auto="1" backrefs="id2" docname="front-matter/preface" xml:id="front-matter_id4" names="2">
+    <label>2</label>
+    <p>Future releases are planned, covering software programming with databases, NoSQL, and other topics of practical interest.</p>
+  </footnote>
+  <p> </p>
+</section>

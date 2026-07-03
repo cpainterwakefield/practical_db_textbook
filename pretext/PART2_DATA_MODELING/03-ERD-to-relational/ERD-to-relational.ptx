@@ -1,0 +1,1656 @@
+<?xml version="1.0"?>
+<section xml:id="_03-erd-to-relational_converting-erd-to-a-relational-model-erd-to-relational-chapter">
+  <title>Converting ERD to a relational model</title>
+  <p xml:id="_03-erd-to-relational_index-0">In this chapter we explain the process of creating a relational database from an entity-relationship model.  While many steps are largely mechanical, a number of decisions need to be made along the way.  We will explore the trade-offs for each decision.  We will use the computer manufacturer data model from <number_reference internal="True" refuri="../02-ERD/ERD#erd-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 2.2</inline></number_reference> as our example.</p>
+  <p>This chapter assumes you are familiar with the basics of the relational model of the database, including tables and primary and foreign key constraints.  The necessary foundations are covered in either Part I (Chapters <number_reference internal="True" refuri="../../PART1_SQL/01-sql-basics/sql-basics#basics-chapter" title="{number}"><inline classes="std std-numref">1.1</inline></number_reference> and <number_reference internal="True" refuri="../../PART1_SQL/07-constraints/constraints#constraints-chapter" title="{number}"><inline classes="std std-numref">1.7</inline></number_reference>) or Part III (<number_reference internal="True" refuri="../../PART3_RELATIONAL_DATABASE_THEORY/01-relational-model/relational-model#relational-model-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 3.1</inline></number_reference>).</p>
+  <p>There are many ways to represent the relational database: logical or physical data models (<number_reference internal="True" refuri="../04-other-notations/other-notations#other-notations-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 2.4</inline></number_reference>), text or tabular descriptions, or SQL code.  Which you use will depend on your development process and needs.  In this chapter, we will provide simple text descriptions in tabular format.</p>
+  <p>We start with the basic conversion rules, converting pieces of our example data model as we go.  The full set of tables resulting from our conversion is given at the end of the chapter.</p>
+  <subsection xml:id="_03-erd-to-relational_entities">
+    <title>Entities</title>
+    <p>The first step in building a relational database from an ERD is creating a table from each entity in the data model.  Weak entities need slightly different handling than regular entities, so we will address them separately, starting with regular entities.</p>
+    <subsubsection xml:id="_03-erd-to-relational_regular-entities">
+      <title>Regular entities</title>
+      <p>First, decide on a name for the table - this does not have to be the same as the entity name!  There are many naming schemes for tables.  If you are building a database for a company or organization that has naming standards, you will of course want to follow those.  Otherwise, choose a basic approach and be consistent.  For example, some databases use plural nouns for tables, while others use singular nouns.  In our data model from <number_reference internal="True" refuri="../02-ERD/ERD#erd-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 2.2</inline></number_reference>, the entity <term>employee</term> might become a table named <term>employee</term> or <term>employees</term>.  Another naming issue arises with table names containing multiple words; some databases choose to run these together, while others employ underscore characters.  For example, the entity <term>assembly line</term> could become a table named <term>assemblyline</term> or <term>assembly_line</term>.  In our examples below, we will use singular nouns and underscores.</p>
+      <p>Most attributes for the entity should be converted to columns in the new table.  Do not create columns for derived attributes, as these values are not intended to be stored.  Do not create columns for multivalued attributes; we will address these later.  For composite attributes, create columns only for the component attributes, not the composite itself.  As with entities, you will need to decide on a name for each new column, which does not have to be the same as the attribute name.  You will also need to specify a type and any constraints for the column.  Determining appropriate types for some columns may require consultation with your data domain experts.  Constraints may be added as appropriate.  In the descriptions below, we will use simple type and constraint descriptions, rather than SQL syntax.</p>
+      <p>Choose a key attribute (every regular entity should have at least one) and use the column created from it as the primary key for the new table.  If the entity has multiple key attributes, you will need to decide which one makes most sense as a primary key.  Simpler primary keys are usually preferred over more complex ones.  If desired, you can constrain the columns resulting from other keys to be not null and unique similar to primary key columns.  For example, an employee table might use a company generated ID number as its primary key, and also include a column for a government issued ID number which we would want to constrain to prevent duplicates.</p>
+      <p>Here is our ERD depiction of the <term>employee</term> entity:</p>
+      <image source="PART2_DATA_MODELING/03-ERD-to-relational/employee.svg" width="50%" alt="The employee entity and its attributes"/>
+      <p>Here is a preliminary conversion of the <term>employee</term> entity into a relational table named <term>employee</term>:</p>
+      <table xml:id="_03-erd-to-relational_id3">
+        <tabular>
+          <title>Table <term>employee</term> (preliminary)</title>
+          <row header="yes">
+            <cell>
+                                    Column name
+                                </cell>
+            <cell>
+                                    Type
+                                </cell>
+            <cell>
+                                    Constraints
+                                </cell>
+            <cell>
+                                    Notes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    id
+                                </cell>
+            <cell>
+                                    integer
+                                </cell>
+            <cell>
+                                    not null
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    name
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                    not null
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    position
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    pay_rate
+                                </cell>
+            <cell>
+                                    currency
+                                </cell>
+            <cell>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    pay_type
+                                </cell>
+            <cell>
+                                    character
+                                </cell>
+            <cell>
+                                    &#x2018;s' or &#x2018;h'
+                                </cell>
+            <cell>
+                                    s = salaried, h = hourly
+                                </cell>
+          </row>
+          <row>
+            <cell><term>Keys</term>
+                                    Primary key: id
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>This is not yet the final <term>employee</term> table!  We will add additional columns to the table when we address the relationships that the <term>employee</term> entity participates in.</p>
+    </subsubsection>
+    <subsubsection xml:id="_03-erd-to-relational_weak-entities">
+      <title>Weak entities</title>
+      <p>Weak entities are converted into tables in nearly the same way as regular entities.  However, recall that a weak entity has no identifying key attribute.  Instead, it has a partial key, which must be combined with the key of the parent entity.  In our example, the <term>assembly line</term> entity is weak.  Its partial key, the number of the assembly line within a particular factory, must be combined with the factory identity for full identification.</p>
+      <p>The table created from a weak entity must therefore incorporate the key from the parent entity as an additional column.  The primary key for the new table will be composed of the columns created from the parent key and from the partial key.  Additionally, the column created from the parent key should be constrained to always match some key in the parent table, using a foreign key constraint.</p>
+      <p>Here is the ERD of <term>assembly line</term> and its parent entity, <term>factory</term>:</p>
+      <image source="PART2_DATA_MODELING/03-ERD-to-relational/assembly_line.svg" width="50%" alt="The assembly line and factory entities, their attributes, and the contains relationship connecting them"/>
+      <p>Using the above guidelines, we should create tables <term>factory</term> and <term>assembly_line</term>, and include a column in <term>assembly_line</term> for values from the <term>city</term> column of <term>factory</term>.  A good choice of name for these <q>borrowed</q> columns is to concatenate the original table and column names together; in our case, this gives us the column <term>factory_city</term>.  (We will use the term <q>borrow</q> in reference to this process of inserting a column in one table to hold values from the primary key column of a related table.)  Here is the preliminary conversion of <term>factory</term> and the final conversion of <term>assembly line</term>:</p>
+      <table xml:id="_03-erd-to-relational_id4">
+        <tabular>
+          <title>Table <term>factory</term> (preliminary)</title>
+          <row header="yes">
+            <cell>
+                                    Column name
+                                </cell>
+            <cell>
+                                    Type
+                                </cell>
+            <cell>
+                                    Constraints
+                                </cell>
+            <cell>
+                                    Notes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    city
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                    not null
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell><term>Keys</term>
+                                    Primary key: city
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <table xml:id="_03-erd-to-relational_id5">
+        <tabular>
+          <title>Table <term>assembly_line</term></title>
+          <row header="yes">
+            <cell>
+                                    Column name
+                                </cell>
+            <cell>
+                                    Type
+                                </cell>
+            <cell>
+                                    Constraints
+                                </cell>
+            <cell>
+                                    Notes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    factory_city
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                    not null
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    number
+                                </cell>
+            <cell>
+                                    integer
+                                </cell>
+            <cell>
+                                    not null
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    throughput
+                                </cell>
+            <cell>
+                                    real
+                                </cell>
+            <cell>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell><term>Keys</term>
+                                    Primary key: factory_city, number
+                                    Foreign key: factory_city &#x2192; factory (city)
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_03-erd-to-relational_relationships">
+    <title>Relationships</title>
+    <p>Relationships can be handled using a few different approaches, depending on the cardinality ratio of the relationship.  Most generally, we can create a table to represent the relationship.  This kind of table is known as a <em>cross-reference</em> table, and acts as an intermediary in a three-way join with the two (or more) tables whose entities participate in the relationship.  As we will see, some cardinality ratios permit simpler solutions.</p>
+    <subsubsection xml:id="_03-erd-to-relational_many-to-many">
+      <title>Many-to-many</title>
+      <p>Many-to-many relationships are the most general type of relationship; a database structure accommodating a many-to-many relationship can also accommodate one-to-many or one-to-one relationships, as <q>one</q> is just a special case of <q>many</q>.  The challenge for many-to-many relationships is how to represent a connection from a record in one table to multiple records in the other table.  While modern SQL allows array valued columns in tables, not all databases support them.  The traditional solution is to create a cross-reference table.</p>
+      <p>Given a table <term>A</term> and a table <term>B</term>, we create a cross-reference table with columns corresponding to the primary keys of <term>A</term> and <term>B</term>.  Each row in the cross-reference table stores one unique pairing of a primary key value from <term>A</term> with a primary key value from <term>B</term>.  Each row thus represents a single connection between one row in <term>A</term> with one row in <term>B</term>.  If a row in <term>A</term> is related to multiple rows in <term>B</term>, then there will be multiple entries with the same <term>A</term> primary key value, paired with each related <term>B</term> primary key value.</p>
+      <p>For example, our ERD indicates a many-to-many relationship between the entities <term>vendor</term> and <term>part</term>.  A computer part (such as an 8TB hard drive) can come from multiple sellers, while sellers can sell multiple different computer parts:</p>
+      <image source="PART2_DATA_MODELING/03-ERD-to-relational/supplies.svg" width="50%" alt="The vendor and part entities, their attributes, and the supplies relationship connecting them"/>
+      <p>We create tables <term>vendor</term> and <term>part</term> following the guidelines above, and then create the cross-reference table <term>vendor_part</term>.  (It is common to name a cross-reference table using the names of the two tables being related, although other schemes can of course be used.)  Note that the <term>supplies</term> relationship also has a relationship attribute, <term>price</term>, which we can incorporate into the cross-reference table.  The result, with some fictional data, is pictured below:</p>
+      <image source="PART2_DATA_MODELING/03-ERD-to-relational/vendor_part_xref.svg" width="50%" alt="The tables vendor, part, and vendor_part with sample data"/>
+      <p>Data in the cross-reference table is constrained in several ways.  First, we only want to store the relationship between rows once, so we make the combination of primary keys from the related tables into a primary key for the cross-reference table.  In our example, the primary key is the combination of <term>vendor_name</term> and <term>part_number</term>.  Second, each of the borrowed primary key columns should be constrained to only hold values that are present in the original tables, using foreign key constraints.</p>
+      <p>Table descriptions for <term>vendor</term>, <term>part</term>, and the <term>vendor_part</term> cross-reference table are given below:</p>
+      <table xml:id="_03-erd-to-relational_id6">
+        <tabular>
+          <title>Table <term>vendor</term></title>
+          <row header="yes">
+            <cell>
+                                    Column name
+                                </cell>
+            <cell>
+                                    Type
+                                </cell>
+            <cell>
+                                    Constraints
+                                </cell>
+            <cell>
+                                    Notes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    name
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                    not null
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    email
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    phone
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell><term>Keys</term>
+                                    Primary key: name
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <table xml:id="_03-erd-to-relational_id7">
+        <tabular>
+          <title>Table <term>part</term></title>
+          <row header="yes">
+            <cell>
+                                    Column name
+                                </cell>
+            <cell>
+                                    Type
+                                </cell>
+            <cell>
+                                    Constraints
+                                </cell>
+            <cell>
+                                    Notes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    part_number
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                    not null
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    description
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell><term>Keys</term>
+                                    Primary key: part_number
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <table xml:id="_03-erd-to-relational_id8">
+        <tabular>
+          <title>Table <term>vendor_part</term></title>
+          <row header="yes">
+            <cell>
+                                    Column name
+                                </cell>
+            <cell>
+                                    Type
+                                </cell>
+            <cell>
+                                    Constraints
+                                </cell>
+            <cell>
+                                    Notes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    vendor_name
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                    not null
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    part_number
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                    not null
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    price
+                                </cell>
+            <cell>
+                                    currency
+                                </cell>
+            <cell>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell><term>Keys</term>
+                                    Primary key: vendor_name, part_number
+                                    Foreign key: vendor_name &#x2192; vendor (name)
+                                    Foreign key: part_number &#x2192; part (part_number)
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+    </subsubsection>
+    <subsubsection xml:id="_03-erd-to-relational_one-to-many">
+      <title>One-to-many</title>
+      <p>As a special case of many-to-many relationships, one-to-many relationships can be implemented in the database using a cross-reference table as above.  We have another choice, however.  Observing that rows on the <q>many</q> side of the relationship can be associated with at most one row from the <q>one</q> side, we can choose to capture the relationship by storing the primary key of the <q>one</q> side table in the <q>many</q> side table.</p>
+      <p>In our ERD, the <term>employee</term> entity participates in one-to-many relationships with both <term>factory</term> and itself:</p>
+      <image source="PART2_DATA_MODELING/03-ERD-to-relational/one_to_many.svg" width="50%" alt="The employee and factory entities and their attributes, and the supervises, manages, and works at relationships"/>
+      <p>There is also a one-to-one relationship between <term>employee</term> and <term>factory</term>, which we will deal with in the next section.</p>
+      <p>Considering first the <term>works at</term> relationship, we see that each employee works at no more than one factory.  Therefore, we can include a column for the factory's city in the <term>employee</term> table.  For consistency with previous choices, we will call this column <term>factory_city</term>.  This column should be constrained by a foreign key referencing the <term>factory</term> table.</p>
+      <p>We also have the <term>supervises</term> relationship to deal with.  In the same fashion as above, we should include a column in the <term>employee</term> table containing primary keys from the <term>employee</term> table.  However, we should give careful consideration to the name we give this added column; <term>employee_id</term> would be a very misleading choice!  A better choice is to consider the role of the employee whose id will be stored, and call the column <term>supervisor_id</term>.</p>
+      <p>With these changes, the <term>employee</term> table now looks like:</p>
+      <table xml:id="_03-erd-to-relational_id9">
+        <tabular>
+          <title>Table <term>employee</term></title>
+          <row header="yes">
+            <cell>
+                                    Column name
+                                </cell>
+            <cell>
+                                    Type
+                                </cell>
+            <cell>
+                                    Constraints
+                                </cell>
+            <cell>
+                                    Notes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    id
+                                </cell>
+            <cell>
+                                    integer
+                                </cell>
+            <cell>
+                                    not null
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    name
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                    not null
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    position
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    pay_rate
+                                </cell>
+            <cell>
+                                    currency
+                                </cell>
+            <cell>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    pay_type
+                                </cell>
+            <cell>
+                                    character
+                                </cell>
+            <cell>
+                                    &#x2018;s' or &#x2018;h'
+                                </cell>
+            <cell>
+                                    s = salaried, h = hourly
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    factory_city
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    supervisor_id
+                                </cell>
+            <cell>
+                                    integer
+                                </cell>
+            <cell>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell><term>Keys</term>
+                                    Primary key: id
+                                    Foreign key: factory_city &#x2192; factory (city)
+                                    Foreign key: supervisor_id &#x2192; employee (id)
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>Using a cross-reference table instead of the above scheme is a perfectly valid choice, and may be preferable if there is any chance the data model might change such that the one-to-many relationship becomes many-to-many.  In our example ERD, a given computer model is built at only one factory (while factories can build multiple different models); however, it would not be surprising if, at some point, we want to allow for models to be built at multiple locations.  We might choose to use a cross-reference table for the relationship between <term>factory</term> and <term>model</term> in anticipation of this possibility.</p>
+    </subsubsection>
+    <subsubsection xml:id="_03-erd-to-relational_one-to-one">
+      <title>One-to-one</title>
+      <p>One-to-one relationships can be considered a special case of one-to-many relationships, so you can utilize either approach suitable for one-to-many relationships.  In most cases, it will be preferable to borrow the primary key from one table as a foreign key in the other table.  Using this approach, you could borrow from either side; however, one choice is often preferable to another.</p>
+      <p>In our example, we have a one-to-one relationship, <term>manages</term>, between <term>employee</term> and <term>factory</term>.  We could therefore add another column to the <term>employee</term> table, this time for the city of the factory that the employee manages.  However, most employees do not manage factories, so the column will end up containing many <c>NULL</c> values.</p>
+      <p>On the other hand, every factory should have a manager (implied by the total participation of <term>factory</term> in the relationship). It makes perfect sense, then, to add a column to the <term>factory</term> table for the employee managing the factory.  This is another situation in which it makes sense to name the column for the role of the employee in this relationship, so we will call the new column <term>manager_id</term>.</p>
+      <p>Here is the completed <term>factory</term> table:</p>
+      <table xml:id="_03-erd-to-relational_id10">
+        <tabular>
+          <title>Table <term>factory</term></title>
+          <row header="yes">
+            <cell>
+                                    Column name
+                                </cell>
+            <cell>
+                                    Type
+                                </cell>
+            <cell>
+                                    Constraints
+                                </cell>
+            <cell>
+                                    Notes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    city
+                                </cell>
+            <cell>
+                                    text
+                                </cell>
+            <cell>
+                                    not null
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    manager_id
+                                </cell>
+            <cell>
+                                    integer
+                                </cell>
+            <cell>
+                                    see note <footnote_reference auto="1" docname="PART2_DATA_MODELING/03-ERD-to-relational/ERD-to-relational" xml:id="_03-erd-to-relational_id1" refid="id2">1</footnote_reference>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell><term>Keys</term>
+                                    Primary key: city
+                                    Foreign key: manager_id &#x2192; employee (id)
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>In some rare cases, it may make sense to handle a one-to-one relationship by simply merging the participating tables into one table.  This should probably be reserved for situations in which both entities have total participation in the relationship.</p>
+    </subsubsection>
+    <subsubsection xml:id="_03-erd-to-relational_higher-arity-relationships">
+      <title>Higher arity relationships</title>
+      <p>For relationships with three or more participants, a cross-reference table incorporating primary keys from each of the participating tables is the best choice.</p>
+    </subsubsection>
+    <subsubsection xml:id="_03-erd-to-relational_identifying-relationships">
+      <title>Identifying relationships</title>
+      <p>Identifying relationships for weak entities are necessarily one-to-many or one-to-one.  However, the conversion of the weak entity already incorporates a column containing primary key values from the parent table.  This suffices to capture the relationship.</p>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_03-erd-to-relational_multivalued-attributes">
+    <title>Multivalued attributes</title>
+    <p>Multivalued attributes can be used to model a few different scenarios.  As a result, there are multiple choices for how to store multivalued data in a relational database.</p>
+    <p>In the simplest case, a multivalued attribute is used when a list of arbitrary values needs to be stored, but there is no particular expectation that the values will be examined in a search of the database.  In this case, an array-valued column may be an appropriate choice for databases that support such columns.</p>
+    <p>When there is a need to query the values associated with a multivalued attribute, or for databases that do not support array-valued columns, the best choice may be to make a simple table with two columns, one for the primary key of the owning table, and one for the values themselves.  Each entry in the table associates one value with the instance of the entity.</p>
+    <p>In our example, computer models can be marketed to customers for different applications, such as gaming, video editing, or business use.  This is represented in our data model with the multivalued <term>application</term> attribute:</p>
+    <image source="PART2_DATA_MODELING/03-ERD-to-relational/multivalued.svg" width="50%" alt="The model entity and its attributes"/>
+    <p>We might, then, implement the model entity and its attributes using the following two tables:</p>
+    <table xml:id="_03-erd-to-relational_id11">
+      <tabular>
+        <title>Table <term>model</term> (preliminary)</title>
+        <row header="yes">
+          <cell>
+                                Column name
+                            </cell>
+          <cell>
+                                Type
+                            </cell>
+          <cell>
+                                Constraints
+                            </cell>
+          <cell>
+                                Notes
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                name
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                number
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                type
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell><term>Keys</term>
+                                Primary key: name, number
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <table xml:id="_03-erd-to-relational_id12">
+      <tabular>
+        <title>Table <term>model_application</term> (preliminary)</title>
+        <row header="yes">
+          <cell>
+                                Column name
+                            </cell>
+          <cell>
+                                Type
+                            </cell>
+          <cell>
+                                Constraints
+                            </cell>
+          <cell>
+                                Notes
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                model_name
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                model_number
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                application
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell><term>Keys</term>
+                                Primary key: model_name, model_number, application
+                                Foreign key: (model_name, model_number) &#x2192; model (name, number)
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>Many applications also require the values associated with a multivalued attribute to be restricted to a certain list of values.  In this case, an additional table is used.  The additional table exists just to contain the allowed values, allowing us to constrain the data to just those values.  For more complex values, an artificial identifier may be added as a primary key, and the primary key used in the multivalued attribute table instead of the values themselves, in which case the multivalued attribute table becomes a cross-reference table. For small lists of simple values (as in our example), this adds unnecessary complication.</p>
+    <p>For our example, we will constrain the <term>application</term> column using a foreign key constraint referencing this simple table:</p>
+    <table xml:id="_03-erd-to-relational_id13">
+      <tabular>
+        <title>Table <term>application</term></title>
+        <row header="yes">
+          <cell>
+                                Column name
+                            </cell>
+          <cell>
+                                Type
+                            </cell>
+          <cell>
+                                Constraints
+                            </cell>
+          <cell>
+                                Notes
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                application
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                                gaming, business, etc.
+                            </cell>
+        </row>
+        <row>
+          <cell><term>Keys</term>
+                                Primary key: application
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+  </subsection>
+  <subsection xml:id="_03-erd-to-relational_full-model-conversion">
+    <title>Full model conversion</title>
+    <p>In this section, we collect together all of the tables produced from our example data model, using the approach outlined above.  For each table we include a short explanation of how the table relates to the data model.</p>
+    <table xml:id="_03-erd-to-relational_id14">
+      <tabular>
+        <title>Table <term>employee</term></title>
+        <row header="yes">
+          <cell>
+                                Column name
+                            </cell>
+          <cell>
+                                Type
+                            </cell>
+          <cell>
+                                Constraints
+                            </cell>
+          <cell>
+                                Notes
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                id
+                            </cell>
+          <cell>
+                                integer
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                name
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                position
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                pay_rate
+                            </cell>
+          <cell>
+                                currency
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                pay_type
+                            </cell>
+          <cell>
+                                character
+                            </cell>
+          <cell>
+                                &#x2018;s' or &#x2018;h'
+                            </cell>
+          <cell>
+                                s = salaried, h = hourly
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                factory
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                supervisor_id
+                            </cell>
+          <cell>
+                                integer
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell><term>Keys</term>
+                                Primary key: id
+                                Foreign key: factory_city &#x2192; factory (city)
+                                Foreign key: supervisor_id &#x2192; employee (id)
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>The <term>employee</term> table contains columns for the attributes of the <term>employee</term> entity and foreign keys implementing the relationships <term>works at</term> and <term>supervises</term>.</p>
+    <table xml:id="_03-erd-to-relational_id15">
+      <tabular>
+        <title>Table <term>factory</term></title>
+        <row header="yes">
+          <cell>
+                                Column name
+                            </cell>
+          <cell>
+                                Type
+                            </cell>
+          <cell>
+                                Constraints
+                            </cell>
+          <cell>
+                                Notes
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                city
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                manager_id
+                            </cell>
+          <cell>
+                                integer
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell><term>Keys</term>
+                                Primary key: city
+                                Foreign key: manager_id &#x2192; employee (id)
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>The <term>factory</term> table contains columns for the attributes of the <term>factory</term> entity and a foreign key implementing the relationship <term>manages</term>.  The <term>throughput</term> attribute is not reflected in the table, as it is a derived attribute.  The throughput of a factory can be computed by summing the throughputs of the assembly lines in the factory.</p>
+    <table xml:id="_03-erd-to-relational_id16">
+      <tabular>
+        <title>Table <term>assembly_line</term></title>
+        <row header="yes">
+          <cell>
+                                Column name
+                            </cell>
+          <cell>
+                                Type
+                            </cell>
+          <cell>
+                                Constraints
+                            </cell>
+          <cell>
+                                Notes
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                factory_city
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                number
+                            </cell>
+          <cell>
+                                integer
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                throughput
+                            </cell>
+          <cell>
+                                real
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell><term>Keys</term>
+                                Primary key: factory_city, number
+                                Foreign key: factory_city &#x2192; factory (city)
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>The <term>assembly_line</term> table implements the <term>assembly line</term> weak entity.  It incorporates a foreign key referencing the <term>factory</term> parent entity.  Its primary key is composed of the parent entity key (<term>factory_city</term>) and the partial key (<term>number</term>).</p>
+    <table xml:id="_03-erd-to-relational_id17">
+      <tabular>
+        <title>Table <term>model</term></title>
+        <row header="yes">
+          <cell>
+                                Column name
+                            </cell>
+          <cell>
+                                Type
+                            </cell>
+          <cell>
+                                Constraints
+                            </cell>
+          <cell>
+                                Notes
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                name
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                number
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                type
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                factory_city
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell><term>Keys</term>
+                                Primary key: name, number
+                                Foreign key: factory_city &#x2192; factory (city)
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>The <term>model</term> table contains columns for the attributes of the <term>model</term> entity.  Only the component attributes of the composite attribute <term>designation</term> are included; as <term>designation</term> was also the key attribute for <term>model</term>, the <term>model</term> table has a composite primary key.  The table also includes a foreign key implementing the <term>builds</term> relationship.  As mentioned in the text above, the <term>builds</term> relationship could alternatively be implemented using a cross-reference table connecting <term>factory</term> and <term>builds</term>, but we have opted for the simpler solution here.  We assume that the designation of computer models includes the name of the computer line (e.g. <q>Orion</q>) and some particular version of the computer line, which we call the <q>number</q> of the model.  These versions may contain letters as well as numbers (e.g., <q>xz450</q>), which is why a column named <q>number</q> is implemented as text.</p>
+    <table xml:id="_03-erd-to-relational_id18">
+      <tabular>
+        <title>Table <term>model_application</term></title>
+        <row header="yes">
+          <cell>
+                                Column name
+                            </cell>
+          <cell>
+                                Type
+                            </cell>
+          <cell>
+                                Constraints
+                            </cell>
+          <cell>
+                                Notes
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                model_name
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                model_number
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                application
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell><term>Keys</term>
+                                Primary key: model_name, model_number, application
+                                Foreign key: (model_name, model_number) &#x2192; model (name, number)
+                                Foreign key: application &#x2192; application (application)
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>The <term>model_application</term> table implements the multivalued attribute <term>application</term> of the <term>model</term> entity.  Each row of the table contains a single <term>application</term> value describing a particular computer model.  Note that, as the <term>model</term> entity has a composite primary key, the <term>model_application</term> table has a composite foreign key referencing its parent (<em>not</em> two separate foreign keys for each component of the parent key).  Additionally, we constrain the values in <term>application</term> to come from a set list of possible values, contained in the <term>application</term> table (below).</p>
+    <table xml:id="_03-erd-to-relational_id19">
+      <tabular>
+        <title>Table <term>application</term></title>
+        <row header="yes">
+          <cell>
+                                Column name
+                            </cell>
+          <cell>
+                                Type
+                            </cell>
+          <cell>
+                                Constraints
+                            </cell>
+          <cell>
+                                Notes
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                application
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                                gaming, business, etc.
+                            </cell>
+        </row>
+        <row>
+          <cell><term>Keys</term>
+                                Primary key: application
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>The <term>application</term> table contains a simple list of unique values which are available to insert into the <term>model_application</term> table.</p>
+    <table xml:id="_03-erd-to-relational_id20">
+      <tabular>
+        <title>Table <term>part</term></title>
+        <row header="yes">
+          <cell>
+                                Column name
+                            </cell>
+          <cell>
+                                Type
+                            </cell>
+          <cell>
+                                Constraints
+                            </cell>
+          <cell>
+                                Notes
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                part_number
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                description
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell><term>Keys</term>
+                                Primary key: part_number
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>The <term>part</term> table contains columns for the attributes of the <term>part</term> entity.  The column <term>part_number</term> here, similar to the model <q>number</q> above, can contain characters as well as numbers, so again we use a text type column.</p>
+    <table xml:id="_03-erd-to-relational_id21">
+      <tabular>
+        <title>Table <term>model_part</term></title>
+        <row header="yes">
+          <cell>
+                                Column name
+                            </cell>
+          <cell>
+                                Type
+                            </cell>
+          <cell>
+                                Constraints
+                            </cell>
+          <cell>
+                                Notes
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                model_name
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                model_number
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                part_number
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell><term>Keys</term>
+                                Primary key: model_name, model_number, part_number
+                                Foreign key: (model_name, model_number) &#x2192; model (name, number)
+                                Foreign key: part_number &#x2192; part (part_number)
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>The <term>model_part</term> table is a cross-reference table implementing the <term>can use</term> relationship.</p>
+    <table xml:id="_03-erd-to-relational_id22">
+      <tabular>
+        <title>Table <term>vendor</term></title>
+        <row header="yes">
+          <cell>
+                                Column name
+                            </cell>
+          <cell>
+                                Type
+                            </cell>
+          <cell>
+                                Constraints
+                            </cell>
+          <cell>
+                                Notes
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                name
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                email
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                phone
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell><term>Keys</term>
+                                Primary key: name
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>The <term>vendor</term> table contains columns for the attributes of the <term>vendor</term> entity.  Only the component attributes of the <term>contact info</term> attribute are reflected.</p>
+    <table xml:id="_03-erd-to-relational_id23">
+      <tabular>
+        <title>Table <term>vendor_part</term></title>
+        <row header="yes">
+          <cell>
+                                Column name
+                            </cell>
+          <cell>
+                                Type
+                            </cell>
+          <cell>
+                                Constraints
+                            </cell>
+          <cell>
+                                Notes
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                vendor_name
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                part_number
+                            </cell>
+          <cell>
+                                text
+                            </cell>
+          <cell>
+                                not null
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                price
+                            </cell>
+          <cell>
+                                currency
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell><term>Keys</term>
+                                Primary key: vendor_name, part_number
+                                Foreign key: vendor_name &#x2192; vendor (name)
+                                Foreign key: part_number &#x2192; part (part_number)
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>The <term>vendor_part</term> table is a cross-reference table implementing the <term>supplies</term> relationship.  In addition to the foreign keys for the tables it relates to, it contains a column for the <term>price</term> attribute of the relationship.</p>
+  </subsection>
+  <subsection xml:id="_03-erd-to-relational_self-check-exercises">
+    <title>Self-check exercises</title>
+    <p>This section has some questions you can use to check your understanding of how to convert ERDs to a relational database.</p>
+    <exercise label="erd_to_relational_self_test_1">
+      <statement>
+        <p>Q-1: Entities in our ERD become tables in our relational database.  What do relationships become?</p>
+      </statement>
+      <choices>
+        <choice>
+          <statement id="erd_to_relational_self_test_1_opt_a">
+            <p>Tables</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_1_opt_a">
+            <p>Any relationship can be converted into a cross-reference table.  Is that the only possibility?</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_to_relational_self_test_1_opt_b">
+            <p>Foreign keys</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_1_opt_b">
+            <p>One-to-one and one-to-many relationships can be converted into foreign keys in our database.  Are those the only cardinality ratios?</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_to_relational_self_test_1_opt_c">
+            <p>Merging of tables</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_1_opt_c">
+            <p>One-to-one relationships can result in merging tables, although this is rare.</p>
+          </feedback>
+        </choice>
+        <choice correct="yes">
+          <statement id="erd_to_relational_self_test_1_opt_d">
+            <p>All of the above</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_1_opt_d">
+            <p>Each of the methods above can be applied, depending on the cardinality ratio of the relationship and other factors.</p>
+          </feedback>
+        </choice>
+      </choices>
+    </exercise>
+    <exercise label="erd_to_relational_self_test_2">
+      <statement>
+        <p>Q-2: Consider the ERD below.  We create tables <term>a</term> and <term>b</term>, each of which have a primary key column named <q>id</q>.  (Assume there are additional columns from attributes not shown.)  What is the simplest way to convert the relationship between <term>A</term> and <term>B</term>?</p>
+        <image source="PART2_DATA_MODELING/03-ERD-to-relational/self_test_many_to_one.svg" width="50%" alt="Entities A and B each with key attribute ID.  The relationship between A and B is many-to-one (many on the A side)."/>
+      </statement>
+      <choices>
+        <choice>
+          <statement id="erd_to_relational_self_test_2_opt_a">
+            <p>Create a column named <q>a_id</q> in table <term>b</term>, and make it a foreign key referencing table <term>a</term>.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_2_opt_a">
+            <p>Since a row in <term>b</term> could be related to multiple rows in <term>a</term>, we would need to store multiple ID values in column <term>a_id</term>.
+                Some databases would permit this, but it would complicate queries and updates on the database.</p>
+          </feedback>
+        </choice>
+        <choice correct="yes">
+          <statement id="erd_to_relational_self_test_2_opt_b">
+            <p>Create a column named <q>b_id</q> in table <term>a</term>, and make it a foreign key referencing table <term>b</term>.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_2_opt_b">
+            <p>This is the simplest solution, assuming we do not expect the relationship to change to many-to-many in the future.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_to_relational_self_test_2_opt_c">
+            <p>Create a cross-reference table, <term>a_b</term>, containing columns <term>a_id</term> and <term>b_id</term> as foreign keys referencing <term>a</term> and <term>b</term> respectively.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_2_opt_c">
+            <p>This is an allowable conversion.  Is it the simplest?</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_to_relational_self_test_2_opt_d">
+            <p>Merge tables <term>a</term> and <term>b</term> into a new table.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_2_opt_d">
+            <p>This is not a good choice; while such a structure can be made to work, it is not considered good database design and is prone to errors.
+                We would say that this table is not properly <em>normalized</em>.  We explore normalization in <number_reference internal="True" refuri="../../PART3_RELATIONAL_DATABASE_THEORY/index#relational-theory-part" title="Part {number}"><inline classes="std std-numref">Part 3</inline></number_reference>.</p>
+          </feedback>
+        </choice>
+      </choices>
+    </exercise>
+    <exercise label="erd_to_relational_self_test_3">
+      <statement>
+        <p>Q-3: Consider the ERD below.  We create table <term>r</term> with primary key column <term>id</term>.  What should table <term>w</term> look like?</p>
+        <image source="PART2_DATA_MODELING/03-ERD-to-relational/self_test_weak.svg" width="50%" alt="Entity R with key ID, and weak entity W with partial key partial.  The identifying relationship between R and W is one-to-many."/>
+      </statement>
+      <choices>
+        <choice>
+          <statement id="erd_to_relational_self_test_3_opt_a">
+            <p>The table should have a column <term>partial</term> as primary key.  Additionally, create a cross-reference table <term>r_w</term>.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_3_opt_a">
+            <p>Partial keys cannot become primary keys.  They do not represent unique identifiers for the instances of the weak entity.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_to_relational_self_test_3_opt_b">
+            <p>The table should have columns <term>partial</term> and <term>r_id</term>.  The primary key is <term>partial</term>.
+                Add a foreign key constraint on <term>r_id</term> referencing <term>r</term>.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_3_opt_b">
+            <p>Partial keys cannot become primary keys.  They do not represent unique identifiers for the instances of the weak entity.</p>
+          </feedback>
+        </choice>
+        <choice correct="yes">
+          <statement id="erd_to_relational_self_test_3_opt_c">
+            <p>The table should have columns <term>partial</term> and <term>r_id</term>.  The primary key is a composite of <term>r_id</term> and <term>partial</term>.
+                Add a foreign key constraint on <term>r_id</term> referencing <term>r</term>.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_3_opt_c">
+            <p>Correct.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_to_relational_self_test_3_opt_d">
+            <p>The table should have columns <term>partial</term> and <term>r_id</term>.  The primary key is <term>r_id</term>.  Add a foreign key constraint on <term>r_id</term> referencing <term>r</term>.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_3_opt_d">
+            <p>The parent key is not a sufficient key for the weak entity; there will be multiple rows in <term>w</term> with the same values for <term>r_id</term>.
+                Therefore it cannot be a primary key.</p>
+          </feedback>
+        </choice>
+      </choices>
+    </exercise>
+    <exercise label="erd_to_relational_self_test_4">
+      <statement>
+        <p>Q-4: Consider the ERD below.  We create tables <term>c</term> and <term>d</term>, each of which have a primary key column named <q>id</q>.  How should we handle the relationship between <term>C</term> and <term>D</term>?</p>
+        <image source="PART2_DATA_MODELING/03-ERD-to-relational/self_test_relationship_attribute.svg" width="50%" alt="Entities C and D each with key attribute ID.  The relationship between C and D is many-to-many and has an attribute named &quot;x&quot;."/>
+      </statement>
+      <choices>
+        <choice>
+          <statement id="erd_to_relational_self_test_4_opt_a">
+            <p>Borrow the primary key from one table as a foreign key into the other table (either direction is fine).  Add a column named <q>x</q> into the table with the foreign key column.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_4_opt_a">
+            <p>This is not a good choice; while such a structure can be made to work, it is not considered good database design and is prone to errors.
+                We would say that this table is not properly <em>normalized</em>.  We explore normalization in <number_reference internal="True" refuri="../../PART3_RELATIONAL_DATABASE_THEORY/index#relational-theory-part" title="Part {number}"><inline classes="std std-numref">Part 3</inline></number_reference>.</p>
+          </feedback>
+        </choice>
+        <choice correct="yes">
+          <statement id="erd_to_relational_self_test_4_opt_b">
+            <p>Create a cross reference table <term>c_d</term> with columns <term>c_id</term>, <term>d_id</term>, and <term>x</term>.  Make a composite primary key using <term>c_id</term> and <term>d_id</term>.
+                Add foreign key constraints on <term>c_id</term> and <term>d_id</term> referencing <term>c</term> and <term>d</term>, respectively.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_4_opt_b">
+            <p>Correct.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_to_relational_self_test_4_opt_c">
+            <p>Create a cross reference table <term>c_d</term> with columns <term>c_id</term> and <term>d_id</term>.  Make a composite primary key using <term>c_id</term> and <term>d_id</term>.
+                Add foreign key constraints on <term>c_id</term> and <term>d_id</term> referencing <term>c</term> and <term>d</term>, respectively.  Create another table, <term>c_d_x</term>,
+                with columns <term>c_id</term>, <term>d_id</term>, and <term>x</term>.  Table <term>c_d_x</term> has primary key <term>x</term>, and a foreign key constraint on <term>c_id</term> and <term>d_id</term> referencing table <term>c_d</term>.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_4_opt_c">
+            <p>This could almost work (you would need a different primary key for <term>c_d_x</term>), but it is unnecessarily complicated.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_to_relational_self_test_4_opt_d">
+            <p>Create a cross reference table <term>c_d</term> with columns <term>c_id</term> and <term>d_id</term>.  Make a composite primary key using <term>c_id</term> and <term>d_id</term>.
+                Add foreign key constraints on <term>c_id</term> and <term>d_id</term> referencing <term>c</term> and <term>d</term>, respectively.  Add column <term>x</term> to either <term>c</term> or <term>d</term>.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_4_opt_d">
+            <p>The values for <term>x</term> will differ for different combinations of <term>c</term> and <term>d</term>.
+                There is no good way to capture the dependence of <term>x</term> on <term>d</term>, for example, if we put the column in <term>c</term>.</p>
+          </feedback>
+        </choice>
+      </choices>
+    </exercise>
+    <exercise label="erd_to_relational_self_test_5">
+      <statement>
+        <p>Q-5: Which of the following statements is <em>false</em>?</p>
+      </statement>
+      <choices>
+        <choice correct="yes">
+          <statement id="erd_to_relational_self_test_5_opt_a">
+            <p>Composite attributes result in columns for each component as well as the composite.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_5_opt_a">
+            <p>We do not create a column for the composite, just the components.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_to_relational_self_test_5_opt_b">
+            <p>Multivalued attributes usually require an additional table in the database.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_5_opt_b">
+            <p>This is true.  In some cases it may be possible to use array-valued columns to handle a multivalued attribute,
+                but otherwise we need an additional table or tables.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_to_relational_self_test_5_opt_c">
+            <p>No column is created for derived attributes.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_5_opt_c">
+            <p>This is true.  Derived attributes are not intended to be stored, as they can be computed from other values in the database.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_to_relational_self_test_5_opt_d">
+            <p>If an entity has a composite key attribute, the resulting table will have a composite primary key.</p>
+          </statement>
+          <feedback id="erd_to_relational_self_test_5_opt_d">
+            <p>This is true.</p>
+          </feedback>
+        </choice>
+      </choices>
+    </exercise>
+    <p>&#x274F;</p>
+    <transition/>
+    <p>
+      <term>Notes</term>
+    </p>
+    <footnote auto="1" backrefs="id1" docname="PART2_DATA_MODELING/03-ERD-to-relational/ERD-to-relational" xml:id="_03-erd-to-relational_id2" names="1">
+      <label>1</label>
+      <p>Due to the total participation of <term>factory</term> in the <term>manages</term> relationship, it might seem we should constrain the <term>manager_id</term> column to never contain <c>NULL</c>.  Some care should be taken in adding such constraints.  While a factory <q>must</q> have a manager, there may be times when a factory has no manager, e.g., when a manager leaves the company and a new manager has not yet been identified.  If the <term>manager_id</term> column is constrained to never hold <c>NULL</c>, it will be difficult to correctly reflect the true situation in the database.  In general, use caution and examine all of your edge cases before choosing to constrain a column.</p>
+    </footnote>
+    <p> </p>
+  </subsection>
+</section>

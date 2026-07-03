@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<section xml:id="part1_sql_sql-sql-part">
+  <title>SQL</title>
+  <p>Part 1 of this book is all about SQL, the most popular language used for interacting with <em>relational databases</em>, the main focus of the book.  The chapters in this section have been organized to allow topics to be introduced in somewhat different orders according to the instructor's desired approach.  The diagram below shows the strong dependencies between chapters; chapters will assume knowledge introduced in earlier chapters as implied by the graph.  Chapters without a strong dependency may still refer to other chapters in passing, with a link to the chapter explaining the reference; these weak dependencies are not critical for understanding the referencing chapter.</p>
+  <figure align="" xml:id="id1-2">
+    <caption xmlns:c="https://www.sphinx-doc.org/" xmlns:changeset="https://www.sphinx-doc.org/" xmlns:citation="https://www.sphinx-doc.org/" xmlns:cpp="https://www.sphinx-doc.org/" xmlns:index="https://www.sphinx-doc.org/" xmlns:js="https://www.sphinx-doc.org/" xmlns:math="https://www.sphinx-doc.org/" xmlns:py="https://www.sphinx-doc.org/" xmlns:rst="https://www.sphinx-doc.org/" xmlns:std="https://www.sphinx-doc.org/">Chapter dependency graph for Part 1</caption>
+    <image source="PART1_SQL/chapter_dependencies.svg" width="50%"/>
+  </figure>
+</section>

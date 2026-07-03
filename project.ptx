@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project ptx-version="2" source="pretext" publication="pretext">
+  <targets>
+    <target name="web"
+      format="html"
+      source="practical_db.ptx"
+      publication="publication-rs-for-all.xml"
+    />
+    <target name="runestone"
+      format="html"
+      source="practical_db.ptx"
+      platform="runestone"
+      publication="publication-rs-academy.xml"
+    />
+    <target name="latex"
+      format="latex"
+      source="practical_db.ptx"
+      publication="publication-rs-for-all.xml"
+      output-dir="output/latex"
+    />
+    <target name="pdf"
+      format="pdf"
+      source="practical_db.ptx"
+      publication="publication-rs-latex.xml"
+      output-dir="output/pdf"
+    />
+  </targets>
+</project>

@@ -1,0 +1,2040 @@
+<?xml version="1.0"?>
+<section xml:id="_02-relational-algebra_relational-algebra-relational-algebra-chapter">
+  <title>Relational algebra</title>
+  <p xml:id="_02-relational-algebra_index-0">In the last chapter, we introduced the relational model of the database, and defined the fundamental mathematical object in the model, the <em>relation</em>.  In this chapter, we discuss <em>relational algebra</em>, which is the set of algebraic operations that can be performed on relations.  Relational algebra can be viewed as one mechanism for expressing queries on data stored in relations, and an understanding of relational algebra is important in understanding how relational databases represent and optimize queries.  We will cover only basic relational algebra, excluding later extensions such as those for group and aggregate operations and those for outer joins.</p>
+  <p>A related topic, which we do not cover in this book, is <em>relational calculus</em>.  Relational calculus provides another mathematical expression of queries on relations, and is equivalent in expressiveness to relational algebra.</p>
+  <subsection xml:id="_02-relational-algebra_unary-operations">
+    <title>Unary operations</title>
+    <p xml:id="_02-relational-algebra_index-1">The unary operations in relational algebra act on one relation and result in another relation.  The unary operations are <em>selection</em>, <em>projection</em>, and <em>renaming</em>, and their associated operators are typically written as the Greek letters which match the starting letters of the operation:</p>
+    <p>
+      <ul>
+        <li>
+          <p><math>\sigma</math> (sigma): selection</p>
+        </li>
+        <li>
+          <p><math>\pi</math> (pi): projection</p>
+        </li>
+        <li>
+          <p><math>\rho</math> (rho): renaming</p>
+        </li>
+      </ul>
+    </p>
+    <p>We will explore each of these unary operators in application to the relation <term>books</term> shown below:</p>
+    <table xml:id="_02-relational-algebra_id9">
+      <tabular>
+        <title>
+          <term>books</term>
+        </title>
+        <row header="yes">
+          <cell>
+                                book_id
+                            </cell>
+          <cell>
+                                author_id
+                            </cell>
+          <cell>
+                                title
+                            </cell>
+          <cell>
+                                year
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                1
+                            </cell>
+          <cell>
+                                3
+                            </cell>
+          <cell>
+            <em>The House of the Spirits</em>
+          </cell>
+          <cell>
+                                1982
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                2
+                            </cell>
+          <cell>
+                                1
+                            </cell>
+          <cell>
+            <em>Invisible Man</em>
+          </cell>
+          <cell>
+                                1952
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                3
+                            </cell>
+          <cell>
+                                6
+                            </cell>
+          <cell>
+            <em>The Hobbit</em>
+          </cell>
+          <cell>
+                                1937
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                4
+                            </cell>
+          <cell>
+                                2
+                            </cell>
+          <cell>
+            <em>Unaccustomed Earth</em>
+          </cell>
+          <cell>
+                                2008
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                5
+                            </cell>
+          <cell>
+                                6
+                            </cell>
+          <cell>
+            <em>The Fellowship of the Ring</em>
+          </cell>
+          <cell>
+                                1954
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                6
+                            </cell>
+          <cell>
+                                4
+                            </cell>
+          <cell>
+            <em>House Made of Dawn</em>
+          </cell>
+          <cell>
+                                1968
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                7
+                            </cell>
+          <cell>
+                                5
+                            </cell>
+          <cell>
+            <em>A Wizard of Earthsea</em>
+          </cell>
+          <cell>
+                                1968
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>The <term>books</term> relation has primary key <term>book_id</term>, while <term>author_id</term> is a foreign key to another table we will use later in this chapter.</p>
+    <subsubsection xml:id="_02-relational-algebra_selection">
+      <title>Selection</title>
+      <p>Selection applies a Boolean condition to the tuples in a relation.  The result of a selection operation is a relation containing exactly those tuples for which the selection condition is true.  For example, if we are interested in books published after 1960, we can write the selection operation to retrieve just those books as:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\sigma_{\text{year} &gt; 1960}(\text{books})</math_block>
+      <p>The operator is written with the Boolean condition as a subscript, and then the operand (the input relation) is given in parentheses.  Note that the Boolean condition refers to an attribute of the <term>books</term> relation, comparing it to a constant value.  The result of this operation is a relation with the same schema as <term>books</term>, but with no name:</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    book_id
+                                </cell>
+            <cell>
+                                    author_id
+                                </cell>
+            <cell>
+                                    title
+                                </cell>
+            <cell>
+                                    year
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+                                    3
+                                </cell>
+            <cell>
+              <em>The House of the Spirits</em>
+            </cell>
+            <cell>
+                                    1982
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    4
+                                </cell>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+              <em>Unaccustomed Earth</em>
+            </cell>
+            <cell>
+                                    2008
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    6
+                                </cell>
+            <cell>
+                                    4
+                                </cell>
+            <cell>
+              <em>House Made of Dawn</em>
+            </cell>
+            <cell>
+                                    1968
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    7
+                                </cell>
+            <cell>
+                                    5
+                                </cell>
+            <cell>
+              <em>A Wizard of Earthsea</em>
+            </cell>
+            <cell>
+                                    1968
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>Simple Boolean expressions in the relational algebra usually involve comparisons of an attribute with a constant, using any comparison operator.  More complex Boolean expressions can be constructed from simple expressions using <term>AND</term>, <term>OR</term>, and <term>NOT</term>.  For instance, if we are interested in books published after 1960 as well as books by the author with <term>author_id</term> equal to 6, we could write:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\sigma_{\text{year} &gt; 1960 \text{ OR } \text{author_id} = 6}(\text{books})</math_block>
+      <p>Selection can result in a relation that has all of the tuples from the original (a relation equivalent to the original), some of the tuples from the original, or no tuples at all (an empty set).  In the case of an empty relation, we still consider the relation to have the same schema as the original relation.</p>
+      <p>Since the result of a selection is a relation, we can apply another selection to the result.  For example, we could find the books published after 1950, and then select from that result the books with <term>author_id</term> equal to 6:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\sigma_{\text{author_id} = 6}(\sigma_{\text{year} &gt; 1950}(\text{books}))</math_block>
+      <p>This would give us a result with one tuple:</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    book_id
+                                </cell>
+            <cell>
+                                    author_id
+                                </cell>
+            <cell>
+                                    title
+                                </cell>
+            <cell>
+                                    year
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    5
+                                </cell>
+            <cell>
+                                    6
+                                </cell>
+            <cell>
+              <em>The Fellowship of the Ring</em>
+            </cell>
+            <cell>
+                                    1954
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>This composition of selection operations is equivalent to a single selection operation using a <em>conjunction</em> (AND) of the selection conditions:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\sigma_{\text{author_id} = 6 \text{ AND } \text{year} &gt; 1950}(\text{books})</math_block>
+    </subsubsection>
+    <subsubsection xml:id="_02-relational-algebra_projection">
+      <title>Projection</title>
+      <p>The projection operation creates a new relation which has a subset of the attributes of the input relation.  We could use projection, for example, to get a set of tuples expressing just the title and publication year of our books.  We write the projection operator with the list of attribute names in the subscript, followed by the operand in parentheses:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{title, year}}(\text{books})</math_block>
+      <p>This result contains a tuple for each tuple in <term>books</term>, but the tuples in the result only have the attributes specified by the projection operation, thus the result relation has a different schema from the original:</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    title
+                                </cell>
+            <cell>
+                                    year
+                                </cell>
+          </row>
+          <row>
+            <cell>
+              <em>The House of the Spirits</em>
+            </cell>
+            <cell>
+                                    1982
+                                </cell>
+          </row>
+          <row>
+            <cell>
+              <em>Invisible Man</em>
+            </cell>
+            <cell>
+                                    1952
+                                </cell>
+          </row>
+          <row>
+            <cell>
+              <em>The Hobbit</em>
+            </cell>
+            <cell>
+                                    1937
+                                </cell>
+          </row>
+          <row>
+            <cell>
+              <em>Unaccustomed Earth</em>
+            </cell>
+            <cell>
+                                    2008
+                                </cell>
+          </row>
+          <row>
+            <cell>
+              <em>The Fellowship of the Ring</em>
+            </cell>
+            <cell>
+                                    1954
+                                </cell>
+          </row>
+          <row>
+            <cell>
+              <em>House Made of Dawn</em>
+            </cell>
+            <cell>
+                                    1968
+                                </cell>
+          </row>
+          <row>
+            <cell>
+              <em>A Wizard of Earthsea</em>
+            </cell>
+            <cell>
+                                    1968
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>At first glance, it might seem the result of a projection will always have the same number of tuples as the input relation, but this is not the case.  Consider what happens if we project <term>books</term> onto the single attribute <term>year</term>.  There are two tuples in <term>books</term> with the same <term>year</term> value of 1968.  Since relations cannot contain duplicates, the result of our projection operation can contain only one tuple with <term>year</term> equal to 1968.  Thus, the result has <em>fewer</em> tuples than the input relation:</p>
+      <table xml:id="_02-relational-algebra_id10">
+        <tabular>
+          <title>
+            <math>\pi_{\text{year}}(\text{books})</math>
+          </title>
+          <row header="yes">
+            <cell>
+                                    year
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1982
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1952
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1937
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    2008
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1954
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1968
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>Since the result of projection is a relation, we can apply selection to the result:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\sigma_{\text{year}=1968}(\pi_{\text{title, year}}(\text{books}))</math_block>
+      <p>Note the order of operations here: first, we supply <term>books</term> as an input to the projection operation; second, the result of the projection is given as the input to the selection operation.</p>
+      <p>Similarly, since the result of a selection is a relation, we can apply projection after selection.  The above expression is equivalent to:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{title, year}}(\sigma_{\text{year}=1968}(\text{books}))</math_block>
+      <p>The result in both cases is:</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    title
+                                </cell>
+            <cell>
+                                    year
+                                </cell>
+          </row>
+          <row>
+            <cell>
+              <em>House Made of Dawn</em>
+            </cell>
+            <cell>
+                                    1968
+                                </cell>
+          </row>
+          <row>
+            <cell>
+              <em>A Wizard of Earthsea</em>
+            </cell>
+            <cell>
+                                    1968
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>It is important to note, however, that you cannot always change the order of projection and selection for an equivalent result.  Consider the following expressions:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{title}}(\sigma_{\text{year}=1968}(\text{books}))</math_block>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\sigma_{\text{year}=1968}(\pi_{\text{title}}(\text{books}))</math_block>
+      <p>In the first expression, we select the books which were published in 1968, and then project the resulting tuples onto the <term>title</term> attribute.  This result is:</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    title
+                                </cell>
+          </row>
+          <row>
+            <cell>
+              <em>House Made of Dawn</em>
+            </cell>
+          </row>
+          <row>
+            <cell>
+              <em>A Wizard of Earthsea</em>
+            </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>However, the second expression is not a correct expression.  The projection occurs first, yielding a relation with just one attribute named <term>title</term>.  The following selection is then incorrect, because it makes reference to an attribute, <term>year</term>, which does not exist in the input relation.</p>
+      <p>Projection can also be applied to the result of another projection; however, the result is equivalent to just performing the second projection.  Compare:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{title}}(\pi_{\text{title, year}}(\text{books}))</math_block>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{title}}(\text{books})</math_block>
+      <p>Note that we cannot change the order of the two projection operations in the first expression above, as the expression would then be incorrect.</p>
+    </subsubsection>
+    <subsubsection xml:id="_02-relational-algebra_renaming">
+      <title>Renaming</title>
+      <p>The final unary operation allows for relations and their attributes to be renamed.  As we will see, this operation is primarily useful in eliminating name conflicts in certain binary operations - that is, in expressions involving two relations in which the name of some attribute is the same in both relations.  The general form of the renaming operator lets us provide new names for the relation and all of its attributes:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\rho_{\text{mybooks(b_id, a_id, title, year)}}(\text{books})</math_block>
+      <p>This results in a relation with the name <term>mybooks</term> with attributes <term>b_id</term>, <term>a_id</term>, <term>title</term>, and <term>year</term>.  The tuples of the new relation have the same values as the tuples of the old relation, but the values are associated with the new attribute names.</p>
+      <p>As in this example, it is not necessary to alter the name of every attribute (we left unchanged the attribute names <term>title</term> and <term>year</term>), but some name must be provided for every attribute.  A non-standard alternative notation allows us to rename only the attributes we want to change:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\rho_{\text{mybooks(book_id} \rightarrow \text{b_id, author_id} \rightarrow \text{a_id)}}(\text{books})</math_block>
+      <p>We can optionally leave out either the relation name or the list of attributes.  For example, the following expression is correct and results in a relation named <term>books</term> with attributes <term>book_id</term>, <term>author_id</term>, <term>title</term>, and <term>publication_year</term>:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\rho_{\text{(year} \rightarrow \text{publication_year)}}(\text{books})</math_block>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_02-relational-algebra_cross-products-and-joins">
+    <title>Cross products and joins</title>
+    <p>We now turn our attention to operations which extend tuples in one relation with tuples from another relation.  For this section, we will be using <term>books</term> and a second relation, <term>authors</term>:</p>
+    <table xml:id="_02-relational-algebra_id11">
+      <tabular>
+        <title>
+          <term>authors</term>
+        </title>
+        <row header="yes">
+          <cell>
+                                author_id
+                            </cell>
+          <cell>
+                                name
+                            </cell>
+          <cell>
+                                birth
+                            </cell>
+          <cell>
+                                death
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                1
+                            </cell>
+          <cell>
+                                Ralph Ellison
+                            </cell>
+          <cell>
+                                1914-03-01
+                            </cell>
+          <cell>
+                                1994-04-16
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                2
+                            </cell>
+          <cell>
+                                Jhumpa Lahiri
+                            </cell>
+          <cell>
+                                1967-07-11
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                3
+                            </cell>
+          <cell>
+                                Isabel Allende
+                            </cell>
+          <cell>
+                                1942-08-02
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                4
+                            </cell>
+          <cell>
+                                N. Scott Momaday
+                            </cell>
+          <cell>
+                                1934-02-27
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                5
+                            </cell>
+          <cell>
+                                Ursula K. Le Guin
+                            </cell>
+          <cell>
+                                1929-10-21
+                            </cell>
+          <cell>
+                                2018-01-22
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                6
+                            </cell>
+          <cell>
+                                J.R.R. Tolkien
+                            </cell>
+          <cell>
+                                1892-01-03
+                            </cell>
+          <cell>
+                                1973-09-02
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                7
+                            </cell>
+          <cell>
+                                Kazuo Ishiguro
+                            </cell>
+          <cell>
+                                1954-11-08
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>The <term>authors</term> relation has a primary key of <term>author_id</term>.  The <term>books</term> relation is related to <term>authors</term> via a foreign key on <term>author_id</term>.</p>
+    <subsubsection xml:id="_02-relational-algebra_cross-product-index-2">
+      <title>Cross product</title>
+      <p>The cross product (or <em>Cartesian product</em>) of two relations <term>A</term> and <term>B</term> is a new relation containing all tuples that can be created by concatenating some tuple from <term>B</term> onto some tuple from <term>A</term> <footnote_reference auto="1" docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" xml:id="_02-relational-algebra_id1" refid="id5">1</footnote_reference>.  Here we are using the definition of tuple as an ordered list of values.  The attributes of the new relation are normally the attributes of <term>A</term> and <term>B</term> concatenated.  However, if there is a name collision, e.g., if both <term>A</term> and <term>B</term> have some attribute <term>x</term>, we will disambiguate the attributes in the new relation by prepending the relation names, that is, the cross product will have attributes <term>A.x</term> and <term>B.x</term>; we can avoid having to do this if we first apply renaming to one relation or the other.</p>
+      <p>The cross product operator is denoted <math>\times</math>, and is written between its two operands. To start, consider two rather abstract relations <term>S</term> and <term>T</term>:</p>
+      <table xml:id="_02-relational-algebra_id12">
+        <tabular>
+          <title>
+            <term>S</term>
+          </title>
+          <row header="yes">
+            <cell>
+                                    u
+                                </cell>
+            <cell>
+                                    v
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+                                    one
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+                                    two
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <table xml:id="_02-relational-algebra_id13">
+        <tabular>
+          <title>
+            <term>T</term>
+          </title>
+          <row header="yes">
+            <cell>
+                                    x
+                                </cell>
+            <cell>
+                                    y
+                                </cell>
+            <cell>
+                                    z
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    green
+                                </cell>
+            <cell>
+                                    3.1415
+                                </cell>
+            <cell>
+                                    apple
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    blue
+                                </cell>
+            <cell>
+                                    2.71828
+                                </cell>
+            <cell>
+                                    pear
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    yellow
+                                </cell>
+            <cell>
+                                    1.618
+                                </cell>
+            <cell>
+                                    mango
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>We write the cross product of <term>S</term> and <term>T</term> as:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\text{S} \times \text{T}</math_block>
+      <p>which gives us the relation containing every pairing of a tuple from <term>S</term> with every tuple from <term>T</term>:</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    u
+                                </cell>
+            <cell>
+                                    v
+                                </cell>
+            <cell>
+                                    x
+                                </cell>
+            <cell>
+                                    y
+                                </cell>
+            <cell>
+                                    z
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+                                    one
+                                </cell>
+            <cell>
+                                    green
+                                </cell>
+            <cell>
+                                    3.1415
+                                </cell>
+            <cell>
+                                    apple
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+                                    one
+                                </cell>
+            <cell>
+                                    blue
+                                </cell>
+            <cell>
+                                    2.71828
+                                </cell>
+            <cell>
+                                    pear
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+                                    one
+                                </cell>
+            <cell>
+                                    yellow
+                                </cell>
+            <cell>
+                                    1.618
+                                </cell>
+            <cell>
+                                    mango
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+                                    two
+                                </cell>
+            <cell>
+                                    green
+                                </cell>
+            <cell>
+                                    3.1415
+                                </cell>
+            <cell>
+                                    apple
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+                                    two
+                                </cell>
+            <cell>
+                                    blue
+                                </cell>
+            <cell>
+                                    2.71828
+                                </cell>
+            <cell>
+                                    pear
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+                                    two
+                                </cell>
+            <cell>
+                                    yellow
+                                </cell>
+            <cell>
+                                    1.618
+                                </cell>
+            <cell>
+                                    mango
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>From the definition, it is trivial to determine that the size of the cross product is the product of the sizes of the operands.</p>
+    </subsubsection>
+    <subsubsection xml:id="_02-relational-algebra_join-index-3">
+      <title>Join</title>
+      <p>The cross product is a fundamental operation in relational algebra, but not a generally useful one when we consider actual data.  Consider the cross product of <term>books</term> and <term>authors</term>:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\text{books} \times \text{authors}</math_block>
+      <p>The full set of tuples in this relation is large (the number of books multiplied by the number of authors), so we only show a subset below:</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    book_id
+                                </cell>
+            <cell>
+                                    books.author_id
+                                </cell>
+            <cell>
+                                    title
+                                </cell>
+            <cell>
+                                    year
+                                </cell>
+            <cell>
+                                    authors.author_id
+                                </cell>
+            <cell>
+                                    name
+                                </cell>
+            <cell>
+                                    birth
+                                </cell>
+            <cell>
+                                    death
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+                                    3
+                                </cell>
+            <cell>
+              <em>The House of the Spirits</em>
+            </cell>
+            <cell>
+                                    1982
+                                </cell>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+                                    Ralph Ellison
+                                </cell>
+            <cell>
+                                    1914-03-01
+                                </cell>
+            <cell>
+                                    1994-04-16
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+                                    3
+                                </cell>
+            <cell>
+              <em>The House of the Spirits</em>
+            </cell>
+            <cell>
+                                    1982
+                                </cell>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+                                    Jhumpa Lahiri
+                                </cell>
+            <cell>
+                                    1967-07-11
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+                                    3
+                                </cell>
+            <cell>
+              <em>The House of the Spirits</em>
+            </cell>
+            <cell>
+                                    1982
+                                </cell>
+            <cell>
+                                    3
+                                </cell>
+            <cell>
+                                    Isabel Allende
+                                </cell>
+            <cell>
+                                    1942-08-02
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+              <em>Invisible Man</em>
+            </cell>
+            <cell>
+                                    1952
+                                </cell>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+                                    Ralph Ellison
+                                </cell>
+            <cell>
+                                    1914-03-01
+                                </cell>
+            <cell>
+                                    1994-04-16
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+              <em>Invisible Man</em>
+            </cell>
+            <cell>
+                                    1952
+                                </cell>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+                                    Jhumpa Lahiri
+                                </cell>
+            <cell>
+                                    1967-07-11
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+              <em>Invisible Man</em>
+            </cell>
+            <cell>
+                                    1952
+                                </cell>
+            <cell>
+                                    3
+                                </cell>
+            <cell>
+                                    Isabel Allende
+                                </cell>
+            <cell>
+                                    1942-08-02
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>The author of <em>The House of the Spirits</em> is Isabel Allende.  What meaning, then, can we make of a tuple that pairs <em>The House of the Spirits</em> with the author Ralph Ellison (the author of <em>Invisible Man</em>)?</p>
+      <p>We are typically interested in pairing only certain tuples of a relation with certain tuples of another.  In the above example, we are interested in tuples where the <term>author_id</term> attribute from <term>books</term> agrees with the <term>author_id</term> attribute from <term>authors</term>.  This relationship is indicated not only by the names we have used for attributes, but also by the foreign key constraint on <term>books</term> and <term>authors</term>.  To retain only the tuples with matching <term>author_id</term> values, we can apply a selection operation to the result of our cross product:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\sigma_{\text{books.author_id}=\text{authors.author_id}}(\text{books} \times \text{authors})</math_block>
+      <p>This yields a useful result:</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    book_id
+                                </cell>
+            <cell>
+                                    books.author_id
+                                </cell>
+            <cell>
+                                    title
+                                </cell>
+            <cell>
+                                    year
+                                </cell>
+            <cell>
+                                    authors.author_id
+                                </cell>
+            <cell>
+                                    name
+                                </cell>
+            <cell>
+                                    birth
+                                </cell>
+            <cell>
+                                    death
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+                                    3
+                                </cell>
+            <cell>
+              <em>The House of the Spirits</em>
+            </cell>
+            <cell>
+                                    1982
+                                </cell>
+            <cell>
+                                    3
+                                </cell>
+            <cell>
+                                    Isabel Allende
+                                </cell>
+            <cell>
+                                    1942-08-02
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+              <em>Invisible Man</em>
+            </cell>
+            <cell>
+                                    1952
+                                </cell>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+                                    Ralph Ellison
+                                </cell>
+            <cell>
+                                    1914-03-01
+                                </cell>
+            <cell>
+                                    1994-04-16
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    3
+                                </cell>
+            <cell>
+                                    6
+                                </cell>
+            <cell>
+              <em>The Hobbit</em>
+            </cell>
+            <cell>
+                                    1937
+                                </cell>
+            <cell>
+                                    6
+                                </cell>
+            <cell>
+                                    J.R.R. Tolkien
+                                </cell>
+            <cell>
+                                    1892-01-03
+                                </cell>
+            <cell>
+                                    1973-09-02
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    4
+                                </cell>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+              <em>Unaccustomed Earth</em>
+            </cell>
+            <cell>
+                                    2008
+                                </cell>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+                                    Jhumpa Lahiri
+                                </cell>
+            <cell>
+                                    1967-07-11
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    5
+                                </cell>
+            <cell>
+                                    6
+                                </cell>
+            <cell>
+              <em>The Fellowship of the Ring</em>
+            </cell>
+            <cell>
+                                    1954
+                                </cell>
+            <cell>
+                                    6
+                                </cell>
+            <cell>
+                                    J.R.R. Tolkien
+                                </cell>
+            <cell>
+                                    1892-01-03
+                                </cell>
+            <cell>
+                                    1973-09-02
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    6
+                                </cell>
+            <cell>
+                                    4
+                                </cell>
+            <cell>
+              <em>House Made of Dawn</em>
+            </cell>
+            <cell>
+                                    1968
+                                </cell>
+            <cell>
+                                    4
+                                </cell>
+            <cell>
+                                    N. Scott Momaday
+                                </cell>
+            <cell>
+                                    1934-02-27
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    7
+                                </cell>
+            <cell>
+                                    5
+                                </cell>
+            <cell>
+              <em>A Wizard of Earthsea</em>
+            </cell>
+            <cell>
+                                    1968
+                                </cell>
+            <cell>
+                                    5
+                                </cell>
+            <cell>
+                                    Ursula K. Le Guin
+                                </cell>
+            <cell>
+                                    1929-10-21
+                                </cell>
+            <cell>
+                                    2018-01-22
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>Since this pattern of applying a selection after a cross product is so common, we have an operator that combines the two into an operation known as a <em>join</em> <footnote_reference auto="1" docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" xml:id="_02-relational-algebra_id2" refid="id6">2</footnote_reference>.  Using the join operator, the above expression becomes:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\text{books} \Join_{\text{books.author_id}=\text{authors.author_id}} \text{authors}</math_block>
+      <p>or, you can instead format the expression as:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\text{books} \underset{\text{books.author_id}=\text{authors.author_id}}\Join \text{authors}</math_block>
+      <p>Note that one tuple from <term>authors</term> does not contribute to the join.  This tuple's <term>author_id</term> matches none of the tuples in <term>books</term>, and thus no combined tuple using it can appear in the join result.  We call this tuple a <em>dangling tuple</em>.  Dangling tuples may be an indication of a problem in the data; in this example, it may suggest that we are missing information about books by one author.</p>
+    </subsubsection>
+    <subsubsection xml:id="_02-relational-algebra_theta-join-and-equijoin-index-4">
+      <title>Theta-join and equijoin</title>
+      <p>While an equality condition is typically used in joins, more generally any condition of the following form can be used:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\text{A.x } \Theta \text{ B.y}</math_block>
+      <p>where <term>A.x</term> is an attribute from one relation, <term>B.y</term> is an attribute from the other relation, and <math>\Theta</math> is a comparison operator (such as =, &lt;, etc.).  A condition of this form is known as a <em>theta condition</em>, and a join using such a condition or a conjunction (AND) of such conditions is known as a <em>theta-join</em>.</p>
+      <p>A theta-join using only equality comparisons (as in our example above) is further known as an <em>equijoin</em>.</p>
+      <p>This terminology is not especially important in understanding the algebra, but is something you may encounter if you intend a deeper study of  relational algebra.</p>
+    </subsubsection>
+    <subsubsection xml:id="_02-relational-algebra_natural-join-index-5">
+      <title>Natural join</title>
+      <p>When we join <term>books</term> with <term>authors</term> we run into the issue that both relations contain an attribute named <term>author_id</term>.  Since a relation cannot have more than one attribute with the same name, joining (or taking a cross product of) these two relations requires us to rename the attributes in some fashion. This can be done either by an explicit renaming operation prior to joining or by prepending the original relation name (as we did in our example).  Because our join condition was equality on the <term>author_id</term> attributes, both the <term>books.author_id</term> and <term>authors.author_id</term> in the resulting relation always agree.  This unnecessary redundancy can be removed using projection and renaming.</p>
+      <p>In this special situation in which we wish to join specifically by equating the attributes with the same names in both relations - subsequently removing the <q>duplicate</q> attributes - we can instead do a <em>natural join</em>.  We can indicate a natural join using the join operator with no conditions <footnote_reference auto="1" docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" xml:id="_02-relational-algebra_id3" refid="id7">3</footnote_reference>:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\text{books} \Join \text{authors}</math_block>
+      <p>which yields the simplified relation:</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    book_id
+                                </cell>
+            <cell>
+                                    author_id
+                                </cell>
+            <cell>
+                                    title
+                                </cell>
+            <cell>
+                                    year
+                                </cell>
+            <cell>
+                                    name
+                                </cell>
+            <cell>
+                                    birth
+                                </cell>
+            <cell>
+                                    death
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+                                    3
+                                </cell>
+            <cell>
+              <em>The House of the Spirits</em>
+            </cell>
+            <cell>
+                                    1982
+                                </cell>
+            <cell>
+                                    Isabel Allende
+                                </cell>
+            <cell>
+                                    1942-08-02
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+                                    1
+                                </cell>
+            <cell>
+              <em>Invisible Man</em>
+            </cell>
+            <cell>
+                                    1952
+                                </cell>
+            <cell>
+                                    Ralph Ellison
+                                </cell>
+            <cell>
+                                    1914-03-01
+                                </cell>
+            <cell>
+                                    1994-04-16
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    3
+                                </cell>
+            <cell>
+                                    6
+                                </cell>
+            <cell>
+              <em>The Hobbit</em>
+            </cell>
+            <cell>
+                                    1937
+                                </cell>
+            <cell>
+                                    J.R.R. Tolkien
+                                </cell>
+            <cell>
+                                    1892-01-03
+                                </cell>
+            <cell>
+                                    1973-09-02
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    4
+                                </cell>
+            <cell>
+                                    2
+                                </cell>
+            <cell>
+              <em>Unaccustomed Earth</em>
+            </cell>
+            <cell>
+                                    2008
+                                </cell>
+            <cell>
+                                    Jhumpa Lahiri
+                                </cell>
+            <cell>
+                                    1967-07-11
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    5
+                                </cell>
+            <cell>
+                                    6
+                                </cell>
+            <cell>
+              <em>The Fellowship of the Ring</em>
+            </cell>
+            <cell>
+                                    1954
+                                </cell>
+            <cell>
+                                    J.R.R. Tolkien
+                                </cell>
+            <cell>
+                                    1892-01-03
+                                </cell>
+            <cell>
+                                    1973-09-02
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    6
+                                </cell>
+            <cell>
+                                    4
+                                </cell>
+            <cell>
+              <em>House Made of Dawn</em>
+            </cell>
+            <cell>
+                                    1968
+                                </cell>
+            <cell>
+                                    N. Scott Momaday
+                                </cell>
+            <cell>
+                                    1934-02-27
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    7
+                                </cell>
+            <cell>
+                                    5
+                                </cell>
+            <cell>
+              <em>A Wizard of Earthsea</em>
+            </cell>
+            <cell>
+                                    1968
+                                </cell>
+            <cell>
+                                    Ursula K. Le Guin
+                                </cell>
+            <cell>
+                                    1929-10-21
+                                </cell>
+            <cell>
+                                    2018-01-22
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_02-relational-algebra_set-operations-index-6">
+    <title>Set operations</title>
+    <p>Unsurprisingly, given that relations are sets, relational algebra includes the usual set operations - <em>union</em>, <em>intersection</em>, and <em>set difference</em> - with some restrictions.  These binary operations are denoted by:</p>
+    <p>
+      <ul>
+        <li>
+          <p><math>\cup</math>: union</p>
+        </li>
+        <li>
+          <p><math>\cap</math>: intersection</p>
+        </li>
+        <li>
+          <p><math>-</math>: set difference</p>
+        </li>
+      </ul>
+    </p>
+    <p>Given two relations <term>A</term> and <term>B</term>, the union <math>\text{A} \cup \text{B}</math> is the set of all tuples that exist in <term>A</term>, or exist in <term>B</term>, or both.  The intersection <math>\text{A} \cap \text{B}</math> is the set of all tuples that exist in both <term>A</term> and <term>B</term>.  Finally, the set difference <math>\text{A} - \text{B}</math> is the set of all tuples that exist in <term>A</term> but do not exist in <term>B</term>.</p>
+    <p>For example, let <term>A</term> and <term>B</term> be the relations below:</p>
+    <table xml:id="_02-relational-algebra_id14">
+      <tabular>
+        <title>
+          <term>A</term>
+        </title>
+        <row header="yes">
+          <cell>
+                                x
+                            </cell>
+          <cell>
+                                y
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                apple
+                            </cell>
+          <cell>
+                                42
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                orange
+                            </cell>
+          <cell>
+                                19
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                cherry
+                            </cell>
+          <cell>
+                                77
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <table xml:id="_02-relational-algebra_id15">
+      <tabular>
+        <title>
+          <term>B</term>
+        </title>
+        <row header="yes">
+          <cell>
+                                x
+                            </cell>
+          <cell>
+                                y
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                banana
+                            </cell>
+          <cell>
+                                8
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                apple
+                            </cell>
+          <cell>
+                                42
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                coconut
+                            </cell>
+          <cell>
+                                17
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>Then we have:</p>
+    <table xml:id="_02-relational-algebra_id16">
+      <tabular>
+        <title>
+          <math>\text{A} \cup \text{B}</math>
+        </title>
+        <row header="yes">
+          <cell>
+                                x
+                            </cell>
+          <cell>
+                                y
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                apple
+                            </cell>
+          <cell>
+                                42
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                orange
+                            </cell>
+          <cell>
+                                19
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                cherry
+                            </cell>
+          <cell>
+                                77
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                banana
+                            </cell>
+          <cell>
+                                8
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                coconut
+                            </cell>
+          <cell>
+                                17
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <table xml:id="_02-relational-algebra_id17">
+      <tabular>
+        <title>
+          <math>\text{A} \cap \text{B}</math>
+        </title>
+        <row header="yes">
+          <cell>
+                                x
+                            </cell>
+          <cell>
+                                y
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                apple
+                            </cell>
+          <cell>
+                                42
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <table xml:id="_02-relational-algebra_id18">
+      <tabular>
+        <title>
+          <math>\text{A} - \text{B}</math>
+        </title>
+        <row header="yes">
+          <cell>
+                                x
+                            </cell>
+          <cell>
+                                y
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                orange
+                            </cell>
+          <cell>
+                                19
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                cherry
+                            </cell>
+          <cell>
+                                77
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <table xml:id="_02-relational-algebra_id19">
+      <tabular>
+        <title>
+          <math>\text{B} - \text{A}</math>
+        </title>
+        <row header="yes">
+          <cell>
+                                x
+                            </cell>
+          <cell>
+                                y
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                banana
+                            </cell>
+          <cell>
+                                8
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                coconut
+                            </cell>
+          <cell>
+                                17
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>Note that union and intersection are commutative, but set difference is not.</p>
+    <p>The important restriction on set operations in relational algebra is that the relations must be compatible in terms of their schemas.  The meaning of <q>compatible</q> varies, but for our purposes, assume we view the tuples in a relation as ordered lists, where each position in the list is associated with a particular attribute and type domain.  Then, if we have two relations, we require that, for a given position in the tuples in either relation, the attribute and type domain are the same.  For <term>A</term> and <term>B</term> shown above, we might assert that the first position corresponds to attribute <term>x</term> and contains character strings, while the second position (<term>y</term>) contains integers.</p>
+    <p>A looser requirement allows attribute names (but not type domains) to differ between relations.  This requirement aligns less closely with the second definition of tuple given in the previous chapter, but it eliminates the occasional need for renaming operations prior to applying set operations. If the attribute names do not match in the two relations, we adopt the attribute names from the left-hand operand for the result relation.</p>
+    <p>While intersection is a useful operation, it is not strictly needed for the algebra, as the same result can be obtained using set difference:</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\text{A} \cap \text{B} \equiv \text{A} - (\text{A} - \text{B})</math_block>
+  </subsection>
+  <subsection xml:id="_02-relational-algebra_division-index-7">
+    <title>Division</title>
+    <p>The operations described above are sufficient for most query needs.  However, one other binary operation, <em>division</em>, is typically included in the basic relational algebra.  To divide a relation <term>P</term> by another relation <term>R</term>, we write:</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\text{P} \div \text{R}</math_block>
+    <p>Division is the most difficult operation to describe; in a very loose sense it acts as a kind of inverse to a cross product.  That is, if <term>P</term>, <term>Q</term>, and <term>R</term> are relations and</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\text{P} = \text{Q} \times \text{R}</math_block>
+    <p>then it is true that</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\text{P} \div \text{R} = \text{Q}</math_block>
+    <p>However, the reverse is not necessarily true.  Rather, let <term>P</term> be some relation, with attributes <term>x</term> and <term>y</term> <footnote_reference auto="1" docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" xml:id="_02-relational-algebra_id4" refid="id8">4</footnote_reference>.  We require that <term>R</term> has attribute <term>y</term>.  Then <math>\text{P} \div \text{R}</math> will contain the values of <term>x</term> which are paired (in <term>P</term>) with <em>every</em> value of <term>y</term> listed in <term>R</term>.</p>
+    <p>We will start with an abstract example.  Let <term>P</term> be the relation pictured below:</p>
+    <table xml:id="_02-relational-algebra_id20">
+      <tabular>
+        <title>
+          <term>P</term>
+        </title>
+        <row header="yes">
+          <cell>
+                                x
+                            </cell>
+          <cell>
+                                y
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                1
+                            </cell>
+          <cell>
+                                blue
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                1
+                            </cell>
+          <cell>
+                                green
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                1
+                            </cell>
+          <cell>
+                                yellow
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                2
+                            </cell>
+          <cell>
+                                blue
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                2
+                            </cell>
+          <cell>
+                                yellow
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                3
+                            </cell>
+          <cell>
+                                blue
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                3
+                            </cell>
+          <cell>
+                                green
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                3
+                            </cell>
+          <cell>
+                                yellow
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                3
+                            </cell>
+          <cell>
+                                red
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>Let <term>R</term> be</p>
+    <table xml:id="_02-relational-algebra_id21">
+      <tabular>
+        <title>
+          <term>R</term>
+        </title>
+        <row header="yes">
+          <cell>
+                                y
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                blue
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                green
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                yellow
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>Then <math>\text{Q} = \text{P} \div \text{R}</math> is</p>
+    <table xml:id="_02-relational-algebra_id22">
+      <tabular>
+        <title>
+          <term>Q</term>
+        </title>
+        <row header="yes">
+          <cell>
+                                x
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                1
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                3
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>because only the values 1 and 3 are paired with blue, green, and yellow in <term>P</term>.  The value 2 is not paired with green, so it does not appear in the quotient.  The value 3 is also paired with red, but red is not in <term>R</term> and thus does not affect the result.</p>
+    <p>For a more tangible example, consider the following relation, named <term>authors_awards</term>:</p>
+    <table xml:id="_02-relational-algebra_id23">
+      <tabular>
+        <title>
+          <term>authors_awards</term>
+        </title>
+        <row header="yes">
+          <cell>
+                                author
+                            </cell>
+          <cell>
+                                award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Ralph Ellison
+                            </cell>
+          <cell>
+                                National Book Award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Jhumpa Lahiri
+                            </cell>
+          <cell>
+                                Pulitzer Prize for Fiction
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                N. Scott Momaday
+                            </cell>
+          <cell>
+                                Pulitzer Prize for Fiction
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Ursula K. Le Guin
+                            </cell>
+          <cell>
+                                Hugo Award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Ursula K. Le Guin
+                            </cell>
+          <cell>
+                                Nebula Award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                C. J. Cherryh
+                            </cell>
+          <cell>
+                                Hugo Award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Kazuo Ishiguro
+                            </cell>
+          <cell>
+                                Booker Prize
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Kazuo Ishiguro
+                            </cell>
+          <cell>
+                                Nobel Prize in Literature
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Michael Chabon
+                            </cell>
+          <cell>
+                                Hugo Award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Michael Chabon
+                            </cell>
+          <cell>
+                                Nebula Award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Michael Chabon
+                            </cell>
+          <cell>
+                                Pulitzer Prize for Fiction
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>and the relation <term>science_fiction_awards</term>:</p>
+    <table xml:id="_02-relational-algebra_id24">
+      <tabular>
+        <title>
+          <term>science_fiction_awards</term>
+        </title>
+        <row header="yes">
+          <cell>
+                                award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Hugo Award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Nebula Award
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>We might ask the question, <q>Which authors have received all of the science fiction book awards?</q>  The answer is given by</p>
+    <table xml:id="_02-relational-algebra_id25">
+      <tabular>
+        <title>
+          <math>\text{authors_awards} \div \text{science_fiction_awards}</math>
+        </title>
+        <row header="yes">
+          <cell>
+                                author
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Ursula K. Le Guin
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Michael Chabon
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>Like the join and set intersection operations, division can be accomplished using other relational algebra operations; however, the construction is fairly complex.  If we have relation <term>P</term> with attributes <term>x</term> and <term>y</term>, and relation <term>R</term> with attribute <term>y</term>, then</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\text{P} \div \text{R} \equiv \pi_{\text{x}}(\text{P}) - \pi_{\text{x}}((\pi_{\text{x}}(\text{P}) \times \text{R}) - \text{P})</math_block>
+    <p>By carefully applying the right-hand side expression above to one of our examples, you can verify that the desired result is obtained, but the basic intuition is that we must first find the values of <term>x</term> in <term>P</term> which are <em>not</em> paired (in <term>P</term>) with one or more <term>y</term> values listed in <term>R</term>, and then subtract that list of <term>x</term> values from the list of all <term>x</term> values in <term>P</term>:</p>
+    <p>
+      <ol label="1">
+        <li>
+          <p>Create a relation containing every <term>x</term> value in <term>P</term> paired with every <term>y</term> value in <term>R</term>:</p>
+        </li>
+      </ol>
+    </p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{x}}(\text{P}) \times \text{R}</math_block>
+    <p>
+      <ol label="1">
+        <li>
+          <p>Subtract (using set difference) <term>P</term> from the cross product result above.  These are the possible pairings of <term>x</term> (in <term>P</term>) and <term>y</term> (in <term>R</term>) that do <em>not</em> exist in <term>P</term>:</p>
+        </li>
+      </ol>
+    </p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">(\pi_{\text{x}}(\text{P}) \times \text{R}) - \text{P}</math_block>
+    <p>
+      <ol label="1">
+        <li>
+          <p>Project the last result onto attribute <term>x</term>. These are the <term>x</term> values that are not paired with some value from <term>R</term>:</p>
+        </li>
+      </ol>
+    </p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{x}}((\pi_{\text{x}}(\text{P}) \times \text{R}) - \text{P})</math_block>
+    <p>
+      <ol label="1">
+        <li>
+          <p>Subtract the last result from the set of all <term>x</term> values in <term>P</term> for the final solution:</p>
+        </li>
+      </ol>
+    </p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{x}}(\text{P}) - \pi_{\text{x}}((\pi_{\text{x}}(\text{P}) \times \text{R}) - \text{P})</math_block>
+  </subsection>
+  <subsection xml:id="_02-relational-algebra_queries">
+    <title>Queries</title>
+    <p>As we have seen, the operations of the relational algebra act on relations and result in relations, and thus we can apply relational operations sequentially to obtain a final desired result.  With the operations we have discussed, we can express a very wide array of <em>queries</em> (questions to be answered by the data).  We have seen examples of simple queries throughout this chapter, mostly involving one or two basic operations.</p>
+    <p>Even simple questions, however, can require the application of multiple operations.  Consider the question, <q>What books by J.R.R. Tolkien were published after 1950?</q>.  This is similar to a question we asked earlier, using the author ID value rather than the author's name.  With only the author's name, we have to do a bit more work.</p>
+    <p>There are many ways to get to our desired result.  One possible approach might begin with the conditions presented: the author is J.R.R. Tolkien, and the publication year is greater than 1950.  Author names are in the <term>authors</term> relation, while publication years are in the <term>books</term> relation.  So we might guess we need two selection operations, one on each relation:</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors})</math_block>
+    <p>and</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\sigma_{\text{year} &gt; 1950}(\text{books})</math_block>
+    <p>This gives us two relations which are related by the <term>author_id</term> attribute present in both.  So a natural join might be our next step:</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors}) \Join \sigma_{\text{year} &gt; 1950}(\text{books})</math_block>
+    <p>Finally, we are only interested in the book titles (or possibly titles and publication years), so we finish with a projection operation:</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors}) \Join \sigma_{\text{year} &gt; 1950}(\text{books}))</math_block>
+    <p>This is only one of many possible expressions that yield identical results.  Here are some equivalent expressions:</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien AND year} &gt; 1950}(\text{authors} \Join \text{books}))</math_block>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\sigma_{\text{year} &gt; 1950}(\text{books}) \Join \text{authors}))</math_block>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors} \Join \text{books}) \cap \sigma_{\text{year} &gt; 1950}(\text{authors} \Join \text{books}))</math_block>
+    <subsubsection xml:id="_02-relational-algebra_operation-sequences">
+      <title>Operation sequences</title>
+      <p>As queries become more complex, expressions like the ones shown above can become quite long and difficult to understand.  An alternative approach is to use intermediate variables to decompose and label the parts of our expression.  The result is a more sequential view of the operations.</p>
+      <p>We will demonstrate this approach with one of the queries from the last section:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors}) \Join \sigma_{\text{year} &gt; 1950}(\text{books}))</math_block>
+      <p>Using variables, we can write this as a sequence of operations:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\begin{eqnarray*}
+\text{A} &amp;=&amp; \sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors}) \\
+\text{B} &amp;=&amp; \sigma_{\text{year} &gt; 1950}(\text{books}) \\
+\text{C} &amp;=&amp; \text{A} \Join \text{B} \\
+\text{R} &amp;=&amp; \pi_{\text{title}}(C) \\
+\end{eqnarray*}</math_block>
+      <p>with <term>R</term> holding our final result.</p>
+    </subsubsection>
+    <subsubsection xml:id="_02-relational-algebra_expression-trees-index-8">
+      <title>Expression trees</title>
+      <p>Another representation of relational algebra expressions is in the form of a tree.  Expression trees are a useful visual representation of a query.</p>
+      <blockquote>
+        <p>We will make use of them again in Chapter XXX, which is concerned with how database software considers different action plans for executing a query.</p>
+      </blockquote>
+      <p>We will again demonstrate using the query:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\text{authors}) \Join \sigma_{\text{year} &gt; 1950}(\text{books}))</math_block>
+      <p>The tree representation of this query looks like:</p>
+      <image source="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/tree1.svg" width="50%"/>
+      <p>Operations start at the bottom of the tree, with the relations <term>authors</term> and <term>books</term>, and proceed upwards.  We can apply either selection operation first, then the other; both must be applied before we can perform the join, and we finish with the projection.</p>
+      <p>Here is another example, corresponding to the expression:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" label="True" nowrap="False" number="True" xml:space="preserve">\pi_{\text{title}}(\sigma_{\text{name} = \text{J.R.R. Tolkien}}(\sigma_{\text{year} &gt; 1950}(\text{books}) \Join \text{authors}))</math_block>
+      <p>The tree is:</p>
+      <image source="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/tree2.svg" width="50%"/>
+      <p>&#x274F;</p>
+      <transition/>
+      <p>
+        <term>Notes</term>
+      </p>
+      <footnote auto="1" backrefs="id1" docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" xml:id="_02-relational-algebra_id5" names="1">
+        <label>1</label>
+        <p>This is consistent with the definition of the Cartesian product of sets of tuples in general mathematics.</p>
+      </footnote>
+      <footnote auto="1" backrefs="id2" docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" xml:id="_02-relational-algebra_id6" names="2">
+        <label>2</label>
+        <p>In fact, the original paper introducing the relational model discusses joins and not cross products.  However, the cross product is now recognized as a more fundamental operation in relational algebra.</p>
+      </footnote>
+      <footnote auto="1" backrefs="id3" docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" xml:id="_02-relational-algebra_id7" names="3">
+        <label>3</label>
+        <p>Some authors use * instead to indicate a natural join.</p>
+      </footnote>
+      <footnote auto="1" backrefs="id4" docname="PART3_RELATIONAL_DATABASE_THEORY/02-relational-algebra/relational-algebra" xml:id="_02-relational-algebra_id8" names="4">
+        <label>4</label>
+        <p>More generally, <term>x</term> and <term>y</term> can stand in for a list of attributes; that is, <term>x</term> might be some list of attributes <term>x1</term>, <term>x2</term>, &#x2026; and similarly for <term>y</term>.  We only require that <term>x</term> and <term>y</term> together represent all attributes of <term>P</term>, and that <term>x</term> and <term>y</term> do not overlap.</p>
+      </footnote>
+      <p> </p>
+    </subsubsection>
+  </subsection>
+</section>

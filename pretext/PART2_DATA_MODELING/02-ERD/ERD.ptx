@@ -1,0 +1,416 @@
+<?xml version="1.0"?>
+<section xml:id="_02-erd_entity-relationship-diagrams-erd-chapter">
+  <title>Entity-relationship diagrams</title>
+  <p xml:id="_02-erd_index-0">This chapter introduces <em>entity-relationship diagrams</em>, or ERDs.  ERDs define a graphical language for data modeling at a high level of abstraction.  ERDs map well to relational databases at a high level, but can also be used as a precursor to building non-relational databases.</p>
+  <p>ERDs were conceived of by Peter Chen and described in a <xref ref="references_references"/>.  While various approaches to data modeling existed before the ERD, Chen's ERD has stood the test of time to become one of the preferred methods and is in wide use today.  Many authors have expanded upon Chen's basic model, extending the notation in different directions.  As a result, there are many different ERD notations in use.  For this book, we adopt the notation of <xref ref="references_references"/>.</p>
+  <p>As we cover the various elements of the ERD notation, our examples will build pieces of a data model for a fictional computer manufacturer.  The complete model is given in <number_reference internal="True" refid="complete-model-section" title="Section {number}"><inline classes="std std-numref">Section 2.2.3</inline></number_reference> below. In <xref ref="appendix-a-datasets_datasets"/>, you can also find ERDs for some of the datasets that we used in <number_reference internal="True" refuri="../../PART1_SQL/index#sql-part" title="Part {number}"><inline classes="std std-numref">Part 1</inline></number_reference>.</p>
+  <subsection xml:id="_02-erd_basic-model">
+    <title>Basic model</title>
+    <p>As the name suggests, ERDs are concerned with <em>entities</em> and the <em>relationships</em> between them.  Each of these elements and its related elements are denoted using simple shapes containing text labels and connected with straight lines.</p>
+    <subsubsection xml:id="_02-erd_entities-index-1">
+      <title>Entities</title>
+      <p>Entities represent things or objects with independent existence; persons, products, and companies are some examples.  Entities act much like the <q>nouns</q> of our visual modeling language.  Entities are denoted by rectangles; the rectangle is labeled with a name indicative of the concept being modeled:</p>
+      <image source="PART2_DATA_MODELING/02-ERD/entity.svg" width="50%" alt="A rectangle containing the word &quot;employee&quot;"/>
+      <p>It is important to distinguish between an entity, which represents the type of the thing or object being modeled, and instances of the entity, e.g., a particular thing or object.  The entity <term>employee</term> models all employees, not a specific employee of a company.</p>
+    </subsubsection>
+    <subsubsection xml:id="_02-erd_attributes-index-2">
+      <title>Attributes</title>
+      <p>Entities are further described by their properties, or <em>attributes</em>.  Attributes are denoted by ovals and attached to their entities with straight lines.  For example, employees have names:</p>
+      <image source="PART2_DATA_MODELING/02-ERD/attribute.svg" width="50%" alt="An oval containing the word &quot;name&quot; connected to the employee entity"/>
+      <p>You can attach as many attributes as necessary to an entity.</p>
+    </subsubsection>
+    <subsubsection xml:id="_02-erd_keys-index-3">
+      <title>Keys</title>
+      <p>Every entity has at least one attribute that uniquely identifies instances of the entity.  These <em>key attributes</em> are indicated by underlining the attribute label.  For our computer company, each employee is given an ID number for unique identification:</p>
+      <image source="PART2_DATA_MODELING/02-ERD/key_attribute.svg" width="50%" alt="An oval containing the word &quot;ID&quot;, underlined, connected to the employee entity"/>
+      <p>ERDs allow for multiple key attributes: for example, we might wish to also store a government issued identification number (such as the SSN used in the United States) for each employee.  In this case, we would have two attributes with underlined labels.  Note that this is not the same as a key attribute composed of multiple parts!  An employee can be uniquely identified by either their company ID or by their government issued identification number - you do not need to know both.  Composite keys will be discussed in a later section.</p>
+    </subsubsection>
+    <subsubsection xml:id="_02-erd_relationships-index-4">
+      <title>Relationships</title>
+      <p>Two or more entities may participate in a relationship.  Relationships act like the <q>verbs</q> in our modeling language.  Relationships are denoted by diamonds and are connected to the participating entities by straight lines:</p>
+      <image source="PART2_DATA_MODELING/02-ERD/relationship_with_entities.svg" width="50%" alt="A diamond containing the words &quot;works at&quot;, connected to the entities employee and factory"/>
+      <p>This diagram reads like a sentence: <q>employee works at factory</q>.  Note that no direction is implied by the layout of the diagram; you have to use your knowledge of the data domain to know that the diagram probably does not mean <q>factory works at employee</q>.</p>
+    </subsubsection>
+    <subsubsection xml:id="_02-erd_cardinality-ratios-and-participation-index-5">
+      <title>Cardinality ratios and participation</title>
+      <p>How many employees work at a factory, and how many factories can an employee work at?  This is important information for our model (and for the database we will create from it).</p>
+      <p><em>Cardinality ratios</em> let us indicate the general number of instances of an entity that map to another entity on the other side of the relationship, and vice versa.  The cardinalities defined by the basic model are <term>1</term> and <term>N</term> (or <term>n</term>).  A cardinality of <term>1</term> actually means <q>zero or one</q>; a cardinality of <term>N</term> means <q>zero, one, or many</q>.  As most relationships are binary (involving only two participating entities), there are a small number of commonly occurring cardinality ratios:</p>
+      <p>
+        <ul>
+          <li>
+            <p>1:1, read as <q>one-to-one</q></p>
+          </li>
+          <li>
+            <p>1:N, read as <q>one-to-many</q> (equivalently, N:1, or <q>many-to-one</q>)</p>
+          </li>
+          <li>
+            <p>N:M (or N:N), read as <q>many-to-many</q></p>
+          </li>
+        </ul>
+      </p>
+      <p>We show the cardinalities on our model next to the line connecting the relationship to the entity:</p>
+      <image source="PART2_DATA_MODELING/02-ERD/relationship_with_cardinalities.svg" width="50%" alt="The works at relationship, annotated with an &quot;N&quot; on the employee side and a &quot;1&quot; on the factory side"/>
+      <p>This diagram's cardinality ratio implies two statements about the relationship between employees and factories.  First, <q>each employee works at zero or one factory</q>.  Second, <q>each factory has zero or more employees working at it</q>.</p>
+      <p><em>Participation</em> is a closely related topic.  An entity is said to have <em>total participation</em> in a relationship if every instance of the entity must be matched with instances of the other entity in the relationship.  In effect, this provides a minimum cardinality for the entity on the other side of the relationship.  Here is an example - note that this is a second relationship between <term>employee</term> and <term>factory</term>:</p>
+      <image source="PART2_DATA_MODELING/02-ERD/relationship_with_participation.svg" width="50%" alt="The manages relationship connecting employee and factory, annotated with a &quot;1&quot; on both sides; employee is connected with a single line, while factory is connected with a double line"/>
+      <p>The double line between <term>factory</term> and <term>manages</term> says that <term>factory</term> has total participation in the relationship.  This diagram's cardinality ratio and participation imply two subtly different statements: <q>each employee manages <em>zero or one</em> factories</q> and <q>each factory has <em>exactly one</em> employee managing it</q>.  That is, every factory is expected to have a manager, but only some employees manage a factory.</p>
+      <p>The alternative to total participation, denoted using a single line, is <em>partial participation</em>.</p>
+      <p>While indicating total participation on an ERD provides useful information, it is not as critical as cardinality ratios.  As we will see in <number_reference internal="True" refuri="../03-ERD-to-relational/ERD-to-relational#erd-to-relational-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 2.3</inline></number_reference>, total participation can influence some decisions when converting our diagram to a relational database (particularly for 1:1 relationships), but its absence is generally not harmful.</p>
+    </subsubsection>
+    <subsubsection xml:id="_02-erd_putting-it-together">
+      <title>Putting it together</title>
+      <p>Below is a diagram incorporating the examples above, with some additional attributes to fill out the entities:</p>
+      <image source="PART2_DATA_MODELING/02-ERD/subset_of_ERD.svg" width="50%" alt="The employee and factory entities with their attributes, and the works at and manages relationships; the employee entity has attributes ID, name, position, pay rate, and pay type; the factory entity has the attribute city."/>
+      <p>Note that the <term>factory</term> entity does not use a generated key, but a <q>natural</q> one - the city in which the factory is located.  (This only works if our company has no more than one factory in a city!)</p>
+      <p>While this is only part of the complete model that we will ultimately develop, it is a valid ERD from which we could build a database.  All of the necessary detail is in place.</p>
+      <p>There is also no unnecessary duplication of information in our model.  It is tempting to add attributes or other features that anticipate the database to come; for example, we might think that employees should have an attribute indicating at which factory they work.  However, the fact that (at least some) employees work at a factory is already implicit in the relationship <term>works at</term>.  This relationship will give rise to the necessary database structures connecting employees to factories.</p>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_02-erd_more-complex-modeling-options">
+    <title>More complex modeling options</title>
+    <p>This section will look at some cases not covered in the examples above, and will also reveal some additional notation covering situations not addressed by the basic model above.</p>
+    <subsubsection xml:id="_02-erd_recursive-relationships-index-6">
+      <title>Recursive relationships</title>
+      <p>Relationships can exist between an entity and itself.  This is frequently useful, especially in modeling hierarchical relationships.  In our fictional computer company, each employee (except for the head of the company) has a supervisor, who is another employee.  This is easily modeled as a one-to-many relationship connecting <term>employee</term> to <term>employee</term>:</p>
+      <image source="PART2_DATA_MODELING/02-ERD/recursive_relationship.svg" width="50%" alt="The one-to-many relationship supervises connecting twice to employee"/>
+      <p>For added clarity, we have annotated the lines connecting the relationship with the roles that employees play in the relationship: one supervisor supervises many supervisees.</p>
+    </subsubsection>
+    <subsubsection xml:id="_02-erd_weak-entities-index-7">
+      <title>Weak entities</title>
+      <p>In some situations, we may want to model an entity for which we do not have a unique identifier, but which can be uniquely identified in relationship with another entity.  As an example, each of the factories of our computer manufacturer will contain assembly lines.  We wish to track certain information about each assembly line in our database, such as the daily <em>throughput</em> of the assembly line (the number of computers it can produce in a day).  We wish to model these as an entity in our data model, but it is not immediately clear what property of an assembly line would make a good identifier.</p>
+      <p>We could, of course, give every assembly line a generated unique identifier, but there is a more natural way to identify assembly lines.  In each factory, assembly lines are simply numbered starting from 1, most likely in order by their position on the factory floor.  To identify a particular assembly line, we first state which factory it is in, and then its number within the factory.</p>
+      <p>When an entity is dependent on another entity for full identification, the dependent entity is called a <em>weak entity</em>, and we notate it using a rectangle with doubled outline.  The weak entity has only a partial, or weak, key - in our example, this is the number of the assembly line within the factory.  We note the weak key using a dashed underline.  We also call out the relationship that the weak entity depends on for its identity, to distinguish it from any other relationships the weak entity participates in.  We call this relationship the <em>identifying relationship</em>, and draw it as a diamond with a doubled outline.  The key of the parent entity together with the weak key of the weak entity constitutes a unique identifier for instances of the weak entity.</p>
+      <p>Here is the diagram of our assembly line example:</p>
+      <image source="PART2_DATA_MODELING/02-ERD/weak_entity.svg" width="50%" alt="The weak entity assembly line and the entity factory and their attributes, connected by the one-to-many relationship contains; assembly line has attributes number and throughput"/>
+    </subsubsection>
+    <subsubsection xml:id="_02-erd_composite-attributes-index-8">
+      <title>Composite attributes</title>
+      <p>We may sometimes wish to model an attribute that is naturally composed of multiple parts.  For example, the address of a person or company may be composed of a street address, city, postal code, and so forth.  To indicate that these attributes work together as part of a larger property of the entity, we can use a <em>composite attribute</em>, which is drawn as a regular attribute with its component attributes attached.</p>
+      <p>The use of a composite attribute is essential in cases where our key is itself composed of multiple attributes.  We cannot simply underline each component of the key, as this would indicate that each is a key by itself.  Instead, we must create a composite attribute; we underline the composite, but not the component attributes.</p>
+      <p>In our computer manufacturer example, each type of computer (or <q>model</q>) that the company builds is identified by a name (indicating some line of computers), and a number (indicating the version of that line of computers).  For lack of a better name, we group these as a composite labeled <q>designation</q>:</p>
+      <image source="PART2_DATA_MODELING/02-ERD/composite_attribute.svg" width="50%" alt="Ovals containing the words &quot;name&quot; and &quot;number&quot; connecting to the key attribute designation of the entity model"/>
+    </subsubsection>
+    <subsubsection xml:id="_02-erd_multivalued-attributes-index-9">
+      <title>Multivalued attributes</title>
+      <p>Some properties of entities are not simple values, but lists or sets of values.  As these will need special handling when we create a database from the data model, we differentiate these <em>multivalued attributes</em> from regular attributes using a doubled outline:</p>
+      <image source="PART2_DATA_MODELING/02-ERD/multivalued_attribute.svg" width="50%" alt="A double outlined oval containing the word &quot;application&quot; connected to the entity model"/>
+      <p>In our example, computer models may be designed or marketed for particular applications, such as gaming, multimedia, or business.  As computers may fit into more than one of these categories, we model it above as a multivalued attribute.</p>
+      <p>An alternative to making a multivalued attribute is modeling the possible attribute values as a separate entity, which is connected to the original entity with a many-to-many relationship.  The separate entity would have only the single attribute, and its instances would represent the possible values that can be associated with the original entity.</p>
+    </subsubsection>
+    <subsubsection xml:id="_02-erd_derived-attributes-index-10">
+      <title>Derived attributes</title>
+      <p>Entities may have important properties that we want to note on our data model, but which we would prefer to compute from other values in the data model, rather than store in our database.  For example, the age of a person is an important property for many applications, but storing this value in the database is generally a poor choice, as a person's age changes over time, necessitating regular updates to the data.  Instead, we might store the person's birth date, and calculate the person's age each time we need it.</p>
+      <p>In our computer manufacturer example, we are interested in the total throughput of each factory.  While we could make this an attribute of <term>factory</term>, we note that a factory's throughput can be calculated by summing up the throughputs of the factory's assembly lines.  We model these calculated properties as <em>derived attributes</em>, using a dashed outline:</p>
+      <image source="PART2_DATA_MODELING/02-ERD/derived_attribute.svg" width="50%" alt="The weak entity assembly line and the entity factory and their attributes, connected by the relationship contains; the diagram now shows a dashed outline oval containing the word &quot;throughput&quot; connected to the factory entity"/>
+    </subsubsection>
+    <subsubsection xml:id="_02-erd_relationship-attributes-index-11">
+      <title>Relationship attributes</title>
+      <p>While most attributes are attached to entities, we can also attach attributes to relationships.  We do this when an attribute properly applies to a combination of entities, rather than to a single entity.  This most frequently occurs with many-to-many relationships.</p>
+      <p>Our fictional computer manufacturer buys computer parts from multiple vendors.  The manufacturer considers certain parts that have similar properties to be a single <q>part</q>.  For example, the database might contain an entry for the part <q>8TB 7200RPM hard drive</q>, regardless of brand.  However, at any given time, one vendor's price for a given part may be different from another vendor's price for the same part.  This price therefore cannot belong to the <term>part</term> entity - it depends on <term>vendor</term>, too.  Similarly, vendors supply many different parts, so the price cannot belong to the <term>vendor</term> entity.  Instead, it belongs to the relationship between these entities:</p>
+      <image source="PART2_DATA_MODELING/02-ERD/relationship_attribute.svg" width="50%" alt="The entities vendor and part connected by the man-to-many relationship supplies; supplies has a price attribute; vendor has attributes part number (key) and description, while vendor has the key attribute name"/>
+    </subsubsection>
+    <subsubsection xml:id="_02-erd_higher-arity-relationships-index-12">
+      <title>Higher-arity relationships</title>
+      <p>We stated that two <em>or more</em> entities could participate in a relationship.  While most relationships are binary, you may run into cases where you need to relate three (or more) entities.  We do not have an example of this in our model.  However, a classic example arises in the context of large organizations or government agencies with many projects involving complex contracts with parts suppliers.  Projects use many parts, and parts may be used in multiple projects; additionally, the same part might be available from different vendors.  Normally this might be modeled using two many-to-many relationships (very much like what is in our computer manufacturer model).  However, if the company has legal agreements that, for a certain project, a certain type of part must come from a certain vendor, while for a different project, the same type of part must come from a different vendor, the situation is not easily modeled using binary relationships.  What we need is a relationship that connects parts, projects, and vendors.</p>
+      <p>In this example, the relationship is many-to-many-to-many, which may be notated as M:N:P (or N:N:N):</p>
+      <image source="PART2_DATA_MODELING/02-ERD/ternary_relationship.svg" width="50%" alt="Entities project, vendor, and part connected by the relationship requires"/>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_02-erd_complete-example-complete-model-section">
+    <title>Complete example</title>
+    <p>Below is our completed example; most parts of the diagram have been explained above.  Now that you know what the different elements mean, the rest of the diagram should be self-explanatory:</p>
+    <image source="PART2_DATA_MODELING/02-ERD/complete_ERD.svg" width="50%" alt="The complete ERD; in addition to pieces shown above, the diagram includes a many-to-many relationship can use between model and part, and a one-to-many relationship builds between factory and model"/>
+  </subsection>
+  <subsection xml:id="_02-erd_using-erd-to-design-a-database">
+    <title>Using ERD to design a database</title>
+    <p>While an ERD has many applications, we emphasize its use as an analysis and design tool.  ERDs facilitate communication between database developers, programmers, domain experts, and database users.  An ERD produces an abstract model of the data.  Although we will examine how to turn our ERD into a relational database in <number_reference internal="True" refuri="../03-ERD-to-relational/ERD-to-relational#erd-to-relational-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 2.3</inline></number_reference>, the ERD contains no details specific to SQL or relational databases.  Especially in the early stages of analysis, thinking ahead to such details can actually be counterproductive; your focus should be on creating a shared understanding of the data.</p>
+    <p>In a similar vein, we encourage you to avoid spending effort on perfect conformance to the ERD notation.  In the interest of improved communication, you should feel free to adapt the notation to your needs.  You can (and perhaps should) add text explanations wherever they are helpful - designing a large database is a complex endeavor, and it can be easy to forget the reasons for particular design decisions.  Notational details will become more important in the later stages of design, however, as you begin to test your design with actual database construction.</p>
+    <p>The actual process you use to create a database for a project may be dictated by your project group or organization, but some general advice is provided below.</p>
+    <subsubsection xml:id="_02-erd_analysis">
+      <title>Analysis</title>
+      <p>A crucial first step in the design of any software is understanding the requirements of your project.  In regards to your database, requirements may be dictated by:</p>
+      <p>
+        <ul>
+          <li>
+            <p>the data domain, e.g., facts which impose structure and relationships on the data</p>
+          </li>
+          <li>
+            <p>user needs, e.g., the answers or insights they want to obtain from the data</p>
+          </li>
+          <li>
+            <p>data sources, e.g., the data values that are actually available to be stored</p>
+          </li>
+          <li>
+            <p>application requirements, e.g., how other software will view or manipulate the data</p>
+          </li>
+        </ul>
+      </p>
+      <p>You may therefore need to talk with domain experts (people who have deep knowledge about the area the data applies to), end users, data providers, and software developers to determine these requirements.  Brainstorming entities, attributes, and relationships is a great starting point for these discussions.  List data elements on a whiteboard or piece of paper where everyone can see.  Some of these are potential entities, some are attributes, and some may even be relationships.  Have people propose relationships between the data elements, and write these as simple <q>subject verb object</q> sentences.  It is not necessary to be exhaustive in your brainstorming; additional entities, attributes, and relationships will be discovered in later steps.</p>
+      <p>Once you have a good set of data elements and relationships, you can begin working on an ERD.  Focus at first on basic model elements - entities, attributes, and relationships.  Identify potential key attributes for all of your entities.  Consider cardinality ratios; examine whether these make sense by the statements they imply about the entities involved, e.g., <q>each instance of this entity has this relationship with <em>x</em> number of instances of the other entity</q>.  Question all assumptions!  For example, if you identify some attribute as a key for an entity, ask if every instance of the entity actually has that attribute.</p>
+      <p>It may take significant time and multiple discussions to build an ERD that is satisfactory to everyone involved.  This process is messy and may seem chaotic at first.  Be patient, try different options, and make incremental improvements.  It is not necessary to solve every disagreement before moving on to next steps; you may need to revisit the ERD multiple times as you uncover questions and issues in later steps.</p>
+    </subsubsection>
+    <subsubsection xml:id="_02-erd_design-implementation-and-beyond">
+      <title>Design, implementation, and beyond</title>
+      <p>You can build a database as the next step once you have an ERD, or you can engage in further design activities.  You may wish to build a lower level data model, such as a <em>logical model</em> (discussed in <number_reference internal="True" refuri="../04-other-notations/other-notations#other-notations-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 2.4</inline></number_reference>) as an intermediate step.  Some of this will depend on interactions with other systems that are being built (e.g., software).  As will be discussed in <number_reference internal="True" refuri="../03-ERD-to-relational/ERD-to-relational#erd-to-relational-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 2.3</inline></number_reference>, the ERD does not fully dictate how your database will be built; for instance, you need to choose table and column names (for a relational database), as well as data types for the different values represented by attributes in your ERD.</p>
+      <p>Regardless of your next step, you are likely to run into problems of some sort: assumptions that do not hold, new questions, or other issues in translating the ERD into a more concrete form.  As part of your process, expect to revisit the design with your domain experts and project stakeholders to resolve these problems.  This will probably happen yet again when you start trying to put data into your new database, when software is written to interact with the database, and when users start testing the database and/or software.</p>
+      <p>Whether you resolve issues at each stage with the ERD or at some lower level, it can be valuable to keep the ERD aligned with the database as implemented as part of your documentation of the system.  Systems change over time; when it is time to modify your database, you will want some documentation of the design decisions that went into the earlier database, and the ERD may play a part in designing the updates to your system.  An up-to-date ERD will also help new database users or software developers become acquainted with the system more quickly.</p>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_02-erd_self-check-exercises">
+    <title>Self-check exercises</title>
+    <p>This section has some questions you can use to check your understanding of entity-relationship diagrams and data modeling.</p>
+    <exercise label="erd_self_test_elements_1">
+      <statement>
+        <p>Q-1: Which data element models a thing or object with independent existence, such as a person, product, or company? <var/>  </p>
+      </statement>
+      <setup>
+        <var>
+          <condition string="^\s*entity\s*$">
+            <feedback>
+              <p>Correct.  Entities act as the <q>nouns</q> of our data model.</p>
+            </feedback>
+          </condition>
+          <condition string="^\s*.*\s*$">
+            <feedback>
+              <p>Try again.  Be sure your answer is in all lowercase.</p>
+            </feedback>
+          </condition>
+        </var>
+      </setup>
+    </exercise>
+    <hint>
+      <p>The answer is <q>entity</q>.</p>
+    </hint>
+    <exercise label="erd_self_test_elements_2">
+      <statement>
+        <p>Q-2: An <BlankNode input_name="x"/> describes a property of an entity. <var/>  </p>
+      </statement>
+      <setup>
+        <var>
+          <condition string="^\s*attribute\s*$">
+            <feedback>
+              <p>Correct.</p>
+            </feedback>
+          </condition>
+          <condition string="^\s*.*\s*$">
+            <feedback>
+              <p>Try again.  Be sure your answer is in all lowercase.</p>
+            </feedback>
+          </condition>
+        </var>
+      </setup>
+    </exercise>
+    <hint>
+      <p>The answer is <q>attribute</q>.</p>
+    </hint>
+    <exercise label="erd_self_test_elements_3">
+      <statement>
+        <p>Q-3: Which data element connects two or more entities and acts as a <q>verb</q> in our data model? <var/>  </p>
+      </statement>
+      <setup>
+        <var>
+          <condition string="^\s*relationship\s*$">
+            <feedback>
+              <p>Correct.</p>
+            </feedback>
+          </condition>
+          <condition string="^\s*.*\s*$">
+            <feedback>
+              <p>Try again.  Be sure your answer is in all lowercase.</p>
+            </feedback>
+          </condition>
+        </var>
+      </setup>
+    </exercise>
+    <hint>
+      <p>The answer is <q>relationship</q>.</p>
+    </hint>
+    <exercise label="erd_self_test_shapes">
+      <statement>
+        <p>Drag the shape to the corresponding model element.</p>
+      </statement>
+      <matches>
+        <match order="1">
+          <premise>rectangle</premise>
+          <response>entity</response>
+        </match>
+        <match order="2">
+          <premise>oval</premise>
+          <response>attribute</response>
+        </match>
+        <match order="3">
+          <premise>diamond</premise>
+          <response>relationship</response>
+        </match>
+      </matches>
+    </exercise>
+    <exercise label="erd_self_test_keys">
+      <statement>
+        <p>Q-5: Suppose you are designing a database to store information about movies.  What might be a good key attribute for your <term>movie</term> entity?</p>
+      </statement>
+      <choices>
+        <choice>
+          <statement id="erd_self_test_keys_opt_a">
+            <p>Lead actor</p>
+          </statement>
+          <feedback id="erd_self_test_keys_opt_a">
+            <p>Many actors, especially lead actors, have worked on many movies.  Lead actor is unlikely to be a unique identifier.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_self_test_keys_opt_b">
+            <p>Title</p>
+          </statement>
+          <feedback id="erd_self_test_keys_opt_b">
+            <p>Many movies have been remade under the same title (and some movies share a title with unrelated films), so this is not a good unique identifier.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_self_test_keys_opt_c">
+            <p>First line of dialogue</p>
+          </statement>
+          <feedback id="erd_self_test_keys_opt_c">
+            <p>Probably not.  It might be unique for most films, but probably not all films, and it is a fairly large piece of data to use as key.</p>
+          </feedback>
+        </choice>
+        <choice correct="yes">
+          <statement id="erd_self_test_keys_opt_d">
+            <p>Title and year of release (composite)</p>
+          </statement>
+          <feedback id="erd_self_test_keys_opt_d">
+            <p>This is the best of the choices given here.  Alternately, you might use an artificially generated id value.</p>
+          </feedback>
+        </choice>
+      </choices>
+    </exercise>
+    <exercise label="erd_self_test_cardinality_1">
+      <statement>
+        <p>Q-6: Consider the entities and relationship shown here:</p>
+        <image source="PART2_DATA_MODELING/02-ERD/self_test_relationship_1.svg" width="50%" alt="Entities A and B connected to an unnamed relationship by single lines, labeled N and M"/>
+        <p>Which statement most accurately describes the relationship?</p>
+      </statement>
+      <choices>
+        <choice>
+          <statement id="erd_self_test_cardinality_1_opt_a">
+            <p>Each instance of A is associated with zero or one instance of B; each instance of B is associated with zero or one instance of A.</p>
+          </statement>
+          <feedback id="erd_self_test_cardinality_1_opt_a">
+            <p>Incorrect.  What does the label <q>N</q> imply about maximum cardinality?</p>
+          </feedback>
+        </choice>
+        <choice correct="yes">
+          <statement id="erd_self_test_cardinality_1_opt_b">
+            <p>Each instance of A is associated with zero or more instances of B; each instance of B is associated with zero or more instances of A.</p>
+          </statement>
+          <feedback id="erd_self_test_cardinality_1_opt_b">
+            <p>Correct.  The relationship is many-to-many, with partial participation on both sides.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_self_test_cardinality_1_opt_c">
+            <p>Each instance of A is associated with one or more instances of B; each instance of B is associated with one or more instances of A.</p>
+          </statement>
+          <feedback id="erd_self_test_cardinality_1_opt_c">
+            <p>Incorrect.  What is the participation of A and B in the relationship?  What does that imply about the minimum cardinality?</p>
+          </feedback>
+        </choice>
+      </choices>
+    </exercise>
+    <exercise label="erd_self_test_cardinality_2">
+      <statement>
+        <p>Q-7: Consider the entities and relationship shown here:</p>
+        <image source="PART2_DATA_MODELING/02-ERD/self_test_relationship_2.svg" width="50%" alt="Entities C and D connected to an unnamed relationship.  C is connected by a single line labeled 1.  D is connected by a double line labeled N."/>
+        <p>Which statement most accurately describes the relationship?</p>
+      </statement>
+      <choices>
+        <choice>
+          <statement id="erd_self_test_cardinality_2_opt_a">
+            <p>Each instance of C is associated with zero or one instance of D; each instance of D is associated with one or more instances of C.</p>
+          </statement>
+          <feedback id="erd_self_test_cardinality_2_opt_a">
+            <p>Incorrect.  Each cardinality label describes the entity on the same side of the relationship.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_self_test_cardinality_2_opt_b">
+            <p>Each instance of C is associated with zero or more instances of D; each instance of D is associated with exactly one instance of C.</p>
+          </statement>
+          <feedback id="erd_self_test_cardinality_2_opt_b">
+            <p>Incorrect.  Reconsider the participation on each side of the relationship, and what that implies about minimum cardinality.</p>
+          </feedback>
+        </choice>
+        <choice correct="yes">
+          <statement id="erd_self_test_cardinality_2_opt_c">
+            <p>Each instance of C is associated with one or more instances of D; each instance of D is associated with zero or one instance of C.</p>
+          </statement>
+          <feedback id="erd_self_test_cardinality_2_opt_c">
+            <p>Correct.</p>
+          </feedback>
+        </choice>
+      </choices>
+    </exercise>
+    <exercise label="erd_self_test_elements_4">
+      <statement>
+        <p>Q-8: Some entities have instances that cannot be uniquely identified based solely on their attributes, but must be associated with a parent entity instance for full identification.  We call these <BlankNode input_name="x"/> entities. <var/>  </p>
+      </statement>
+      <setup>
+        <var>
+          <condition string="^\s*weak\s*$">
+            <feedback>
+              <p>Correct.</p>
+            </feedback>
+          </condition>
+          <condition string="^\s*.*\s*$">
+            <feedback>
+              <p>Try again.  Be sure your answer is in all lowercase.</p>
+            </feedback>
+          </condition>
+        </var>
+      </setup>
+    </exercise>
+    <hint>
+      <p>The answer is <q>weak</q>.</p>
+    </hint>
+    <exercise label="erd_self_test_elements_5">
+      <statement>
+        <p>Q-9: Suppose we are modeling a simple database about books.  For each book we want to include information about the genres the book belongs to.  Many books can belong to more than one genre.  What kind of attribute should we use for genre?</p>
+      </statement>
+      <choices>
+        <choice correct="yes">
+          <statement id="erd_self_test_elements_5_opt_a">
+            <p>Multivalued</p>
+          </statement>
+          <feedback id="erd_self_test_elements_5_opt_a">
+            <p>Correct.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_self_test_elements_5_opt_b">
+            <p>Derived</p>
+          </statement>
+          <feedback id="erd_self_test_elements_5_opt_b">
+            <p>Probably not, unless genre information can be deduced from some other information stored in the database.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_self_test_elements_5_opt_c">
+            <p>Composite</p>
+          </statement>
+          <feedback id="erd_self_test_elements_5_opt_c">
+            <p>Probably not, although you could make a case for storing a general genre category and a more specific sub-genre.</p>
+          </feedback>
+        </choice>
+        <choice>
+          <statement id="erd_self_test_elements_5_opt_d">
+            <p>Key</p>
+          </statement>
+          <feedback id="erd_self_test_elements_5_opt_d">
+            <p>Definitely not.  Many books belong to the same genre, so genre is not a unique identifier for a book.</p>
+          </feedback>
+        </choice>
+      </choices>
+    </exercise>
+    <p>&#x274F;</p>
+    <p> </p>
+  </subsection>
+</section>

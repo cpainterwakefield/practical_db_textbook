@@ -1,0 +1,974 @@
+<?xml version="1.0"?>
+<section xml:id="appendix-a-datasets_appendix-a-example-datasets-used-in-this-book-appendix-a">
+  <title>Appendix A: Example datasets used in this book</title>
+  <p>This appendix contains descriptions of the tables in the textbook database as well as SQL scripts and data files that can be used to recreate the book's database in other database systems.</p>
+  <topic classes="contents local" xml:id="appendix-a-datasets_quick-links" names="quick\ links">
+    <title>Quick links</title>
+    <p>
+      <ul>
+        <li>
+          <p>
+            <url href="" visual="">Dataset descriptions</url>
+          </p>
+          <p>
+            <ul>
+              <li>
+                <p>
+                  <url href="" visual="">The simple books dataset</url>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <url href="" visual="">The expanded books dataset</url>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <url href="" visual="">The bookstore dataset</url>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <url href="" visual="">Other tables in the database</url>
+                </p>
+              </li>
+            </ul>
+          </p>
+        </li>
+        <li>
+          <p>
+            <url href="" visual="">Data collection notes</url>
+          </p>
+        </li>
+        <li>
+          <p>
+            <url href="" visual="">Getting the data</url>
+          </p>
+          <p>
+            <ul>
+              <li>
+                <p>
+                  <url href="" visual="">SQLite</url>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <url href="" visual="">PostgreSQL</url>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <url href="" visual="">MySQL</url>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <url href="" visual="">Oracle</url>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <url href="" visual="">SQL Server</url>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <url href="" visual="">Raw data files</url>
+                </p>
+              </li>
+            </ul>
+          </p>
+        </li>
+      </ul>
+    </p>
+  </topic>
+  <subsection xml:id="appendix-a-datasets_dataset-descriptions">
+    <title>Dataset descriptions</title>
+    <p>In this section we provide descriptions of each dataset or group of related tables.  The tables are described in detail in tabular format. Entity-relationship diagrams (ERDs) and logical models using crow's foot notation (as described in <number_reference internal="True" refuri="../PART2_DATA_MODELING/index#data-modeling-part" title="Part {number}"><inline classes="std std-numref">Part 2</inline></number_reference>) are also provided for some datasets.  Finally, each dataset section contains an interactive query tool set up to retrieve the data from all of the tables in the dataset (note that the interactive query tool limits results to 100 rows, and some tables have more than that number of rows).</p>
+    <subsubsection xml:id="appendix-a-datasets_the-simple-books-dataset">
+      <title>The simple books dataset</title>
+      <p>The simple books dataset consists of the tables <term>simple_books</term> and <term>simple_authors</term>.  The <term>simple_books</term> table contains data about 12 books, each by a different author, while the <term>simple_authors</term> table contains data on each of the 12 authors appearing in <term>simple_books</term>.</p>
+      <p>This dataset is used in the early chapters of <number_reference internal="True" refuri="../PART1_SQL/index#sql-part" title="Part {number}"><inline classes="std std-numref">Part 1</inline></number_reference> of the text to introduce SQL, and is not intended as an example of good database design.  The rows in <term>simple_books</term> are implicitly identified by unique book titles, and the rows in <term>simple_authors</term> are implicitly identified by author names, but neither table has a primary key.  Similarly, the rows in <term>simple_books</term> are in one-to-one correspondence with the rows in <term>simple_authors</term>, however, there is no explicit relationship between the tables via a foreign key constraint.</p>
+      <container classes="data-dictionary">
+        <p>The <term>simple_books</term> table records works of fiction, non-fiction, poetry, etc. by a single author.</p>
+        <table>
+          <tabular>
+            <row header="yes">
+              <cell>
+                                        column
+                                    </cell>
+              <cell>
+                                        type
+                                    </cell>
+              <cell>
+                                        description
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        author
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        the book's author
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        title
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        the book's title
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        publication_year
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        year the book was first published
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        genre
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        a genre describing the book
+                                    </cell>
+            </row>
+          </tabular>
+        </table>
+      </container>
+      <container classes="data-dictionary">
+        <p>The <term>simple_authors</term> table records persons who have authored books.</p>
+        <table>
+          <tabular>
+            <row header="yes">
+              <cell>
+                                        column
+                                    </cell>
+              <cell>
+                                        type
+                                    </cell>
+              <cell>
+                                        description
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        name
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        full name of the author
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        birth
+                                    </cell>
+              <cell>
+                                        date
+                                    </cell>
+              <cell>
+                                        birth date of the author, if known
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        death
+                                    </cell>
+              <cell>
+                                        date
+                                    </cell>
+              <cell>
+                                        death date of the author, if known
+                                    </cell>
+            </row>
+          </tabular>
+        </table>
+      </container>
+      <p>Use the query tool below to view the data.</p>
+      <program xml:id="appendix_a_simple_books_dataset" interactive="activecode" language="sql">
+        <input>
+SELECT * FROM simple_books;
+SELECT * FROM simple_authors;
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+      <p>To see the <term>CREATE TABLE</term> code for a table, you can use the query tool above to query the <term>sqlite_master</term> table, e.g.:</p>
+      <program language="sql">
+        <input>
+SELECT sql FROM sqlite_master WHERE name = 'simple_books';
+</input>
+      </program>
+    </subsubsection>
+    <subsubsection xml:id="appendix-a-datasets_the-expanded-books-dataset">
+      <title>The expanded books dataset</title>
+      <p>The expanded books dataset includes information on 200 books (in the <term>books</term> table) and their authors (76 authors in total in the <term>authors</term> table).  An <term>awards</term> table lists some major awards given to authors for their body of work or for specific books.  Two cross-reference tables associate authors with their awards (<term>authors_awards</term>) and specific books with their awards (<term>books_awards</term>).  Finally, the <term>editions</term> table contains publication data related to just four books by author J.R.R. Tolkien.  (Only four books were included to reduce the size of the database file, which must be downloaded and held in the web browser's memory.)  The publication data is particularly <q>dirty</q> in the sense that it contains numerous inaccuracies, omissions, and redundancies; see the section title <url href="" visual="">Data collection notes</url>, below.</p>
+      <p>This dataset is introduced in <number_reference internal="True" refuri="../PART1_SQL/04-multiple-tables/multiple-tables#joins-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.4</inline></number_reference> and is used throughout much of the rest of <number_reference internal="True" refuri="../PART1_SQL/index#sql-part" title="Part {number}"><inline classes="std std-numref">Part 1</inline></number_reference> of the text.  While the dataset represents a highly simplified model of books (e.g., books are assumed to always have a single author), the schema attempts to emulate best practices in database design while illustrating fundamental SQL database concepts.  The design makes use of primary key constraints (using synthetic unique identifiers), foreign key constraints, and cross-reference tables implementing many-to-many relationships.</p>
+      <p>We provide below detailed descriptions of each table in the dataset, an entity-relationship diagram (ERD) modeling the data, and a logical model in crow's foot notation showing the tables and their relationships.</p>
+      <container classes="data-dictionary">
+        <p>The <term>authors</term> table records persons who have authored books.  Every author corresponds to at least one book in the database.</p>
+        <table>
+          <tabular>
+            <row header="yes">
+              <cell>
+                                        column
+                                    </cell>
+              <cell>
+                                        type
+                                    </cell>
+              <cell>
+                                        description
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        author_id
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        unique identifier for the author
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        name
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        full name of the author
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        birth
+                                    </cell>
+              <cell>
+                                        date
+                                    </cell>
+              <cell>
+                                        birth date of the author, if known
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        death
+                                    </cell>
+              <cell>
+                                        date
+                                    </cell>
+              <cell>
+                                        death date of the author, if known
+                                    </cell>
+            </row>
+          </tabular>
+        </table>
+      </container>
+      <container classes="data-dictionary">
+        <p>The <term>books</term> table records works of fiction, non-fiction, poetry, etc. by a single author.  Each book corresponds to a single author from the <term>authors</term> table, and may correspond to many editions of the book listed in the <term>editions</term> table.</p>
+        <table>
+          <tabular>
+            <row header="yes">
+              <cell>
+                                        column
+                                    </cell>
+              <cell>
+                                        type
+                                    </cell>
+              <cell>
+                                        description
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        book_id
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        unique identifier for the book
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        author_id
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        author_id of book's author from <term>authors</term> table
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        title
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        the book's title
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        publication_year
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        year the book was first published
+                                    </cell>
+            </row>
+          </tabular>
+        </table>
+      </container>
+      <container classes="data-dictionary">
+        <p>The <term>editions</term> table records specific publications of a book.  Each edition corresponds to a single book from the <term>books</term> table.  For space reasons, the <term>editions</term> table only includes data on four books by J.R.R. Tolkien.</p>
+        <table>
+          <tabular>
+            <row header="yes">
+              <cell>
+                                        column
+                                    </cell>
+              <cell>
+                                        type
+                                    </cell>
+              <cell>
+                                        description
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        edition_id
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        unique identifier for the edition
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        book_id
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        book_id of the book (from <term>books</term> table) published as this edition
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        publication_year
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        year this edition was published
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        publisher
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        name of the publisher
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        publisher_location
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        city or other location(s) where the publisher is located
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        title
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        title this edition was published under
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        pages
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        number of pages in this edition
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        isbn10
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        10-digit international standard book number
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        isbn13
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        13-digit international standard book number
+                                    </cell>
+            </row>
+          </tabular>
+        </table>
+      </container>
+      <container classes="data-dictionary">
+        <p>The <term>awards</term> table records various author and/or book awards.</p>
+        <table>
+          <tabular>
+            <row header="yes">
+              <cell>
+                                        column
+                                    </cell>
+              <cell>
+                                        type
+                                    </cell>
+              <cell>
+                                        description
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        award_id
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        unique identifier for the award
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        name
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        name of the award
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        sponsor
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        name of the organization giving the award
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        criteria
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        what the award is given for
+                                    </cell>
+            </row>
+          </tabular>
+        </table>
+      </container>
+      <container classes="data-dictionary">
+        <p>The <term>authors_awards</term> table is a <em>cross-reference</em> table (explained in <number_reference internal="True" refuri="../PART1_SQL/04-multiple-tables/multiple-tables#joins-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.4</inline></number_reference>) relating <term>authors</term> and <term>awards</term>; each entry in the table records the giving of an award to an author (not for any particular book) in a particular year.</p>
+        <table>
+          <tabular>
+            <row header="yes">
+              <cell>
+                                        column
+                                    </cell>
+              <cell>
+                                        type
+                                    </cell>
+              <cell>
+                                        description
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        author_id
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        author_id of the author receiving the award
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        award_id
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        award_id of the award received
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        year
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        year the award was given
+                                    </cell>
+            </row>
+          </tabular>
+        </table>
+      </container>
+      <container classes="data-dictionary">
+        <p>The <term>books_awards</term> table is a cross-reference table relating <term>books</term> and <term>awards</term>; each entry in the table records the giving of an award to an author for a specific book in a particular year.</p>
+        <table>
+          <tabular>
+            <row header="yes">
+              <cell>
+                                        column
+                                    </cell>
+              <cell>
+                                        type
+                                    </cell>
+              <cell>
+                                        description
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        book_id
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        book_id of the book for which the award was given
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        award_id
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        award_id of the award given
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        year
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        year the award was given
+                                    </cell>
+            </row>
+          </tabular>
+        </table>
+      </container>
+      <p>Here is the data model for the expanded books dataset, as an ERD:</p>
+      <image source="appendix-a-datasets/books_ERD.svg" width="50%" alt="A data model of the books dataset given as an entity-relationship diagram."/>
+      <p>A logical model of the expanded books dataset is shown below.  In this crow's foot diagram, primary keys are shown underlined and in boldface, while foreign keys are italicized.</p>
+      <image source="appendix-a-datasets/books_logical.svg" width="50%" alt="A crow's foot diagram showing the logical model of the books dataset."/>
+      <p>Use the query tool below to view the expanded books data.  Note that the query tool limits results to 100 rows, but the <term>books</term> and <term>editions</term> tables have more than 100 rows each.</p>
+      <program xml:id="appendix_a_expanded_books_dataset" interactive="activecode" language="sql">
+        <input>
+SELECT * FROM authors;
+SELECT * FROM books;
+SELECT * FROM editions;
+SELECT * FROM awards;
+SELECT * FROM authors_awards;
+SELECT * FROM books_awards;
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </subsubsection>
+    <subsubsection xml:id="appendix-a-datasets_the-bookstore-dataset">
+      <title>The bookstore dataset</title>
+      <p>The bookstore dataset consists of the tables <term>bookstore_inventory</term> and <term>bookstore_sales</term>.  These tables simulate a very simple database that a seller of used books might use.  The <term>bookstore_inventory</term> table represents books that the bookseller is selling.  The table actually includes some books that have already been sold - when a book is sold, an entry is added to the companion table, <term>bookstore_sales</term>.  The bookseller thus has to look at both tables to determine which books are actually available to be sold.  The bookseller may choose to periodically remove old records from the tables.</p>
+      <p>While students should feel free to modify any data within the textbook database (secure in the knowledge that any changes will be reverted when they reload the page in their browser), the bookstore dataset was specifically designed with data modification in mind.  To avoid complications in introducing data modification queries, there are no foreign key constraints on the tables.  However, the tables as provided have a one-to-one relationship: each record in <term>bookstore_sales</term> matches exactly record in <term>bookstore_inventory</term>, while each record in <term>bookstore_inventory</term> matches at most one record in <term>bookstore_sales</term>.</p>
+      <p>This dataset is used briefly to illustrate one-to-one relationships in <number_reference internal="True" refuri="../PART1_SQL/04-multiple-tables/multiple-tables#joins-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.4</inline></number_reference>.  In <number_reference internal="True" refuri="../PART1_SQL/05-data-modification/data-modification#data-modification-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.5</inline></number_reference>, the tables are used to demonstrate data modification queries.  The tables are used in examples of grouping and aggregation in <number_reference internal="True" refuri="../PART1_SQL/09-grouping-and-aggregation/grouping-and-aggregation#grouping-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.9</inline></number_reference>.</p>
+      <container classes="data-dictionary">
+        <p>The <term>bookstore_inventory</term> table contains information on new and used books for sale.</p>
+        <table>
+          <tabular>
+            <row header="yes">
+              <cell>
+                                        column
+                                    </cell>
+              <cell>
+                                        type
+                                    </cell>
+              <cell>
+                                        description
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        stock_number
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        unique key identifying a particular copy of a book
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        author
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        the author of the book
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        title
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        the title of the book
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        condition
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        the condition of the book (new, good, fair, etc.)
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        price
+                                    </cell>
+              <cell>
+                                        fixed-point
+                                    </cell>
+              <cell>
+                                        the price of the book, in some unit of currency
+                                    </cell>
+            </row>
+          </tabular>
+        </table>
+      </container>
+      <container classes="data-dictionary">
+        <p>The <term>bookstore_sales</term> table gives information about the sales of books from <term>bookstore_inventory</term>.</p>
+        <table>
+          <tabular>
+            <row header="yes">
+              <cell>
+                                        column
+                                    </cell>
+              <cell>
+                                        type
+                                    </cell>
+              <cell>
+                                        description
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        receipt_number
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        unique key identifying this sale
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        stock_number
+                                    </cell>
+              <cell>
+                                        integer
+                                    </cell>
+              <cell>
+                                        key of the book copy (from <term>bookstore_inventory</term>) that was sold
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        date_sold
+                                    </cell>
+              <cell>
+                                        date
+                                    </cell>
+              <cell>
+                                        the date on which the books was sold
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        payment
+                                    </cell>
+              <cell>
+                                        character string
+                                    </cell>
+              <cell>
+                                        the method of payment used in the sale (case, credit card, etc.)
+                                    </cell>
+            </row>
+          </tabular>
+        </table>
+      </container>
+      <p>Use the query tool below to view the data.</p>
+      <program xml:id="appendix_a_bookstore_dataset" interactive="activecode" language="sql">
+        <input>
+SELECT * FROM bookstore_inventory;
+SELECT * FROM bookstore_sales;
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </subsubsection>
+    <subsubsection xml:id="appendix-a-datasets_other-tables-in-the-database">
+      <title>Other tables in the database</title>
+      <p>In addition to the above, the database contains some very small tables which are used to illustrate various points in the text: <term>fruit_stand</term>, <term>s</term>, <term>s2</term>, <term>s3</term>, <term>t</term>, <term>t2</term>, and <term>t3</term>.  As these tables are give in full in the text, we do not further explain them here.  However, you can use the interactive query tool below to view the data.</p>
+      <program xml:id="appendix_a_miscellaneous_tables" interactive="activecode" language="sql">
+        <input>
+SELECT * FROM fruit_stand;
+SELECT * FROM s;
+SELECT * FROM s2;
+SELECT * FROM s3;
+SELECT * FROM t;
+SELECT * FROM t2;
+SELECT * FROM t3;
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="appendix-a-datasets_data-collection-notes">
+    <title>Data collection notes</title>
+    <p>The selection of books in the simple and expanded books datasets was driven by several interests.  First, the textbook's author is a fan of science fiction and fantasy - these genres are thus perhaps overrepresented in the dataset.  Second, an attempt was made to include a diverse set of authors, in hopes of providing some common points of reference for students everywhere.  (There is nevertheless a strong bias towards English-language literature, reflecting the context of the textbook's author.) Lastly, the selection favored books by authors who have received literary awards.  To keep things manageable, the number of books was capped at 200.</p>
+    <p>Authors were handpicked, based on the textbook author's knowledge and on internet searches of major literary awards. <url href="https://www.wikipedia.org/" visual="https://www.wikipedia.org/">Wikipedia</url> was extremely helpful in collecting data such as authors' birth and death dates.  (Note that the dataset was finalized in 2022; it is very possible that some authors in the dataset have died since the data was entered.  This inaccuracy is regrettable but unavoidable under the circumstances.)</p>
+    <p>Some authors are represented by a single work (typically an award winning or at least widely acclaimed book), while in other cases many books by the author were included.  There was no consistent decision process used to decide how many books to include by each author.  Many choices were made in support of specific examples in the text.  Most of the data regarding individual books was hand collected from Wikipedia and other freely available sources on the internet.  Some publication year values were extracted from the freely available <url href="https://openlibrary.org/" visual="https://openlibrary.org/">Open Library</url> dataset.</p>
+    <p>Data on author and book awards was hand collected from Wikipedia and the websites representing the awards.  Data on the many editions of works comes entirely from the Open Library.</p>
+    <p>To the best of the author's knowledge, all of the data in the simple and expanded books datasets is in the public domain.</p>
+    <p>The bookstore dataset uses books from the expanded books dataset, but is otherwise entirely fabricated, as are the fruit stand and other abstract example tables.</p>
+  </subsection>
+  <subsection xml:id="appendix-a-datasets_getting-the-data">
+    <title>Getting the data</title>
+    <p><number_reference internal="True" refuri="../PART1_SQL/index#sql-part" title="Part {number}"><inline classes="std std-numref">Part 1</inline></number_reference> of this book includes interactive elements allowing the reader to work directly with a relational database.  This functionality lets students immediately try example code on a real database system.  As the database available on each page is actually a copy (in memory) of a fixed database, changes to the database do not persist over time - refreshing the browser window will return the database to the same initial state each time.  This is useful in that students can safely experiment with destructive SQL commands, knowing that no changes are permanent.  On the other hand, it means that students cannot use the system for longer term projects.</p>
+    <p>The database system used in this textbook is <url href="https://www.sqlite.org/" visual="https://www.sqlite.org/">SQLite</url>.  While SQLite is a powerful and popular relational database system, it lacks some features of the client-server database systems commonly used in industry.  It also differs in significant ways from the SQL standard (notably with its use of dynamic typing).</p>
+    <p>For these reasons, users of this textbook may wish to set up their own database system.  Many different database systems are available, each with their own system requirements and installation procedures.  There are likewise many ways to access and query each database system.  Instructions for setting up and accessing different systems are therefore out of the scope of this textbook.  However, in the interest of providing a transition from the textbook's database to the users' systems of choice, we provide scripts and data files below, which can be used to recreate the book's database on the database system of your choice.</p>
+    <subsubsection xml:id="appendix-a-datasets_id1">
+      <title>SQLite</title>
+      <p>The <url href="https://www.sqlite.org/" visual="https://www.sqlite.org/">SQLite</url> database engine is unique (in the set of systems supported by this textbook) in that it works with databases stored entirely in a single file.  SQLite databases can be shared by simply copying the files containing them.  We provide below the database file used by this textbook.  Additionally, we provide a SQL script (a text file in UTF-8 Unicode format) with the SQL commands necessary to re-create the database from scratch.  Use the former if you simply want a copy of the textbook's database for your own use; use the latter if you want to create the textbook's database tables within an existing SQLite database.  The SQL script contains only <term>CREATE TABLE</term> and <term>INSERT</term> statements, and therefore should not replace existing tables within the database.</p>
+      <p>
+        <ul>
+          <li>
+            <p><download_reference filename="ce329fc66414fc686619752469110df7/textbook.sqlite3" refdoc="appendix-a-datasets/datasets" refdomain="" refexplicit="False" reftarget="textbook.sqlite3" reftype="download" refwarn="False"><c classes="xref download">textbook.sqlite3</c></download_reference>, the textbook's SQLite database file</p>
+          </li>
+          <li>
+            <p><download_reference filename="82b98d571ecccbd1a3e60cf84fbfc0f7/sqlite.sql" refdoc="appendix-a-datasets/datasets" refdomain="" refexplicit="False" reftarget="sqlite.sql" reftype="download" refwarn="False"><c classes="xref download">sqlite.sql</c></download_reference>, the SQL script</p>
+          </li>
+        </ul>
+      </p>
+      <p>This SQL script was verified to work correctly using version 3.39.2 of the <c>sqlite3.exe</c> program on Windows 10 and with version 3.31.1 of the <c>sqlite3</c> program running on linux (Linux Mint 20.3 with kernel version 5.15.0-41).</p>
+    </subsubsection>
+    <subsubsection xml:id="appendix-a-datasets_postgresql">
+      <title>PostgreSQL</title>
+      <p>The SQL script below can be used to create the equivalent of the textbook's tables in a <url href="https://www.postgresql.org/" visual="https://www.postgresql.org/">PostgreSQL</url> database.  The SQL script contains only <term>CREATE TABLE</term> and <term>INSERT</term> statements, and therefore should not replace existing tables within the database.</p>
+      <p>
+        <ul>
+          <li>
+            <p>
+              <download_reference filename="fc3d4c7a49bcdf6e8d8161ea05edaff4/postgresql.sql" refdoc="appendix-a-datasets/datasets" refdomain="" refexplicit="False" reftarget="postgresql.sql" reftype="download" refwarn="False">
+                <c classes="xref download">postgresql.sql</c>
+              </download_reference>
+            </p>
+          </li>
+        </ul>
+      </p>
+      <p>This SQL script was verified to work correctly using version 12.5 of the <c>psql.exe</c> program on Windows 10 and with version 12.11 of the <c>psql</c> program running on linux (Linux Mint 20.3 with kernel version 5.15.0-41), loading into a PostgreSQL version 12.8 instance running on linux (Linux Mint 20 with kernel version 5.4.0-86).  Note: on Windows 10, you may need to first issue the command <c>\encoding utf8</c> (at the <c>psql</c> command line) before loading or querying the data.  This setting may not be sufficient to ensure all characters can be viewed correctly when returned by a query, but the data can be loaded correctly.</p>
+      <p>Notable differences from the textbook:</p>
+      <p>
+        <ul>
+          <li>
+            <p>As described in the text, SQLite does not use a standard SQL approach to automatically generate sequential ID values.  The <term>AUTOINCREMENT</term> option used in the SQLite database (in <term>bookstore_sales</term> and <term>bookstore_inventory</term>) is not available in PostgreSQL, but the standard SQL <term>GENERATED BY DEFAULT AS IDENTITY</term> option is.  Accordingly, the PostgreSQL script uses the standard approach.  The two options behave slightly differently.</p>
+          </li>
+        </ul>
+      </p>
+    </subsubsection>
+    <subsubsection xml:id="appendix-a-datasets_mysql">
+      <title>MySQL</title>
+      <p>The SQL script below can be used to create the equivalent of the textbook's tables in a <url href="https://www.mysql.com/" visual="https://www.mysql.com/">MySQL</url> database.  The SQL script contains only <term>CREATE TABLE</term> and <term>INSERT</term> statements, and therefore should not replace existing tables within the database.</p>
+      <p>
+        <ul>
+          <li>
+            <p>
+              <download_reference filename="cd83b94dd066740fcc4c0179194aa16a/mysql.sql" refdoc="appendix-a-datasets/datasets" refdomain="" refexplicit="False" reftarget="mysql.sql" reftype="download" refwarn="False">
+                <c classes="xref download">mysql.sql</c>
+              </download_reference>
+            </p>
+          </li>
+        </ul>
+      </p>
+      <p>This SQL script was verified to work correctly using version 8.0.29 of the MySQL Shell (<c>mysqlsh.exe</c>) program on Windows 10 and with version 8.0.29 of the <c>mysql</c> program running on linux (Linux Mint 20.3 with kernel version 5.15.0-41), loading into a MySQL version 8.0.26 instance running on linux (Linux Mint 20 with kernel version 5.4.0-86).</p>
+      <p>Notable differences from the textbook:</p>
+      <p>
+        <ul>
+          <li>
+            <p>The <term>bookstore_sales</term> table in the textbook database has a <term>DEFAULT</term> clause to set the <term>date_sold</term> column to the current date when no value is provided for the column.  MySQL does not permit default setting for columns of type <term>DATE</term>, but does allow it for the <term>TIMESTAMP</term> type.  Accordingly, the <term>date_sold</term> column in the MySQL script is of type <term>TIMESTAMP</term> (and thus includes time as well as date).</p>
+          </li>
+          <li>
+            <p>The MySQL <term>AUTO_INCREMENT</term> option is very similar to the <term>AUTOINCREMENT</term> option in SQLite (used in <term>bookstore_sales</term> and <term>bookstore_inventory</term>), but may have slightly different behavior.</p>
+          </li>
+          <li>
+            <p>The <term>bookstore_inventory</term> table contains a column named <term>condition</term>.  This is a reserved keyword in MySQL, which means that queries such as <q>SELECT DISTINCT condition FROM bookstore_inventory</q> will fail unless you put backticks around the word <q>condition</q>.  (The backtick character looks like an apostrophe, but slanting in the opposite direction.)</p>
+          </li>
+        </ul>
+      </p>
+    </subsubsection>
+    <subsubsection xml:id="appendix-a-datasets_oracle">
+      <title>Oracle</title>
+      <p>The SQL script below can be used to create the equivalent of the textbook's tables in an Oracle database.  The SQL script contains only <term>CREATE TABLE</term> and <term>INSERT</term> statements and statements setting temporary session variables, and therefore should not replace existing tables within the database.</p>
+      <p>
+        <ul>
+          <li>
+            <p>
+              <download_reference filename="9666b924634aad1a07f9449c66fe0c78/oracle.sql" refdoc="appendix-a-datasets/datasets" refdomain="" refexplicit="False" reftarget="oracle.sql" reftype="download" refwarn="False">
+                <c classes="xref download">oracle.sql</c>
+              </download_reference>
+            </p>
+          </li>
+        </ul>
+      </p>
+      <p>This SQL script was verified to work correctly using Oracle's SQLcl utility (release 22.2) running on linux (Linux Mint 20.3 with kernel version 5.15.0-41) with OpenJDK version 11.0.15, loading into an Oracle Database XE 18c instance running on linux (openSUSE Leap 15.2 with kernel version 5.3.18).  On Windows 10 with SQLcl (release 22.2), the script ran without reporting errors, but some character values were loaded incorrectly.  Note: if you run this script with SQLcl or SQL*Plus, you <em>must</em> uncomment the command <c>SET DEFINE OFF</c> at the top of the script.  Otherwise, the program will interpret any &amp; characters to imply a variable substitution sequence, which will halt the script and prevent the data from loading correctly.</p>
+      <p>Notable differences from the textbook:</p>
+      <p>
+        <ul>
+          <li>
+            <p>As described in the text, SQLite does not use a standard SQL approach to automatically generate sequential ID values.  The <term>AUTOINCREMENT</term> option used in the SQLite database (in <term>bookstore_sales</term> and <term>bookstore_inventory</term>) is not available in Oracle, but the standard SQL <term>GENERATED BY DEFAULT AS IDENTITY</term> option is.  Accordingly, the Oracle script uses the standard approach.  The two options behave slightly differently.</p>
+          </li>
+        </ul>
+      </p>
+    </subsubsection>
+    <subsubsection xml:id="appendix-a-datasets_sql-server">
+      <title>SQL Server</title>
+      <p>The SQL script below can be used to create the equivalent of the textbook's tables in a Microsoft SQL Server database.  The SQL script primarily contains <term>CREATE TABLE</term> and <term>INSERT</term> statements, and should not replace existing tables within the database.  The <term>USE</term> statement at the top of the script assumes that data will be loaded into an existing database named <q>textbook</q>.  This statement is needed for use with the <c>sqlcmd</c> utility and possibly other software, and should be edited to indicate the correct database as needed.  The statement may not be needed in other client software programs.</p>
+      <p>
+        <ul>
+          <li>
+            <p>
+              <download_reference filename="910babcff522c32aec06497e33d8c71c/sqlserver.sql" refdoc="appendix-a-datasets/datasets" refdomain="" refexplicit="False" reftarget="sqlserver.sql" reftype="download" refwarn="False">
+                <c classes="xref download">sqlserver.sql</c>
+              </download_reference>
+            </p>
+          </li>
+        </ul>
+      </p>
+      <p>This SQL script was verified to work correctly using the <c>sqlcmd</c> program (version 17.10.0001.1) running on linux (Linux Mint 20.3 with kernel version 5.15.0-41), loading into a SQL Server 2019 instance running on linux (Linux Mint 20 with kernel version 5.4.0-86).  On Windows 10 with version 15.0.2000.5 of <c>sqlcmd.exe</c>, the script ran without reporting errors, but some character values were loaded incorrectly.  Note that a collation supporting UTF8 must be used (this can be set on the database using an <term>ALTER DATABASE</term> statement); the test system used the <q>Latin1_General_100_CI_AS_SC_UTF8</q> collation.</p>
+      <p>Notable differences from the textbook:</p>
+      <p>
+        <ul>
+          <li>
+            <p>SQL Server generates sequential integer values for columns with the <term>IDENTITY</term> property, which differs in behavior compared to both the standard SQL <term>GENERATED BY&#x2026;</term> and SQLite's <term>AUTO_INCREMENT</term>.</p>
+          </li>
+        </ul>
+      </p>
+    </subsubsection>
+    <subsubsection xml:id="appendix-a-datasets_raw-data-files">
+      <title>Raw data files</title>
+      <p>If you wish to use a database other than one of those listed above, you can likely adapt one of the above scripts for use with your database, using the find/replace function of a text editor and some trial and error.  Alternatively, you may create the desired tables manually, and load the data from the data files in the zip archive linked below - most database systems provide mechanisms to load data from formatted files.  The data files are in comma-separated value (CSV) format, and are encoded in UTF-8.  Each file includes a header row with labels matching the column names from the textbook database.  If your database system does not support this file format, you may be able to open the files with a spreadsheet program and then export a format that is supported by your system.</p>
+      <p>
+        <ul>
+          <li>
+            <p>
+              <download_reference filename="51beb61daff7d0f1806905eb20088771/practical_db_data_files.zip" refdoc="appendix-a-datasets/datasets" refdomain="" refexplicit="False" reftarget="practical_db_data_files.zip" reftype="download" refwarn="False">
+                <c classes="xref download">practical_db_data_files.zip</c>
+              </download_reference>
+            </p>
+          </li>
+        </ul>
+      </p>
+      <transition/>
+      <p> </p>
+    </subsubsection>
+  </subsection>
+</section>

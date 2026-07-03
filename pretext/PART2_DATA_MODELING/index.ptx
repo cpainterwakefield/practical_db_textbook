@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<section xml:id="part2_data_modeling_data-modeling-data-modeling-part">
+  <title>DATA MODELING</title>
+  <p>Part 2 of this book concerns graphical modeling in general, and entity-relationship diagrams in particular.  The diagram below shows the strong dependencies between chapters; chapters will assume knowledge introduced in earlier chapters as implied by the graph.  The dotted outlines indicate chapters from other sections of the book.</p>
+  <figure align="" xml:id="id1">
+    <caption xmlns:c="https://www.sphinx-doc.org/" xmlns:changeset="https://www.sphinx-doc.org/" xmlns:citation="https://www.sphinx-doc.org/" xmlns:cpp="https://www.sphinx-doc.org/" xmlns:index="https://www.sphinx-doc.org/" xmlns:js="https://www.sphinx-doc.org/" xmlns:math="https://www.sphinx-doc.org/" xmlns:py="https://www.sphinx-doc.org/" xmlns:rst="https://www.sphinx-doc.org/" xmlns:std="https://www.sphinx-doc.org/">Chapter dependency graph for Part 2</caption>
+    <image source="PART2_DATA_MODELING/chapter_dependencies.svg" width="50%"/>
+  </figure>
+</section>

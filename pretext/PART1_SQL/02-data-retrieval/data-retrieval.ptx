@@ -1,0 +1,308 @@
+<?xml version="1.0"?>
+<section xml:id="_02-data-retrieval_data-retrieval-data-retrieval-chapter">
+  <title>Data retrieval</title>
+  <p>In this chapter, you will learn more about <term>SELECT</term> queries, including how to retrieve specific rows and how to sort the output.</p>
+  <subsection xml:id="_02-data-retrieval_tables-used-in-this-chapter">
+    <title>Tables used in this chapter</title>
+    <p>We will be working with the <term>simple_books</term> and <term>simple_authors</term> tables for this chapter.  As the names suggest, these are smaller, simplified versions of other tables we will work with later in the book, and the data concerns books and their authors.  You can read a full explanation of these tables in <xref ref="appendix-a-datasets_datasets"/>, but for now we recommend simply using a <term>SELECT</term> query to view all of the data in these two tables.  Here is an interactive tool you can use for that purpose:</p>
+    <program xml:id="data_retrieval_example_tables" interactive="activecode" language="sql">
+      <input>
+SELECT * FROM simple_books;
+        </input>
+      <tests>
+
+
+</tests>
+    </program>
+    <p>Remember from the previous chapter that you can <term>SELECT</term> * to retrieve all columns, or you can specify the columns you want:</p>
+    <program language="sql">
+      <input>
+SELECT author, title FROM simple_books;
+</input>
+    </program>
+  </subsection>
+  <subsection xml:id="_02-data-retrieval_filtering-rows-the-where-clause-index-0">
+    <title>Filtering rows: the WHERE clause</title>
+    <p>Retrieving all of the data from a table is useful, but often not what we want, especially if the table is very large (and tables can get very, very large!)  To see just a subset of rows, we include a <term>WHERE</term> clause in our query.  The <term>WHERE</term> clause consists of the keyword <term>WHERE</term> followed by an <em>expression</em> that evaluates to true or false (a Boolean expression). <footnote_reference auto="1" docname="PART1_SQL/02-data-retrieval/data-retrieval" xml:id="_02-data-retrieval_id1" refid="id3">1</footnote_reference>  The <term>WHERE</term> clause is placed after the <term>FROM</term> clause.  Expressions are discussed more in <number_reference internal="True" refuri="../03-expressions/expressions#expressions-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.3</inline></number_reference>, but for now, let's see some simple examples:</p>
+    <program xml:id="data_retrieval_example_where" interactive="activecode" language="sql">
+      <input>
+SELECT * FROM simple_books WHERE author = 'Isabel Allende';
+
+SELECT author, title, genre
+FROM simple_books
+WHERE publication_year &gt; 1999;
+
+SELECT birth, death
+FROM simple_authors
+WHERE name = 'Ralph Ellison';
+        </input>
+      <tests>
+
+
+</tests>
+    </program>
+    <p>Note that character string literals in SQL are enclosed with single quotes - not double quotes.  Double quotes are used in SQL for a different purpose, which we'll see in <number_reference internal="True" refuri="../04-multiple-tables/multiple-tables#joins-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.4</inline></number_reference>.</p>
+    <p>Queries can return zero, one, or many rows.  If no rows match the <term>WHERE</term> condition, zero rows are returned (try pasting this in one of the interactive tools above):</p>
+    <program language="sql">
+      <input>
+SELECT * FROM simple_books WHERE genre = 'romance';
+</input>
+    </program>
+  </subsection>
+  <subsection xml:id="_02-data-retrieval_ordering-data-the-order-by-clause-index-1">
+    <title>Ordering data: the ORDER BY clause</title>
+    <p>One surprising fact about relational databases is that the rows in a table are not necessarily ordered in any particular fashion.  In fact, relational DBMSes (RDBMSes) are permitted to store data in whatever fashion is most convenient or efficient, as well as to retrieve data however is most convenient.  For example, in many RDBMSes, data may be initially in the order in which it was added to the table, but a subsequent data modification statement results in the data being re-ordered.</p>
+    <p>SQL provides a mechanism by which we can put rows in order by whatever criteria we wish.  This is accomplished via the <term>ORDER BY</term> clause, which always comes last in any query.  The key phrase <term>ORDER BY</term> is followed by a comma-separated list of expressions, which must evaluate to some type that can be put in order: numbers, character strings, dates, etc.  By default, numbers are sorted from smallest to largest, and dates from earliest to latest.  Character strings are a bit trickier, because different databases order them differently. <footnote_reference auto="1" docname="PART1_SQL/02-data-retrieval/data-retrieval" xml:id="_02-data-retrieval_id2" refid="id4">2</footnote_reference> SQLite, the dialect we are using, defaults to <url href="https://en.wikipedia.org/wiki/Lexicographic_order" visual="https://en.wikipedia.org/wiki/Lexicographic_order">lexicographic ordering</url> based on <url href="https://en.wikipedia.org/wiki/ASCII" visual="https://en.wikipedia.org/wiki/ASCII">ASCII</url> values.</p>
+    <p>Here are some simple queries to try:</p>
+    <program xml:id="data_retrieval_example_order_by" interactive="activecode" language="sql">
+      <input>
+SELECT * FROM simple_books ORDER BY publication_year;
+
+SELECT * FROM simple_authors ORDER BY birth;
+        </input>
+      <tests>
+
+
+</tests>
+    </program>
+    <p>Ordering is initially applied using the first expression after the <term>ORDER BY</term> keyword.  If any two rows are equal according to that first expression, and there are additional expressions in the <term>ORDER BY</term> clause, the next expression is then applied to groups of rows that have equal values for the first expression, and so forth.  For example, suppose you are organizing books for a library or bookstore where books are grouped by genre and then alphabetized by title.  You could write the following query to help with this task:</p>
+    <program language="sql">
+      <input>
+SELECT author, title, genre
+FROM simple_books
+ORDER BY genre, title;
+</input>
+    </program>
+    <p>It is also possible to reverse the ordering for any or all of the criteria using the <term>DESC</term> (<q>descending</q>) keyword.  (You can also use <term>ASC</term> for <q>ascending</q>, but, as that is the default, it is usually omitted.)  If we want to see all books listed from most recent to least recent, we can write:</p>
+    <program language="sql">
+      <input>
+SELECT * FROM simple_books ORDER BY publication_year DESC;
+</input>
+    </program>
+  </subsection>
+  <subsection xml:id="_02-data-retrieval_retrieving-unique-rows-the-distinct-keyword-index-2">
+    <title>Retrieving unique rows: the DISTINCT keyword</title>
+    <p>As we will see in later chapters, it is usually good practice to set up database tables in such as way that each record in the table is unique; that is, for each row, there will be no other row in the table that contains exactly the same data in every column.</p>
+    <p>However, queries that <term>SELECT</term> a subset of the columns of a table can easily end up with duplicate results; this may or may not be desired.  Suppose you were interested in browsing the books in our database for particular genres of books, but you weren't sure what genres the database puts books into - that is, you need to determine what would be valid choices given the data.</p>
+    <p>You could simply run the query:</p>
+    <program xml:id="data_retrieval_example_distinct" interactive="activecode" language="sql">
+      <input>
+SELECT genre FROM simple_books;
+        </input>
+      <tests>
+
+
+</tests>
+    </program>
+    <p>For this small collection of books, that would probably be fine - there are duplicate values, but we can pretty quickly come up with a unique set.  However, a real database of books could contain many thousands of books.  You wouldn't want to browse that many rows to discover the possible genres!</p>
+    <p>SQL provides a keyword, <term>DISTINCT</term>, that can be added after the <term>SELECT</term> keyword and tells SQL that we only want unique results, and if there are duplicates, it should discard them.  This will give us the desired result, a unique set of genres that we can choose from:</p>
+    <program language="sql">
+      <input>
+SELECT DISTINCT genre FROM simple_books;
+</input>
+    </program>
+  </subsection>
+  <subsection xml:id="_02-data-retrieval_self-check-exercises">
+    <title>Self-check exercises</title>
+    <p>This section contains some simple exercises using the <term>simple_books</term> and <term>simple_authors</term> tables used in the text above.  If you get stuck, click on the <q>Show answer</q> button below the exercise to see a correct answer.</p>
+    <exercise label="data_retrieval_self_test_select">
+      <statement>
+        <p>Modify the SQL statement below to retrieve author names only.</p>
+      </statement>
+      <program xml:id="data_retrieval_self_test_select_editor" interactive="activecode" language="sql">
+        <input>
+SELECT * FROM simple_authors;
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT name FROM simple_authors;
+</input>
+      </program>
+    </hint>
+    <exercise label="data_retrieval_self_test_where1">
+      <statement>
+        <p>Write a query to find all books in the science fiction genre.</p>
+      </statement>
+      <program xml:id="data_retrieval_self_test_where1_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT * FROM simple_books WHERE genre = 'science fiction';
+</input>
+      </program>
+    </hint>
+    <exercise label="data_retrieval_self_test_where2">
+      <statement>
+        <p>Write a query to find the publication year and author for the book <em>Bodega Dreams</em>.</p>
+      </statement>
+      <program xml:id="data_retrieval_self_test_where2_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT publication_year, author
+FROM simple_books
+WHERE title = 'Bodega Dreams';
+</input>
+      </program>
+    </hint>
+    <exercise label="data_retrieval_self_test_where3">
+      <statement>
+        <p>Write a query to find all books published prior to 1950.</p>
+      </statement>
+      <program xml:id="data_retrieval_self_test_where3_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT * FROM simple_books WHERE publication_year &lt; 1950;
+</input>
+      </program>
+    </hint>
+    <exercise label="data_retrieval_self_test_order">
+      <statement>
+        <p>Write a query to get books in order by title.</p>
+      </statement>
+      <program xml:id="data_retrieval_self_test_order_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT * FROM simple_books ORDER BY title;
+</input>
+      </program>
+    </hint>
+    <exercise label="data_retrieval_self_test_challenge1">
+      <statement>
+        <p>Write a query to get the authors publishing since 1980, in order by author name.</p>
+      </statement>
+      <program xml:id="data_retrieval_self_test_challenge1_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT author
+FROM simple_books
+WHERE publication_year &gt; 1979
+ORDER BY author;
+</input>
+      </program>
+    </hint>
+    <exercise label="data_retrieval_self_test_challenge2">
+      <statement>
+        <p>Write a query to get the unique publication years for the books in our database published since 1980, ordered latest to earliest.</p>
+      </statement>
+      <program xml:id="data_retrieval_self_test_challenge2_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT DISTINCT publication_year
+FROM simple_books
+WHERE publication_year &gt; 1979
+ORDER BY publication_year DESC;
+</input>
+      </program>
+    </hint>
+    <p>&#x274F;</p>
+    <transition/>
+    <p>
+      <term>Notes</term>
+    </p>
+    <footnote auto="1" backrefs="id1" docname="PART1_SQL/02-data-retrieval/data-retrieval" xml:id="_02-data-retrieval_id3" names="1">
+      <label>1</label>
+      <p>There is actually a third possible value, <c>NULL</c>, which may occur in expressions used in the <term>WHERE</term> clause of a query.  <c>NULL</c> is a complex topic which will be covered in <number_reference internal="True" refuri="../03-expressions/expressions#expressions-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.3</inline></number_reference>.  For now, assume a normal Boolean result of true or false.</p>
+    </footnote>
+    <footnote auto="1" backrefs="id2" docname="PART1_SQL/02-data-retrieval/data-retrieval" xml:id="_02-data-retrieval_id4" names="2">
+      <label>2</label>
+      <p>You can change the sort order for strings by applying the <term>COLLATE</term> operator. <term>COLLATE</term> is out of scope for this textbook, and varies with the dialect of SQL.  Please see the documentation for your particular DBMS.</p>
+    </footnote>
+    <p> </p>
+  </subsection>
+</section>

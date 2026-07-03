@@ -1,0 +1,420 @@
+<?xml version="1.0"?>
+<section xml:id="_09-grouping-and-aggregation_grouping-and-aggregation-grouping-chapter">
+  <title>Grouping and aggregation</title>
+  <p>Previous chapters have focused on mechanisms for storing and retrieving data.  SQL also provides facilities for simple analyses of the data.  In this chapter, we discuss methods of partitioning data and computing simple statistics on the partitions.</p>
+  <subsection xml:id="_09-grouping-and-aggregation_tables-used-in-this-chapter">
+    <title>Tables used in this chapter</title>
+    <p>For this chapter, we will primarily work with the tables <term>bookstore_inventory</term> and <term>bookstore_sales</term>, which simulate a simple database that a seller of used books might reference.  The <term>bookstore_inventory</term> table lists printed books that the bookstore either has in stock or has sold recently, along with the condition of the book and the asking price.  When the bookstore sells a book, a record is added to the <term>bookstore_sales</term> table.  This table lists the <term>stock_number</term> of the book sold, the date sold, and the type of payment.  The column <term>stock_number</term> is a unique identifier for each book in the inventory, and can be used to join the tables.</p>
+    <p>We will also use the <term>authors</term> table to illustrate the interaction of <c>NULL</c> with aggregate functions.</p>
+    <p>A full description of these tables can be found in <xref ref="appendix-a-datasets_datasets"/>.</p>
+  </subsection>
+  <subsection xml:id="_09-grouping-and-aggregation_aggregate-statistics-index-0">
+    <title>Aggregate statistics</title>
+    <p><em>Aggregate statistics</em> are values computed on entire sets of data.  Counts, sums, and averages are examples of aggregate statistics.  SQL provides a number of aggregate functions for computing such statistics.  This section will cover some of the most commonly used functions; for documentation on all of the aggregate functions defined by SQL, see Appendix B - <xref ref="appendix-b-reference_reference"/>.</p>
+    <p>We start by using the <term>COUNT</term> aggregate function to illustrate the basic rules for aggregate functions.  At its simplest, <term>COUNT</term> can be used to return the number of rows in a table:</p>
+    <program xml:id="grouping_example_aggregate" interactive="activecode" language="sql">
+      <input>
+SELECT COUNT(*) FROM bookstore_sales;
+        </input>
+      <tests>
+
+
+</tests>
+    </program>
+    <p>If you add a <term>WHERE</term> clause, <term>COUNT</term> will only consider rows matching the <term>WHERE</term> clause:</p>
+    <program language="sql">
+      <input>
+SELECT COUNT(*)
+FROM bookstore_sales
+WHERE payment = 'cash';
+</input>
+    </program>
+    <p>The use of <term>*</term> within the aggregate function is unique to <term>COUNT</term>; it simply means that we want to count rows, rather than any particular column.  Other aggregate functions require application to a column or expression.  When applied to a column or expression, <term>COUNT</term> and the other aggregate functions ignore <c>NULL</c> values.  For example, observe the result when applying <term>COUNT</term> to different columns of the <term>authors</term> table:</p>
+    <program language="sql">
+      <input>
+SELECT COUNT(*), COUNT(author_id), COUNT(birth), COUNT(death)
+FROM authors;
+</input>
+    </program>
+    <p>In each of the results above, we obtain a single number for each function in the <term>SELECT</term> clause.  Only one row is returned, because we are (at the moment) applying the aggregate function to all rows matching the (optional) <term>WHERE</term> clause.  This row represents a <em>summary</em> of the data.  As a summary, details of the data cannot be included; it is an error to try to retrieve any expressions on the columns other than aggregates, when any aggregate function is used.  The following query will result in an error in every database except SQLite:</p>
+    <program language="sql">
+      <input>
+SELECT title, COUNT(*) FROM bookstore_inventory;
+</input>
+    </program>
+    <p>While SQLite does not give us an error, the data returned demonstrates why this is an error in most databases; the returned <term>title</term> value represents just one row of the table, while the <term>COUNT(*)</term> value is a summary of the whole table.  These two things do not match.</p>
+    <p>In addition to <term>COUNT</term>, the most common aggregate functions implemented by SQLite are <term>SUM</term>, <term>AVG</term>, <term>MIN</term>, and <term>MAX</term>.  SQL defines a number of other aggregate functions as well, including statistical functions such as variance and standard deviation.  As with <term>COUNT</term>, the argument of the function is a column or expression, which is evaluated for every row; <c>NULL</c> values are discarded.  For all aggregates except <term>COUNT</term>, if the argument evaluates to <c>NULL</c> for every row, then the result is <c>NULL</c> (for <term>COUNT</term> the result is zero).</p>
+    <p>You can probably guess the meaning of these aggregate functions:</p>
+    <p>
+      <ul>
+        <li>
+          <p><term>SUM</term> computes the sum, and can only be applied to numbers</p>
+        </li>
+        <li>
+          <p><term>AVG</term> computes the average, and can only be applied to numbers</p>
+        </li>
+        <li>
+          <p><term>MIN</term> finds the minimum value according to the normal sort order for the value type</p>
+        </li>
+        <li>
+          <p><term>MAX</term> finds the maximum value according to the normal sort order for the value type</p>
+        </li>
+      </ul>
+    </p>
+    <p>We can apply all of these to the <term>price</term> column of <term>bookstore_inventory</term>:</p>
+    <program language="sql">
+      <input>
+SELECT COUNT(price), SUM(price), AVG(price), MIN(price), MAX(price)
+FROM bookstore_inventory;
+</input>
+    </program>
+    <p>In addition to ignoring <c>NULL</c> values, it is possible to indicate that duplicate values should be ignored by putting the <term>DISTINCT</term> keyword before the argument of the aggregate function.  This is mostly useful when combined with <term>COUNT</term>.  For example, if we want to know the total number of books versus the number of unique titles in our inventory, we could write:</p>
+    <program language="sql">
+      <input>
+SELECT COUNT(title), COUNT(DISTINCT title) FROM bookstore_inventory;
+</input>
+    </program>
+  </subsection>
+  <subsection xml:id="_09-grouping-and-aggregation_grouping-index-1">
+    <title>Grouping</title>
+    <p>Aggregates can be very useful when applied to an entire table or to a set of rows matching a <term>WHERE</term> clause.  Sometimes, though, we want more than one count, or sum, or average from a table; we may want these statistics over some subsets of rows, organized by some common attribute.  For example, our <term>bookstore_inventory</term> table includes books in different conditions; we might be interested in the average price we are charging for books in <q>good</q> condition separately from books in <q>fair</q> condition, and so forth.</p>
+    <p>SQL provides the <term>GROUP BY</term> clause for this purpose.  <term>GROUP BY</term> lets us specify an attribute, such as the condition of a book, by which to organize a table into <em>groups</em>.  Membership in a specific group is based on the <term>GROUP BY</term> expression; all members of a group share the same value for the expression.  The groups form a <em>partition</em> of the data; every row (matching the optional <term>WHERE</term> clause, if used) is assigned to a group, and no row is assigned to more than one group.</p>
+    <p>With <term>GROUP BY</term> in effect, we can now retrieve information about each group as a whole; each row of our output will represent information about one group.  If we put an aggregate function expression in our <term>SELECT</term> clause, the aggregate is applied to each group's rows separately.  In addition to aggregates, we can <term>SELECT</term> the <term>GROUP BY</term> expression - this is allowed (and makes sense) because all of the rows in each group will have the same value for the expression. You usually want to include the grouping expression as a label for the group - otherwise you will not know what group each aggregate expression belongs to!</p>
+    <p>The <term>GROUP BY</term> clause comes immediately after the <term>WHERE</term> clause, or after <term>FROM</term> if there is no <term>WHERE</term> clause.  Here is an example of grouping on our bookstore inventory by book condition:</p>
+    <program xml:id="grouping_example_grouping" interactive="activecode" language="sql">
+      <input>
+SELECT condition, COUNT(*), AVG(price)
+FROM bookstore_inventory
+GROUP BY condition;
+        </input>
+      <tests>
+
+
+</tests>
+    </program>
+    <p>If we want to exclude books that have already been sold, we could add a <term>WHERE</term> clause (here we use a subquery as discussed in <number_reference internal="True" refuri="../08-subqueries/subqueries#subqueries-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.8</inline></number_reference>):</p>
+    <program language="sql">
+      <input>
+SELECT condition, COUNT(*), AVG(price)
+FROM bookstore_inventory
+WHERE stock_number NOT IN
+  (SELECT stock_number FROM bookstore_sales)
+GROUP BY condition;
+</input>
+    </program>
+    <p>It is also possible to group by more than one expression, in which case each group is defined by a unique setting for all of the expressions.  Our <term>bookstore_sales</term> table contains information about the date in which a book was sold, as well as the type of payment used in the purchase.  We might be very interested in knowing sales totals by month, or by type of payment, or both.  To get the price that was paid, we will have to join in the <term>bookstore_inventory</term> table.</p>
+    <p>To start with, let's retrieve sales totals by month (here we will use SQLite's substring() function to extract the 2-digit month number; in other databases it may be possible to extract a month by name):</p>
+    <program language="sql">
+      <input>
+SELECT
+  substring(s.date_sold, 6, 2) AS month,
+  SUM(i.price) AS total_sales
+FROM
+  bookstore_sales AS s
+  JOIN bookstore_inventory AS i ON s.stock_number = i.stock_number
+GROUP BY month;
+</input>
+    </program>
+    <p>Note that we can use the alias <q>month</q> defined in our <term>SELECT</term> clause in our <term>GROUP BY</term> clause without having to rewrite the function expression.</p>
+    <p>Now, let's break down our total sales by type of month <em>and</em> type of payment:</p>
+    <program language="sql">
+      <input>
+SELECT
+  substring(s.date_sold, 6, 2) AS month,
+  s.payment,
+  SUM(i.price) AS total_sales
+FROM
+  bookstore_sales AS s
+  JOIN bookstore_inventory AS i ON s.stock_number = i.stock_number
+GROUP BY month, s.payment
+ORDER BY month, s.payment;
+</input>
+    </program>
+    <p>Here we have sorted by our grouping expressions as well, just to ensure that our groups come out in a consistent fashion.</p>
+    <subsubsection xml:id="_09-grouping-and-aggregation_filtering-grouped-data-index-2">
+      <title>Filtering grouped data</title>
+      <p>When we group, we are generating a new set of rows representing the groups present in our data.  If we include a <term>WHERE</term> clause in our query, it is applied to the data <em>before</em> grouping.  The <term>WHERE</term> clause, then, cannot be used to filter the set of rows produced by grouping.  If we want to filter the grouped data, we must do so using a <term>HAVING</term> clause.</p>
+      <p>The <term>HAVING</term> clause works just like the <term>WHERE</term> clause, but applies to the set of rows generated by grouping.  Using <term>HAVING</term>, we can filter by expressions available to us after grouping: any expressions that we grouped by (our group labels), or aggregate functions on the groups.  The <term>HAVING</term> clause comes after the <term>GROUP BY</term> clause.</p>
+      <p>Here we use <term>HAVING</term> to list books for which we have more than one copy in our bookstore inventory, in order by the number of copies:</p>
+      <program language="sql">
+        <input>
+SELECT author, title, COUNT(*)
+FROM bookstore_inventory
+GROUP BY author, title
+HAVING COUNT(*) &gt; 1
+ORDER BY COUNT(*) DESC;
+</input>
+      </program>
+      <p>We can, of course, use both <term>WHERE</term> and <term>HAVING</term> in the same query - here we group books that have not been sold by author and title; then we report  the titles (groups) with multiple copies:</p>
+      <program language="sql">
+        <input>
+SELECT author, title, COUNT(*)
+FROM bookstore_inventory
+WHERE stock_number NOT IN
+  (SELECT stock_number FROM bookstore_sales)
+GROUP BY author, title
+HAVING COUNT(*) &gt; 1;
+</input>
+      </program>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_09-grouping-and-aggregation_self-check-exercises">
+    <title>Self-check exercises</title>
+    <p>This section contains exercises on grouping and aggregation, using the <term>bookstore_inventory</term> and <term>bookstore_sales</term> tables.  If you get stuck, click on the <q>Show answer</q> button below the exercise to see a correct answer.</p>
+    <exercise label="grouping_self_test_count">
+      <statement>
+        <p>Write a query to count the number of books in our inventory by the author Toni Morrison.</p>
+      </statement>
+      <program xml:id="grouping_self_test_count_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT COUNT(*) FROM bookstore_inventory WHERE author = 'Toni Morrison';
+</input>
+      </program>
+    </hint>
+    <exercise label="grouping_self_test_statistics">
+      <statement>
+        <p>Write a query to find the minimum, maximum, and average price of a book in &#x2018;good' condition.</p>
+      </statement>
+      <program xml:id="grouping_self_test_statistics_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT MIN(price), MAX(price), AVG(price)
+FROM bookstore_inventory
+WHERE condition = 'good';
+</input>
+      </program>
+    </hint>
+    <exercise label="grouping_self_test_distinct">
+      <statement>
+        <p>Write a query to find out how many different authors have written books in our inventory.</p>
+      </statement>
+      <program xml:id="grouping_self_test_distinct_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT COUNT(DISTINCT author) FROM bookstore_inventory;
+</input>
+      </program>
+    </hint>
+    <exercise label="grouping_self_test_grouping_1">
+      <statement>
+        <p>Write a query to get the average price of a book, by author; sort by highest average price first.</p>
+      </statement>
+      <program xml:id="grouping_self_test_grouping_1_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT author, AVG(price)
+FROM bookstore_inventory
+GROUP BY author
+ORDER BY AVG(price) DESC;
+</input>
+      </program>
+    </hint>
+    <exercise label="grouping_self_test_grouping_2">
+      <statement>
+        <p>Write a query to get the average price of a book, by author and condition; sort by author and condition.</p>
+      </statement>
+      <program xml:id="grouping_self_test_grouping_2_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT author, condition, AVG(price)
+FROM bookstore_inventory
+GROUP BY author, condition
+ORDER BY author, condition;
+</input>
+      </program>
+    </hint>
+    <exercise label="grouping_self_test_grouping_3">
+      <statement>
+        <p>Write a query to give the number of books sold and the total sales from those books, grouped by condition.  Exclude books for the payment type &#x2018;trade in'.</p>
+      </statement>
+      <program xml:id="grouping_self_test_grouping_3_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT i.condition, COUNT(*) AS books_sold, SUM(i.price) AS sales
+FROM
+  bookstore_inventory AS i
+  JOIN bookstore_sales AS s ON s.stock_number = i.stock_number
+WHERE s.payment &lt;&gt; 'trade in'
+GROUP BY i.condition;
+</input>
+      </program>
+    </hint>
+    <exercise label="grouping_self_test_having">
+      <statement>
+        <p>Write a query to find which authors' books have an average price less than 3 units of currency.</p>
+      </statement>
+      <program xml:id="grouping_self_test_having_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT author, AVG(price)
+FROM bookstore_inventory
+GROUP BY author
+HAVING AVG(price) &lt; 3;
+</input>
+      </program>
+    </hint>
+    <exercise label="grouping_self_test_challenge_1">
+      <statement>
+        <p>Write a query to get the difference between the maximum and minimum price of a book for each possible book condition.</p>
+      </statement>
+      <program xml:id="grouping_self_test_challenge_1_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT condition, MAX(price) - MIN(price)
+FROM bookstore_inventory
+GROUP BY condition;
+</input>
+      </program>
+    </hint>
+    <exercise label="grouping_self_test_challenge_2">
+      <statement>
+        <p>Write a query to find the maximum price of any book in our inventory and list the books with that price.  <em>Hint</em>: you will need to use a subquery for this one.</p>
+      </statement>
+      <program xml:id="grouping_self_test_challenge_2_editor" interactive="activecode" language="sql">
+        <prefix>
+
+
+</prefix>
+        <input>
+
+
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+    </exercise>
+    <hint>
+      <program language="sql">
+        <input>
+SELECT * FROM bookstore_inventory WHERE price =
+  (SELECT MAX(price) FROM bookstore_inventory);
+</input>
+      </program>
+    </hint>
+    <p>&#x274F;</p>
+    <p> </p>
+  </subsection>
+</section>

@@ -25,6 +25,28 @@ serving_dir = "./build/" + project_name
 # The destination directory for ``runestone deploy``.
 dest = "../../static"
 
+template_args = {
+    'login_required': 'false',
+    'loglevel': 0,
+    'course_title': project_name,
+    'python3': 'false',
+    'dburl': '',
+    'default_ac_lang': 'sql',
+    'jobe_server': 'http://jobe2.cosc.canterbury.ac.nz',
+    'proxy_uri_runs': '/jobe/index.php/restapi/runs/',
+    'proxy_uri_files': '/jobe/index.php/restapi/files/',
+    'downloads_enabled': 'false',
+    'enable_chatcodes': 'false',
+    'allow_pairs': 'false',
+    'dynamic_pages': False,
+    'use_services': 'false',
+    'basecourse': project_name,
+    'course_id': project_name,
+    # These are used for non-dynamic books.
+    'appname': 'runestone',
+    'course_url': master_url,
+}
+
 options(
     sphinx=Bunch(docroot=".",),
 

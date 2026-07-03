@@ -1,0 +1,1746 @@
+<?xml version="1.0"?>
+<section xml:id="appendix-b-reference_appendix-b-sql-reference-appendix-b">
+  <title>Appendix B: SQL Reference</title>
+  <p>This appendix contains documentation on various aspects of the SQL standard (2016).  This is not an exhaustive guide to the standard.  Where possible, variations from the standard by various database implementations (SQLite, PostgreSQL, MySQL, Oracle, Microsoft SQL Server) are shown.  Note that documentation of this sort is a moving target, so the information below may be out-of-date when you read it.  Consult your database vendor's documentation for current information.</p>
+  <p>In the documentation below, options may be indicated using square brackets.  For example, usage of the <term>SUBSTRING</term> function is documented as</p>
+  <program language="sql">
+    <input>
+SUBSTRING(*s* FROM *start* [FOR *length*])
+</input>
+  </program>
+  <p>meaning both of the following expressions are valid:</p>
+  <program language="sql">
+    <input>
+SUBSTRING('hello, world' FROM 1 FOR 5)
+SUBSTRING('hello, world' FROM 8)
+</input>
+  </program>
+  <p>(The first expression evaluates to <c>'hello'</c>, and the second to <c>'world'</c>.)</p>
+  <subsection xml:id="appendix-b-reference_data-types-appendix-b-data-types">
+    <title>Data types</title>
+    <subsubsection xml:id="appendix-b-reference_number-types-appendix-b-number-types">
+      <title>Number types</title>
+      <p>The SQL standard provides for both exact (integers and fixed-precision decimal) and inexact (floating point) numbers.  Details of these types (e.g., the number of bits used in the number representation) are left up to individual implementations, so consult your database's documentation to fully understand its capabilities.</p>
+      <remark xml:id="appendix-b-reference_integers">
+        <title>Integers</title>
+        <p>SQL defines three integer types: <term>INTEGER</term>, <term>SMALLINT</term>, and <term>BIGINT</term>.  Implementations of these types vary, but it is not uncommon for <term>INTEGER</term> (often abbreviated as <term>INT</term>) to store 32-bit integers, <term>SMALLINT</term> 16-bit integers, and <term>BIGINT</term> 64-bit integers.  Not all databases recognize all of these types, but <term>INTEGER</term> is recognized by all of the databases considered for this book.  Additional integer types may be available for your database system.</p>
+      </remark>
+      <remark xml:id="appendix-b-reference_exact-decimal-numbers">
+        <title>Exact decimal numbers</title>
+        <p>Decimal number types allow for exact storage of numbers that have digits to the right of the decimal point, e.g., 1234.56789.  These numbers are exact (compare to the floating point types below), and permit exact mathematical operations where possible (addition, subtraction, and multiplication).  The two defined types for SQL are <term>NUMERIC</term> and <term>DECIMAL</term>, which are synonyms of each other.  These types may be defined with parameters representing <em>precision</em> and <em>scale</em>, where precision is the number of significant digits that can be stored, and scale is the number of digits following the decimal point.  If the precision is given, but not the scale, the scale defaults to zero.</p>
+        <p>For example, in most implementations:</p>
+        <p>
+          <ul>
+            <li>
+              <p><term>NUMERIC(3, 2)</term> defines a type that can store the values between -999.99 and 999.99, with a maximum of 2 digits past the decimal point.</p>
+            </li>
+            <li>
+              <p><term>NUMERIC(4)</term> defines a type that can store integers between -9999 and 9999.</p>
+            </li>
+            <li>
+              <p><term>NUMERIC</term> defines a type that can exactly store decimal values with implementation-defined precision and scale.</p>
+            </li>
+          </ul>
+        </p>
+        <p>Different implementations behave differently when an attempt is made to store values with more digits than are allowed by the specified precision and scale.  This may result in an error, or (in the case of too many digits to the right of the decimal point), it may result in rounding or truncation of the value.</p>
+      </remark>
+      <remark xml:id="appendix-b-reference_floating-point-numbers">
+        <title>Floating point numbers</title>
+        <p>Floating point number types allow for (possibly inexact) storage of real numbers, similar (or sometimes identical to) the <url href="https://en.wikipedia.org/wiki/IEEE_754" visual="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754</url> specification.  The SQL standard defines the types <term>FLOAT</term>, <term>REAL</term>, and <term>DOUBLE PRECISION</term> (often abbreviated <term>DOUBLE</term>), but implementation of these types vary.</p>
+      </remark>
+      <remark xml:id="appendix-b-reference_database-support-for-number-types">
+        <title>Database support for number types</title>
+        <p>A summary of database support for number types is shown below (for the five databases this textbook attempts to cover):</p>
+        <table>
+          <tabular>
+            <row header="yes">
+              <cell>
+                                        Type
+                                    </cell>
+              <cell>
+                                        SQLite
+                                    </cell>
+              <cell>
+                                        PostgreSQL
+                                    </cell>
+              <cell>
+                                        MySQL
+                                    </cell>
+              <cell>
+                                        Oracle
+                                    </cell>
+              <cell>
+                                        SQL Server
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        INTEGER
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        use NUMBER
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        SMALLINT
+                                    </cell>
+              <cell>
+                                        equivalent to INTEGER
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        use NUMBER
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        BIGINT
+                                    </cell>
+              <cell>
+                                        equivalent to INTEGER
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        use NUMBER
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        NUMERIC/DECIMAL
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        use NUMBER
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        FLOAT
+                                    </cell>
+              <cell>
+                                        equivalent to REAL
+                                    </cell>
+              <cell>
+                                        equivalent to DOUBLE PRECISION
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        yes; but BINARY_DOUBLE recommended
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        REAL
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        yes; but BINARY_DOUBLE recommended
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        DOUBLE PRECISION
+                                    </cell>
+              <cell>
+                                        equivalent to REAL
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        yes
+                                    </cell>
+              <cell>
+                                        yes; but BINARY_DOUBLE recommended
+                                    </cell>
+              <cell>
+                                        use FLOAT
+                                    </cell>
+            </row>
+          </tabular>
+        </table>
+      </remark>
+    </subsubsection>
+    <subsubsection xml:id="appendix-b-reference_character-string-types-appendix-b-string-types">
+      <title>Character string types</title>
+      <p>There are three main data types for storing character data in SQL.  Officially, these are named <term>CHARACTER</term>, <term>CHARACTER VARYING</term>, and <term>CHARACTER LARGE OBJECT</term>.  In addition, the modifier <term>NATIONAL</term> may be used to indicate strings containing data from locale-dependent character sets.  These names are fairly long and clunky, so databases typically use abbreviations or even completely different names for the same concepts.</p>
+      <p>The type <term>CHARACTER</term>, usually abbreviated as <term>CHAR</term>, is used for fixed-length strings.  The type <term>CHAR</term> is followed by parentheses enclosing the length of the string.  All values in a column of type <term>CHAR(4)</term>, for example, must contain exactly 4 characters.  In practice, many databases relax the <q>exactly</q> part of the definition and allow for shorter strings to be stored, although they may <q>pad</q> the value with trailing space characters.  Attempting to store strings longer than <em>n</em> usually results in an error.</p>
+      <p><term>CHARACTER VARYING</term> is usually abbreviated as <term>VARCHAR</term>, and is used for strings of varying length up to some maximum, which must be specified just as with the <term>CHAR</term> type.  It is usually an error to attempt to store strings longer than the maximum.</p>
+      <p><term>CHARACTER LARGE OBJECT</term> goes by many names, and is used to store strings of arbitrary length, up to some implementation-defined maximum (for example, Oracle's <term>CLOB</term> type allows strings of up to 128TB in some cases).  In many implementations, this type is limited in the operations or functions that may be used, and may not allow indexing.</p>
+      <p>A summary of database support for character strings is shown below:</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    Type
+                                </cell>
+            <cell>
+                                    SQLite
+                                </cell>
+            <cell>
+                                    PostgreSQL
+                                </cell>
+            <cell>
+                                    MySQL
+                                </cell>
+            <cell>
+                                    Oracle
+                                </cell>
+            <cell>
+                                    SQL Server
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    CHARACTER(n)
+                                </cell>
+            <cell>
+                                    equivalent to TEXT
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    CHARACTER VARYING(n)
+                                </cell>
+            <cell>
+                                    equivalent to TEXT
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    use VARCHAR2(n)
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    CHARACTER LARGE OBJECT
+                                </cell>
+            <cell>
+                                    equivalent to TEXT
+                                </cell>
+            <cell>
+                                    use&#xA0;TEXT
+                                </cell>
+            <cell>
+                                    use&#xA0;TEXT
+                                </cell>
+            <cell>
+                                    use&#xA0;CLOB
+                                </cell>
+            <cell>
+                                    use&#xA0;VARCHAR(MAX)
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+    </subsubsection>
+    <subsubsection xml:id="appendix-b-reference_date-and-time-types-appendix-b-datetime-types">
+      <title>Date and time types</title>
+      <p>The SQL standard defines three or five principal types, depending on how you count.  The types are <term>DATE</term>, <term>TIME</term> (with or without time zone), and <term>TIMESTAMP</term> (with or without time zone).  If you specify simply <term>TIME</term> or <term>TIMESTAMP</term>, you get the version without time zones; append <term>WITH TIME ZONE</term> to additionally store time zone information.</p>
+      <p>
+        <ul>
+          <li>
+            <p><term>DATE</term> values store dates in such a way that any particular day in history can be accurately recorded.  Typically the Gregorian calendar is supported, but some implementations will convert to and from Julian dates or other calendars.</p>
+          </li>
+          <li>
+            <p><term>TIME</term> represents a time of day, without reference to the date.  <term>TIME WITH TIME ZONE</term> includes information specifying the time zone relative to which the time should be evaluated.</p>
+          </li>
+          <li>
+            <p><term>TIMESTAMP</term> represents a precise moment in time, incorporating both the date and the time of day (with or without time zone).</p>
+          </li>
+        </ul>
+      </p>
+      <p>A summary of database support for date and time types is shown below:</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    Type
+                                </cell>
+            <cell>
+                                    SQLite
+                                </cell>
+            <cell>
+                                    PostgreSQL
+                                </cell>
+            <cell>
+                                    MySQL
+                                </cell>
+            <cell>
+                                    Oracle
+                                </cell>
+            <cell>
+                                    SQL Server
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    DATE
+                                </cell>
+            <cell>
+                                    use TEXT, REAL, or INTEGER
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    TIME
+                                </cell>
+            <cell>
+                                    use TEXT, REAL, or INTEGER
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    no, use TIMESTAMP
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    TIME WITH TIME ZONE
+                                </cell>
+            <cell>
+                                    use TEXT, REAL, or INTEGER
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    no
+                                </cell>
+            <cell>
+                                    no, use TIMESTAMP WITH TIME ZONE
+                                </cell>
+            <cell>
+                                    no
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    TIMESTAMP
+                                </cell>
+            <cell>
+                                    use TEXT, REAL, or INTEGER
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    use DATETIME2
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    TIMESTAMP WITH TIME ZONE
+                                </cell>
+            <cell>
+                                    use TEXT, REAL, or INTEGER
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    no
+                                </cell>
+            <cell>
+                                    yes
+                                </cell>
+            <cell>
+                                    no
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>In addition to the date and time types, SQL defines a set of types known as <em>interval</em> types, where an interval represents a span of days or time between two date or time values.  Intervals are not covered in this book.</p>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="appendix-b-reference_operators-and-functions">
+    <title>Operators and functions</title>
+    <subsubsection xml:id="appendix-b-reference_comparison-operators-appendix-b-comparison-operators">
+      <title>Comparison operators</title>
+      <p>Generally speaking, two non-NULL values of the same type can be compared, resulting in a Boolean value.  In certain cases, comparisons can made between different types, e.g., when both are numbers.  Numeric values are compared according to their algebraic values.  Date, time, and timestamp values are compared chronologically.  The Boolean value <c>True</c> is greater than <c>False</c>.</p>
+      <p>Character string comparison is somewhat complex, as the comparison done depends on the <em>collation</em> rules in effect for the values; collation may depend on many factors including: the DBMS implementation, DBMS configuration parameters (such as the <em>locale</em>), operating system parameters, and any explicit collation settings for a given database table.  Collations may be used to implement proper sorting, for example, in a particular language context.  In general, if string <em>s</em> would appear in sorted (ascending) order prior to string <em>t</em>, then <em>s</em> &lt; <em>t</em>.</p>
+      <p>A comparison of any value with <c>NULL</c> results in <c>NULL</c> <footnote_reference auto="1" docname="appendix-b-reference/reference" xml:id="appendix-b-reference_id1" refid="id3">1</footnote_reference> when using any of the operators in the table below.</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    operator
+                                </cell>
+            <cell>
+                                    meaning
+                                </cell>
+            <cell>
+                                    usage
+                                </cell>
+            <cell>
+                                    notes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    =
+                                </cell>
+            <cell>
+                                    equal to
+                                </cell>
+            <cell><em>x</em> = <em>y</em>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    &lt;&gt;
+                                </cell>
+            <cell>
+                                    not equal to
+                                </cell>
+            <cell><em>x</em> &lt;&gt; <em>y</em>
+                                </cell>
+            <cell>
+                                    can also use != in most DBMSes (nonstandard)
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    &lt;
+                                </cell>
+            <cell>
+                                    less than
+                                </cell>
+            <cell><em>x</em> &lt; <em>y</em>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    &gt;
+                                </cell>
+            <cell>
+                                    greater than
+                                </cell>
+            <cell><em>x</em> &gt; <em>y</em>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    &lt;=
+                                </cell>
+            <cell>
+                                    less than or equal to
+                                </cell>
+            <cell><em>x</em> &lt;= <em>y</em>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    &gt;=
+                                </cell>
+            <cell>
+                                    greater than or equal to
+                                </cell>
+            <cell><em>x</em> &gt;= <em>y</em>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    BETWEEN
+                                </cell>
+            <cell>
+                                    range comparison
+                                </cell>
+            <cell><em>x</em> BETWEEN <em>y</em> AND <em>z</em>
+                                </cell>
+            <cell>
+                                    equivalent to <em>x</em> &gt;= <em>y</em> AND <em>x</em> &lt;= <em>z</em>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    NOT BETWEEN
+                                </cell>
+            <cell>
+                                    exterior range comparison
+                                </cell>
+            <cell><em>x</em> NOT BETWEEN <em>y</em> AND <em>z</em>
+                                </cell>
+            <cell>
+                                    equivalent to NOT(<em>x</em> BETWEEN <em>y</em> AND <em>z</em>)
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>Comparison of <c>NULL</c> values requires special treatment; the expression <c>NULL = NULL</c> results in <c>NULL</c>, not <c>True</c>, and thus is not useful in testing for <c>NULL</c>.  The <term>IS NULL</term> operator is provided for this purpose.  <term>IS NULL</term> (and the inverse, <term>IS NOT NULL</term>) expressions always result in <c>True</c> or <c>False</c>.</p>
+      <p>Another standard SQL operator that has utility in the presence of <c>NULL</c> values are the binary operators <term>IS DISTINCT FROM</term> and <term>IS NOT DISTINCT FROM</term>.  These operators compare two values, treating <c>NULL</c> as if it were a special, distinct value, and always return <c>True</c> or <c>False</c>.  Thus, the expression <c>x IS NOT DISTINCT FROM y</c> returns <c>True</c> if <c>x = y</c> evaluates to <c>True</c> or if <em>x</em> and <em>y</em> are both <c>NULL</c>.  Of the databases considered for this book, only PostgreSQL implements <term>IS DISTINCT FROM</term> and <term>IS NOT DISTINCT FROM</term>.</p>
+      <p>The table below summarizes these operators.</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    operator
+                                </cell>
+            <cell>
+                                    usage
+                                </cell>
+            <cell>
+                                    result
+                                </cell>
+            <cell>
+                                    notes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    IS NULL
+                                </cell>
+            <cell><em>x</em> IS NULL
+                                </cell>
+            <cell>
+                                    True if and only if <em>x</em> evaluates to NULL
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    IS NOT NULL
+                                </cell>
+            <cell><em>x</em> IS NOT NULL
+                                </cell>
+            <cell>
+                                    equivalent to NOT (<em>x</em> IS NULL)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    IS DISTINCT FROM
+                                </cell>
+            <cell><em>x</em> IS DISTINCT FROM <em>y</em>
+                                </cell>
+            <cell>
+                                    equivalent to NOT (<em>x</em> IS NOT DISTINCT FROM <em>y</em>)
+                                </cell>
+            <cell>
+                                    PostgreSQL only
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    IS NOT DISTINCT FROM
+                                </cell>
+            <cell><em>x</em> IS NOT DISTINCT FROM <em>y</em>
+                                </cell>
+            <cell>
+                                    True if <em>x</em> = <em>y</em> is true, or if <em>x</em> and <em>y</em> are both NULL
+                                </cell>
+            <cell>
+                                    PostgreSQL only
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>Also see the <url href="" visual="">Boolean operators</url> section below for comparison operators that only apply to Boolean values.</p>
+    </subsubsection>
+    <subsubsection xml:id="appendix-b-reference_mathematical-operators-and-functions-appendix-b-math-operators">
+      <title>Mathematical operators and functions</title>
+      <p>Unless otherwise noted, the operands or parameters below can be any numeric type.</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    operator/ function
+                                </cell>
+            <cell>
+                                    meaning
+                                </cell>
+            <cell>
+                                    usage
+                                </cell>
+            <cell>
+                                    notes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    +
+                                </cell>
+            <cell>
+                                    addition
+                                </cell>
+            <cell><em>x</em> + <em>y</em>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    -
+                                </cell>
+            <cell>
+                                    subtraction
+                                </cell>
+            <cell><em>x</em> - <em>y</em>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    *
+                                </cell>
+            <cell>
+                                    multiplication
+                                </cell>
+            <cell><em>x</em> * <em>y</em>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    /
+                                </cell>
+            <cell>
+                                    division
+                                </cell>
+            <cell><em>x</em> / <em>y</em>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    ABS
+                                </cell>
+            <cell>
+                                    absolute value
+                                </cell>
+            <cell>
+                                    ABS(<em>x</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    MOD
+                                </cell>
+            <cell>
+                                    modulus (remainder)
+                                </cell>
+            <cell>
+                                    MOD(<em>x</em>, <em>divisor</em>)
+                                </cell>
+            <cell>
+                                    integers only in standard SQL
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    LOG
+                                </cell>
+            <cell>
+                                    logarithm
+                                </cell>
+            <cell>
+                                    LOG(<em>base</em>, <em>x</em>)
+                                </cell>
+            <cell>
+                                    in SQL Server, use LOG(<em>x</em>, <em>base</em>)
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    LN
+                                </cell>
+            <cell>
+                                    natural logarithm
+                                </cell>
+            <cell>
+                                    LN(<em>x</em>)
+                                </cell>
+            <cell>
+                                    in SQL Server, use LOG(<em>x</em>)
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    LOG10
+                                </cell>
+            <cell>
+                                    base-10 logarithm
+                                </cell>
+            <cell>
+                                    LOG10(<em>x</em>)
+                                </cell>
+            <cell>
+                                    in Oracle, use LOG(10, <em>x</em>)
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    EXP
+                                </cell>
+            <cell>
+                                    exponential function
+                                </cell>
+            <cell>
+                                    EXP(<em>x</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    POWER
+                                </cell>
+            <cell>
+                                    raise to power
+                                </cell>
+            <cell>
+                                    POWER(<em>base</em>, <em>exponent</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    SQRT
+                                </cell>
+            <cell>
+                                    square root
+                                </cell>
+            <cell>
+                                    SQRT(<em>x</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    FLOOR
+                                </cell>
+            <cell>
+                                    floor function
+                                </cell>
+            <cell>
+                                    FLOOR(<em>x</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    CEILING
+                                </cell>
+            <cell>
+                                    ceiling function
+                                </cell>
+            <cell>
+                                    CEILING(<em>x</em>) or CEIL(<em>x</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    SIN
+                                </cell>
+            <cell>
+                                    sine function
+                                </cell>
+            <cell>
+                                    SIN(<em>x</em>)
+                                </cell>
+            <cell>
+                                    argument in radians
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    COS
+                                </cell>
+            <cell>
+                                    cosine function
+                                </cell>
+            <cell>
+                                    COS(<em>x</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    TAN
+                                </cell>
+            <cell>
+                                    tangent function
+                                </cell>
+            <cell>
+                                    TAN(<em>x</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    ASIN
+                                </cell>
+            <cell>
+                                    inverse sine
+                                </cell>
+            <cell>
+                                    ASIN(<em>x</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    ACOS
+                                </cell>
+            <cell>
+                                    inverse cosine
+                                </cell>
+            <cell>
+                                    ACOS(<em>x</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    ATAN
+                                </cell>
+            <cell>
+                                    inverse tangent
+                                </cell>
+            <cell>
+                                    ATAN(<em>x</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    SINH
+                                </cell>
+            <cell>
+                                    hyperbolic sine
+                                </cell>
+            <cell>
+                                    SINH(<em>x</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    COSH
+                                </cell>
+            <cell>
+                                    hyperbolic cosine
+                                </cell>
+            <cell>
+                                    COSH(<em>x</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    TANH
+                                </cell>
+            <cell>
+                                    hyperbolic tangent
+                                </cell>
+            <cell>
+                                    TANH(<em>x</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>Most database implementations provide additional non-standard functions and operators; for example, most include some mechanism for generating random numbers.</p>
+      <p>Mathematical expressions where one or more operands or inputs are <c>NULL</c> evaluate to <c>NULL</c>.</p>
+    </subsubsection>
+    <subsubsection xml:id="appendix-b-reference_character-string-operators-and-functions-appendix-b-string-operators">
+      <title>Character string operators and functions</title>
+      <p>Below is a partial listing of operators and functions acting on character strings, omitting some less frequently implemented functions and some less frequently used optional parameters.</p>
+      <p>The SQL standard defines several operators and functions making use of three different pattern-matching languages: the one used by the operator <term>LIKE</term> (discussed in <url href="../03-expressions/expressions.html" visual="../03-expressions/expressions.html">Chapter 3</url>), and two different regular expression (regex) languages; however the databases considered for this book mostly do not conform to the standard with respect to these operators and functions.  Many implementations provide functions with similar effect, but under different names and using different regex languages.  These functions are therefore omitted, but you are encouraged to read the documentation for your database to see what options are available to you.</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    operator/function
+                                </cell>
+            <cell>
+                                    meaning
+                                </cell>
+            <cell>
+                                    usage
+                                </cell>
+            <cell>
+                                    notes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    ||
+                                </cell>
+            <cell>
+                                    concatenation
+                                </cell>
+            <cell><em>s</em> || <em>t</em>
+                                </cell>
+            <cell>
+                                    in MySQL, use CONCAT(<em>s</em>, <em>t</em>); in SQL Server, use <em>s</em> + <em>t</em>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    LIKE
+                                </cell>
+            <cell>
+                                    pattern comparison
+                                </cell>
+            <cell><em>s</em> LIKE <em>pattern</em>
+                                </cell>
+            <cell>
+                                    see <number_reference internal="True" refuri="../PART1_SQL/03-expressions/expressions#expressions-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.3</inline></number_reference>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    NOT LIKE
+                                </cell>
+            <cell>
+                                    inverse of LIKE
+                                </cell>
+            <cell><em>s</em> NOT LIKE <em>pattern</em>
+                                </cell>
+            <cell>
+                                    equivalent to NOT (<em>s</em> LIKE <em>pattern</em>)
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    CHAR_LENGTH
+                                </cell>
+            <cell>
+                                    length of string
+                                </cell>
+            <cell>
+                                    CHARACTER_LENGTH(<em>s</em>) or CHAR_LENGTH(<em>s</em>)
+                                </cell>
+            <cell>
+                                    in SQLite and Oracle, use LENGTH(<em>s</em>); in SQL Server, use LEN(<em>s</em>)
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    POSITION
+                                </cell>
+            <cell>
+                                    index of substring
+                                </cell>
+            <cell>
+                                    POSITION(<em>t</em> IN <em>s</em>)
+                                </cell>
+            <cell>
+                                    in SQLite and Oracle, use INSTR(<em>s</em>, <em>t</em>)
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    SUBSTRING
+                                </cell>
+            <cell>
+                                    substring extraction
+                                </cell>
+            <cell>
+                                    SUBSTRING(<em>s</em> FROM <em>start</em> [FOR <em>length</em>])
+                                </cell>
+            <cell>
+                                    in SQLite and Oracle, use SUBSTR(<em>s</em>, <em>start</em>, <em>length</em>); in SQL Server, use SUBSTRING(<em>s</em>, <em>start</em>, <em>length</em>)
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    UPPER
+                                </cell>
+            <cell>
+                                    convert to uppercase
+                                </cell>
+            <cell>
+                                    UPPER(<em>s</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    LOWER
+                                </cell>
+            <cell>
+                                    convert to lowercase
+                                </cell>
+            <cell>
+                                    LOWER(<em>s</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    TRIM
+                                </cell>
+            <cell>
+                                    remove leading/trailing characters
+                                </cell>
+            <cell>
+                                    TRIM([[LEADING|TRAILING|BOTH] [<em>t</em>] FROM] <em>s</em>)
+                                </cell>
+            <cell>
+                                    If <em>t</em> is omitted, whitespace is trimmed; BOTH is the default if LEADING etc. are omitted; in SQLite, Oracle, and SQL Server use LTRIM, RTRIM and TRIM (varying usage)
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    OVERLAY
+                                </cell>
+            <cell>
+                                    substring replacement
+                                </cell>
+            <cell>
+                                    OVERLAY(<em>s</em> PLACING <em>t</em> FROM <em>start</em> FOR <em>length</em>)
+                                </cell>
+            <cell>
+                                    not in SQLite, Oracle, or SQL Server, but see REPLACE
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>Most database implementations provide additional non-standard functions and operators.</p>
+      <p>String operator or function expressions where the operands or inputs are <c>NULL</c> result in <c>NULL</c>.</p>
+    </subsubsection>
+    <subsubsection xml:id="appendix-b-reference_boolean-operators-appendix-b-boolean-operators">
+      <title>Boolean operators</title>
+      <p>The principal Boolean operators in SQL are <term>AND</term>, <term>OR</term>, and <term>NOT</term>.  Given operands that are strictly truth valued, i.e., not <c>NULL</c>, these operators result in the logic operations they are named for.  That is, <c>a AND b</c> evaluates to <c>True</c> if and only if <c>a</c> and <c>b</c> are both <c>True</c>, <c>c OR d</c> evaluates to <c>True</c> if either <c>c</c> or <c>d</c> are <c>True</c>, and <c>NOT e</c> inverts the value <c>e</c>.</p>
+      <p>However, since expressions resulting in Boolean values may also result in NULL (e.g., <c>4 &gt; NULL</c>), <c>NULL</c> is also a valid operand for the Boolean operators, and we can think of SQL as therefore having a 3-valued (rather than truly Boolean) logic <footnote_reference auto="1" docname="appendix-b-reference/reference" xml:id="appendix-b-reference_id2" refid="id4">2</footnote_reference>.  The truth tables for <term>AND</term>, <term>OR</term>, and <term>NOT</term> are given below.  Treating <c>NULL</c> as meaning <q>unknown</q> in Boolean expressions, we can generally infer the result of a Boolean expression involving <c>NULL</c>.  For example, <c>True AND NULL</c> must evaluate to <c>NULL</c> (meaning unknown), because the truth of the second operand is unknown.  On the other hand, <c>True OR NULL</c> must evaluate to <c>True</c>, as it doesn't matter whether the second operand represents a true or a false value.</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+              <em>a</em>
+            </cell>
+            <cell>
+              <em>b</em>
+            </cell>
+            <cell><em>a</em> AND <em>b</em>
+                                </cell>
+            <cell><em>a</em> OR <em>b</em>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    True
+                                </cell>
+            <cell>
+                                    True
+                                </cell>
+            <cell>
+                                    True
+                                </cell>
+            <cell>
+                                    True
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    True
+                                </cell>
+            <cell>
+                                    False
+                                </cell>
+            <cell>
+                                    False
+                                </cell>
+            <cell>
+                                    True
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    True
+                                </cell>
+            <cell>
+                                    NULL
+                                </cell>
+            <cell>
+                                    NULL
+                                </cell>
+            <cell>
+                                    True
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    False
+                                </cell>
+            <cell>
+                                    True
+                                </cell>
+            <cell>
+                                    False
+                                </cell>
+            <cell>
+                                    True
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    False
+                                </cell>
+            <cell>
+                                    False
+                                </cell>
+            <cell>
+                                    False
+                                </cell>
+            <cell>
+                                    False
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    False
+                                </cell>
+            <cell>
+                                    NULL
+                                </cell>
+            <cell>
+                                    False
+                                </cell>
+            <cell>
+                                    NULL
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    NULL
+                                </cell>
+            <cell>
+                                    True
+                                </cell>
+            <cell>
+                                    NULL
+                                </cell>
+            <cell>
+                                    True
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    NULL
+                                </cell>
+            <cell>
+                                    False
+                                </cell>
+            <cell>
+                                    False
+                                </cell>
+            <cell>
+                                    NULL
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    NULL
+                                </cell>
+            <cell>
+                                    NULL
+                                </cell>
+            <cell>
+                                    NULL
+                                </cell>
+            <cell>
+                                    NULL
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+              <em>a</em>
+            </cell>
+            <cell>
+                                    NOT <em>a</em>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    True
+                                </cell>
+            <cell>
+                                    False
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    False
+                                </cell>
+            <cell>
+                                    True
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    NULL
+                                </cell>
+            <cell>
+                                    NULL
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>The SQL standard defines some less frequently used unary operators on Boolean values:  <term>IS [NOT] TRUE</term>, <term>IS [NOT] FALSE</term>, and <term>IS [NOT] UNKNOWN</term>, with <term>IS UNKNOWN</term> equivalent to <term>IS NULL</term> except that it only applies to the result of a Boolean expression.  So for example, SQL allows us to write <c>NULL &lt; 7 IS FALSE</c>, which would evaluate to <c>False</c>.</p>
+      <p>SQL Server and Oracle do not implement <term>IS [NOT] TRUE</term>, <term>IS [NOT] FALSE</term>, and <term>IS [NOT] UNKNOWN</term>.  SQLite does not implement <term>IS [NOT] UNKNOWN</term>.</p>
+      <p>Some database implementations provide additional non-standard operators, such as <term>XOR</term>, <term>&amp;</term> as an alternative to <term>AND</term>, etc.</p>
+    </subsubsection>
+    <subsubsection xml:id="appendix-b-reference_date-and-time-operators-and-functions-appendix-b-datetime-operators">
+      <title>Date and time operators and functions</title>
+      <p>The SQL standard defines several basic operations relating <term>DATE</term>, <term>TIME</term> (with and without timezone), <term>TIMESTAMP</term> (with and without timezone), and <term>INTERVAL</term> data types.  (For a description of these data types, consult the section on <url href="" visual="">Data types</url> above.)</p>
+      <p>Comparison of like types is accomplished using the <url href="" visual="">Comparison operators</url> previously documented.  For example, <term>DATE</term> values can be compared with other <term>DATE</term> values, but not with <term>TIME</term>, <term>TIMESTAMP</term>, or <term>INTERVAL</term> values. (Behavior varies widely among the different database implementations - some do allow comparisons between types not allowed in the SQL standard.  However, it is generally inadvisable to compare different types, unless you know exactly how the comparison is being made.)</p>
+      <p>In addition, the mathematical operators <em>+</em>, <em>-</em>, <em>*</em>, and <em>/</em> may be used as follows:</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    operator
+                                </cell>
+            <cell>
+                                    left operand
+                                </cell>
+            <cell>
+                                    right operand
+                                </cell>
+            <cell>
+                                    result type
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    -
+                                </cell>
+            <cell>
+                                    DATE, TIME, or TIMESTAMP
+                                </cell>
+            <cell>
+                                    DATE, TIME, or TIMESTAMP
+                                </cell>
+            <cell>
+                                    INTERVAL
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    + or -
+                                </cell>
+            <cell>
+                                    DATE, TIME, or TIMESTAMP
+                                </cell>
+            <cell>
+                                    INTERVAL
+                                </cell>
+            <cell>
+                                    DATE, TIME, or TIMESTAMP
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    +
+                                </cell>
+            <cell>
+                                    INTERVAL
+                                </cell>
+            <cell>
+                                    DATE, TIME, or TIMESTAMP
+                                </cell>
+            <cell>
+                                    DATE, TIME, or TIMESTAMP
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    + or -
+                                </cell>
+            <cell>
+                                    INTERVAL
+                                </cell>
+            <cell>
+                                    INTERVAL
+                                </cell>
+            <cell>
+                                    INTERVAL
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    * or /
+                                </cell>
+            <cell>
+                                    INTERVAL
+                                </cell>
+            <cell>
+                                    number (INTEGER, etc.)
+                                </cell>
+            <cell>
+                                    INTERVAL
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    *
+                                </cell>
+            <cell>
+                                    number (INTEGER, etc.)
+                                </cell>
+            <cell>
+                                    INTERVAL
+                                </cell>
+            <cell>
+                                    INTERVAL
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>So, for example, a subtraction of one <term>TIMESTAMP</term> from another yields an <term>INTERVAL</term> representing the difference in days, hours, minutes, and seconds.</p>
+      <p>Other operators and functions involving dates and times:</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    operator or function
+                                </cell>
+            <cell>
+                                    meaning
+                                </cell>
+            <cell>
+                                    usage
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    CURRENT_DATE
+                                </cell>
+            <cell>
+                                    evaluates to the current date
+                                </cell>
+            <cell>
+                                    CURRENT_DATE
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    CURRENT_TIME
+                                </cell>
+            <cell>
+                                    evaluates to the current time
+                                </cell>
+            <cell>
+                                    CURRENT_TIME
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    CURRENT_TIMESTAMP
+                                </cell>
+            <cell>
+                                    evaluates to the current date and time
+                                </cell>
+            <cell>
+                                    CURRENT_TIMESTAMP
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    EXTRACT
+                                </cell>
+            <cell>
+                                    get a date or time field from a date or time
+                                </cell>
+            <cell>
+                                    EXTRACT(<em>field</em> FROM <em>date/time/interval</em>), where <em>field</em> is e.g., &#x2018;YEAR', &#x2018;HOUR', etc.
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    OVERLAPS
+                                </cell>
+            <cell>
+                                    test if one span of time overlaps another
+                                </cell>
+            <cell><em>period1</em> OVERLAPS <em>period2</em>, where each <em>period</em> can be (<em>start date/time</em>, <em>end date/time</em>) or (<em>start date/time</em>, <em>interval</em>)
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>Examples:</p>
+      <p><c>EXTRACT('HOUR' FROM TIME '10:03:21')</c> results in the integer <c>10</c>.</p>
+      <p><c>(DATE '2002-07-19', DATE '2003-01-31') OVERLAPS (DATE '2002-12-31', DATE '2005-05-05')</c> results in a <c>True</c>.</p>
+      <p>In actual practice, the databases considered for this book vary widely in their implementation of the SQL standard in regards to date and time types and operations on those types.  The variations are so great, we have not attempted to list departures from the standard in the above tables.  In most implementations, similar types can be compared, date and time types can be subtracted to yield intervals, and intervals can be added or subtracted to date and time types to yield a modified date or time.  Most databases implement <term>CURRENT_DATE</term>, <term>CURRENT_TIME</term>, and <term>CURRENT_TIMESTAMP</term>, or something similar.  Most implementations provide some function or functions replicating some of the functionality of <term>EXTRACT</term>.</p>
+    </subsubsection>
+    <subsubsection xml:id="appendix-b-reference_miscellaneous-operators-and-functions">
+      <title>Miscellaneous operators and functions</title>
+      <p>This section collects some miscellaneous SQL functions that do not fit neatly into the above categories.</p>
+      <table>
+        <tabular>
+          <row header="yes">
+            <cell>
+                                    function
+                                </cell>
+            <cell>
+                                    meaning
+                                </cell>
+            <cell>
+                                    usage
+                                </cell>
+            <cell>
+                                    notes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    NULLIF
+                                </cell>
+            <cell><c>NULL</c> if <em>a</em> = <em>b</em>, else <em>a</em>
+                                </cell>
+            <cell>
+                                    NULLIF(<em>a</em>, <em>b</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    COALESCE
+                                </cell>
+            <cell>
+                                    yield first non-<c>NULL</c> argument
+                                </cell>
+            <cell>
+                                    COALESCE(<em>a</em>, <em>b</em>, &#x2026;)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    CASE
+                                </cell>
+            <cell>
+                                    general purpose conditional expression
+                                </cell>
+            <cell>
+                                    see <number_reference internal="True" refuri="../PART1_SQL/03-expressions/expressions#expressions-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.3</inline></number_reference>
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    CAST
+                                </cell>
+            <cell>
+                                    explicit type conversion
+                                </cell>
+            <cell>
+                                    CAST (<em>a</em> AS <em>type</em>)
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="appendix-b-reference_aggregate-functions-appendix-b-aggregate-functions">
+    <title>Aggregate functions</title>
+    <p>Below is a reference to some of the more commonly implemented aggregate functions defined by the SQL standard.  See <number_reference internal="True" refuri="../PART1_SQL/09-grouping-and-aggregation/grouping-and-aggregation#grouping-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.9</inline></number_reference> for a basic guide to their use.  The SQL standard also defines a number of statistical functions on two variables; these are implemented in PostgreSQL and Oracle only.  Most database implementations provide additional non-standard aggregate functions.</p>
+    <table>
+      <tabular>
+        <row header="yes">
+          <cell>
+                                function
+                            </cell>
+          <cell>
+                                meaning
+                            </cell>
+          <cell>
+                                usage
+                            </cell>
+          <cell>
+                                notes
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                COUNT
+                            </cell>
+          <cell>
+                                count of rows or non-<c>NULL</c> values
+                            </cell>
+          <cell>
+                                COUNT(*) or COUNT([DISTINCT] <em>a</em>)
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                AVG
+                            </cell>
+          <cell>
+                                average or mean
+                            </cell>
+          <cell>
+                                AVG([DISTINCT] <em>a</em>)
+                            </cell>
+          <cell><em>a</em> must be numeric
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                MAX
+                            </cell>
+          <cell>
+                                maximum
+                            </cell>
+          <cell>
+                                MAX([DISTINCT] <em>a</em>)
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                MIN
+                            </cell>
+          <cell>
+                                minimum
+                            </cell>
+          <cell>
+                                MIN([DISTINCT] <em>a</em>)
+                            </cell>
+          <cell>
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                SUM
+                            </cell>
+          <cell>
+                                sum
+                            </cell>
+          <cell>
+                                SUM([DISTINCT] <em>a</em>)
+                            </cell>
+          <cell><em>a</em> must be numeric
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                VAR_POP
+                            </cell>
+          <cell>
+                                population variance
+                            </cell>
+          <cell>
+                                VAR_POP([DISTINCT] <em>a</em>)
+                            </cell>
+          <cell><em>a</em> must be numeric; not in SQLite; in SQL Server, use VARP(<em>a</em>)
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                VAR_SAMP
+                            </cell>
+          <cell>
+                                sample variance
+                            </cell>
+          <cell>
+                                VAR_SAMP([DISTINCT] <em>a</em>)
+                            </cell>
+          <cell><em>a</em> must be numeric; not in SQLite; in SQL Server, use VAR(<em>a</em>)
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                STDDEV_POP
+                            </cell>
+          <cell>
+                                population standard deviation
+                            </cell>
+          <cell>
+                                STDDEV_POP([DISTINCT] <em>a</em>)
+                            </cell>
+          <cell><em>a</em> must be numeric; not in SQLite; in SQL Server, use STDEVP(<em>a</em>)
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                STDDEV_SAMP
+                            </cell>
+          <cell>
+                                sample standard deviation
+                            </cell>
+          <cell>
+                                STDDEV_SAMP([DISTINCT] <em>a</em>)
+                            </cell>
+          <cell><em>a</em> must be numeric; not in SQLite; in SQL Server, use STDEV(<em>a</em>)
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                LISTAGG
+                            </cell>
+          <cell>
+                                concatenate values into a string
+                            </cell>
+          <cell>
+                                LISTAGG(<em>a</em> [, <em>delim</em>])
+                            </cell>
+          <cell>
+                                In SQLite and MySQL, use GROUP_CONCAT(<em>a</em>, <em>delim</em>); in PostgreSQL and SQL Server, use STRING_AGG(<em>a</em>, <em>delim</em>)
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <transition/>
+    <p>
+      <term>Notes</term>
+    </p>
+    <footnote auto="1" backrefs="id1" docname="appendix-b-reference/reference" xml:id="appendix-b-reference_id3" names="1">
+      <label>1</label>
+      <p>Technically, a comparison with NULL results in the value <q>unknown</q>.  However, in all databases that we are aware of, NULL is indistinguishable from <q>unknown</q> except when using the operator <term>IS [NOT] UNKNOWN</term>.</p>
+    </footnote>
+    <footnote auto="1" backrefs="id2" docname="appendix-b-reference/reference" xml:id="appendix-b-reference_id4" names="2">
+      <label>2</label>
+      <p>See above note.  The truth table technically should use <q>unknown</q> everywhere <q>NULL</q> appears.</p>
+    </footnote>
+    <p> </p>
+  </subsection>
+</section>

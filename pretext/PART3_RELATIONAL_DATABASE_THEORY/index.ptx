@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<section xml:id="part3_relational_database_theory_relational-database-theory-relational-theory-part">
+  <title>RELATIONAL DATABASE THEORY</title>
+  <p>Part 3 of this book explains the mathematical and theoretical foundations of relational database technology.  The diagram below shows the strong dependencies between chapters.  The first three chapters need to be read in order; however, chapter 3.3 on database normalization should be accessible for students who have a strong foundation in relational databases through the lens of SQL (<number_reference internal="True" refuri="../PART1_SQL/index#sql-part" title="Part {number}"><inline classes="std std-numref">Part 1</inline></number_reference> of the text) even without the preceding chapters on the relational model.  Readers of chapter 3.4 will benefit from some exposure to SQL as well, although that is not a prerequisite.</p>
+  <figure align="" xml:id="id1-4">
+    <caption xmlns:c="https://www.sphinx-doc.org/" xmlns:changeset="https://www.sphinx-doc.org/" xmlns:citation="https://www.sphinx-doc.org/" xmlns:cpp="https://www.sphinx-doc.org/" xmlns:index="https://www.sphinx-doc.org/" xmlns:js="https://www.sphinx-doc.org/" xmlns:math="https://www.sphinx-doc.org/" xmlns:py="https://www.sphinx-doc.org/" xmlns:rst="https://www.sphinx-doc.org/" xmlns:std="https://www.sphinx-doc.org/">Chapter dependency graph for Part 3</caption>
+    <image source="PART3_RELATIONAL_DATABASE_THEORY/chapter_dependencies.svg" width="50%"/>
+  </figure>
+</section>

@@ -1,0 +1,281 @@
+<?xml version="1.0"?>
+<section xml:id="_07-constraints_keys-and-constraints-constraints-chapter">
+  <title>Keys and constraints</title>
+  <p>In this chapter, we explore the different ways in which data may be constrained in order to help preserve the correctness of our data.</p>
+  <subsection xml:id="_07-constraints_tables-used-in-this-chapter">
+    <title>Tables used in this chapter</title>
+    <p>Some examples in this chapter will use the <term>books</term> table and related tables (see <xref ref="appendix-a-datasets_datasets"/> for a full description of these tables).  Other examples will use tables created just for the example, then discarded.</p>
+  </subsection>
+  <subsection xml:id="_07-constraints_constraints-index-0">
+    <title>Constraints</title>
+    <p>As data is critical to so many organizations and applications, it is worth doing everything possible to ensure the correctness and consistency of the data in databases.  This can be achieved in many ways: application software can do checks to ensure data is entered and maintained correctly, separate programs can test and report on data consistency, and databases can enforce correctness using constraints and triggers.  (Triggers are actions the database can perform when certain events, such as an update to a row, occur; in some databases, the actions can even be complete small programs using implementation-specific programming languages.  This book does not cover triggers.)  We focus in this chapter on database constraints.</p>
+    <p>Constraints are properties of the database that restrict data in various ways.  One of the simplest types of constraints are <em>domain</em> constraints: data entered into a column is constrained to be of the type defined for the column.  (Domain constraints are not enforced in SQLite, so we cannot demonstrate using the book's database.)  Below we discuss constraints that enforce data properties for entire tables - primary and foreign key constraints - and those that apply to individual rows: not null, uniqueness, and check constraints.</p>
+  </subsection>
+  <subsection xml:id="_07-constraints_primary-keys-index-1">
+    <title>Primary keys</title>
+    <p>A <em>primary key</em> is a column or set of columns of a table which are required to contain unique values for each row stored in the table.  Controlling for uniqueness ensures that we can associate a specific, single item of data with data in another table by storing the key value in the other table. It also prevents unnecessary duplication of data that could result in incorrect statistics (for example, when taking counts or sums).  The id columns discussed in <number_reference internal="True" refuri="../04-multiple-tables/multiple-tables#joins-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.4</inline></number_reference> - special columns used specifically to ensure each row can be uniquely identified - are commonly used as primary keys.  A table can have only one primary key.</p>
+    <p>Some examples can be found in our books database.  The table <term>authors</term>, for example, has <term>author_id</term> as a primary key.  The database will enforce the uniqueness property of the <term>author_id</term> column by preventing any data modification queries which would result in a duplicate primary key.  Deleting rows can never violate a primary key constraint, but inserts and updates can.  Either of the following queries will result in an error because there already exists a row in the database with <term>author_id</term> = 1:</p>
+    <program xml:id="constraints_example_primary_key" interactive="activecode" language="sql">
+      <input>
+INSERT INTO authors (author_id, name)
+VALUES (1, 'Charles Dickens');
+
+UPDATE authors SET author_id = 1 WHERE author_id = 2;
+        </input>
+      <tests>
+
+
+</tests>
+    </program>
+    <p>Because we need to compare primary key values to ensure uniqueness, it is also forbidden to insert <c>NULL</c> values into a primary key column.  (SQLite varies from this standard behavior, though. If you insert a <c>NULL</c> into an integer primary key column, SQLite will generate a unique value for you.  For other primary key column types, or multi-column primary keys, <c>NULL</c> values are permitted in SQLite.)</p>
+    <p>An example of a multi-column primary key can be found in the table <term>authors_awards</term>.  For this table, the primary key is the pair (<term>author_id</term>, <term>award_id</term>).  This does not mean that each column is a primary key, e.g., that each column is independently unique.  Instead, it is the pair of values which must be unique.  That is, you may not insert the pair <c>(4, 10)</c> twice, but you may insert all of <c>(4, 10)</c>, <c>(4, 11)</c>, and <c>(5, 10)</c> (assuming none of those pairs is already in the table).</p>
+    <subsubsection xml:id="_07-constraints_creating-a-primary-key-index-2">
+      <title>Creating a primary key</title>
+      <p>There are a few ways to create a primary key on a table.  It is easiest to create a primary key when creating the table.  If the primary key is a single column, then you may simply put the phrase <term>PRIMARY KEY</term> at the end of the column definition:</p>
+      <program language="sql">
+        <input>
+DROP TABLE IF EXISTS test;
+CREATE TABLE test (
+  x VARCHAR(10) PRIMARY KEY
+);
+</input>
+      </program>
+      <p>You can also create the primary key as a separate entry in the table definition; you must use this form when creating a multi-column primary key.  The first definition below is equivalent to the one above, while the second creates a multi-column primary key:</p>
+      <program language="sql">
+        <input>
+DROP TABLE IF EXISTS test2;
+DROP TABLE IF EXISTS test3;
+
+CREATE TABLE test2 (
+  x VARCHAR(10),
+  PRIMARY KEY (x)
+);
+
+CREATE TABLE test3 (
+  x INTEGER,
+  y INTEGER,
+  PRIMARY KEY (x, y)
+);
+</input>
+      </program>
+      <p>Some database systems also allow the addition of a primary key to an existing table using the <term>ALTER TABLE</term> command, as long as the existing data would conform to the constraint.  <term>ALTER TABLE</term> can also be used to remove (drop) constraints from a table.  (SQLite does not support this usage.)</p>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_07-constraints_foreign-keys-index-3">
+    <title>Foreign keys</title>
+    <p>We are also interested in the relationships between data in different tables.  For example, every row in the <term>books</term> table has an <term>author_id</term> value which lets us look up author information in the <term>authors</term> table.  How can we ensure that the <term>author_id</term> value is valid, that is, that it always has a corresponding row in the <term>authors</term> table?  For a relational database, the solution is a <em>foreign key</em> constraint.</p>
+    <p>A foreign key constraint applies to a column or list of columns in one table (the <em>referencing</em> table), and references a column or list of columns in another table (the <em>referenced</em> table).  The constraint requires that one of two things be true:</p>
+    <p>
+      <ul>
+        <li>
+          <p>The values in the column or columns in the referencing table exist in the referenced column or columns</p>
+        </li>
+        <li>
+          <p>The values in the column or columns in the referencing table are <c>NULL</c></p>
+        </li>
+      </ul>
+    </p>
+    <p>The column or columns in the referenced table must be constrained to be unique, either by making them the primary key (the usual case), or through a uniqueness constraint (see below).</p>
+    <p>Our database defines a foreign key between <term>books</term> and <term>authors</term>.  The foreign key constraint is on the <term>author_id</term> column of <term>books</term> and references the <term>author_id</term> column of <term>authors</term>.  If we want to add a new book to <term>books</term>, we must add it with an <term>author_id</term> value, which must be a valid <term>author_id</term> from the <term>authors</term> table.  The foreign key by itself would allow a <c>NULL</c> <term>author_id</term> value, but we have further constrained the <term>author_id</term> column to not be null (using the <term>NOT NULL</term> constraint defined later on).</p>
+    <p>For example, the code below will fail due to the foreign key constraint on <term>books</term> referencing <term>authors</term>.  (Note that, unlike other database systems, SQLite will not enforce foreign keys unless you specifically tell it to - that is what the line of code below starting with the keyword <term>PRAGMA</term> is doing.  The <term>PRAGMA</term> keyword is not part of the SQL standard, and is only needed in SQLite.)</p>
+    <program xml:id="constraints_example_foreign_key" interactive="activecode" language="sql">
+      <input>
+PRAGMA foreign_keys = ON;
+
+INSERT INTO books (author_id, title)
+VALUES (99, 'Unknown');   -- 99 is not a valid author id
+        </input>
+      <tests>
+
+
+</tests>
+    </program>
+    <p>We also cannot do operations which would destroy existing relationships.  For example, there exist records in the <term>books</term> table for which the <term>author_id</term> = 1.  If we were to delete the author with this id value, we would violate the foreign key constraint on the <term>books</term> table.  We would also violate a similar foreign key constraint on <term>authors_awards</term>.  This code therefore produces an error:</p>
+    <program language="sql">
+      <input>
+PRAGMA foreign_keys = ON;
+
+DELETE FROM authors WHERE author_id = 1;
+</input>
+    </program>
+    <p>However, if we first remove all books and awards for this author, we can successfully remove the author:</p>
+    <program language="sql">
+      <input>
+PRAGMA foreign_keys = ON;
+
+DELETE FROM books WHERE author_id = 1;
+DELETE FROM authors_awards WHERE author_id = 1;
+DELETE FROM authors WHERE author_id = 1;
+</input>
+    </program>
+    <p>We similarly cannot drop the <term>authors</term> table without first dropping any referencing tables.</p>
+    <p>The <term>books</term> and <term>authors</term> examples demonstrate a common pattern, which is that foreign key constraints relate columns that we are likely to want to use in a join query (<number_reference internal="True" refuri="../04-multiple-tables/multiple-tables#joins-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 1.4</inline></number_reference>).  This does not mean that a foreign key is a necessary condition for a join; one of the strengths of a relational database is that relationships between data do not have to be predetermined.  However, the presence of a foreign key is an indication that there exists a natural relationship between the data in the referencing and referenced tables.</p>
+    <p>Foreign key constraints are also known as <em>referential integrity constraints</em>.</p>
+    <subsubsection xml:id="_07-constraints_creating-a-foreign-key-constraint-index-4">
+      <title>Creating a foreign key constraint</title>
+      <p>As with primary keys, there are multiple ways to create a foreign key constraint.  If the foreign key constrains a single column, then we can add it in the column definition for a table using the <term>REFERENCES</term> keyword:</p>
+      <program language="sql">
+        <input>
+DROP TABLE IF EXISTS referencing;
+DROP TABLE IF EXISTS referenced;
+
+CREATE TABLE referenced (
+  x INTEGER PRIMARY KEY
+);
+
+CREATE TABLE referencing (
+  xx INTEGER REFERENCES referenced (x)
+);
+</input>
+      </program>
+      <p>Note that although the foreign key constraint only appears in the referencing table definition, the constraint affects both tables.  The code above ensures that values in the <term>xx</term> column of <term>referencing</term> are either <c>NULL</c> or contained in the <term>x</term> column of <term>referenced</term>.</p>
+      <p>(Note for MySQL users: MySQL does not recognize the single column syntax for creating foreign keys.  Use instead the explicit constraint syntax below.)</p>
+      <p>We can also create a foreign key constraint with a separate <term>FOREIGN KEY</term> entry in the table definition.  This form must be used for multi-column foreign keys:</p>
+      <program language="sql">
+        <input>
+DROP TABLE IF EXISTS referencing2;
+DROP TABLE IF EXISTS referenced2;
+
+CREATE TABLE referenced2 (
+  a VARCHAR(10),
+  b VARCHAR(20),
+  PRIMARY KEY (a, b)
+);
+
+CREATE TABLE referencing2 (
+  c INTEGER PRIMARY KEY,
+  aa VARCHAR(10),
+  bb VARCHAR(10),
+  FOREIGN KEY (aa, bb) REFERENCES referenced2 (a, b)
+);
+</input>
+      </program>
+      <p>In the above example, the <em>pair</em> (<term>aa</term>, <term>bb</term>) in <term>referencing2</term> must match a corresponding (<term>a</term>, <term>b</term>) pair in <term>referenced2</term>; the columns are not constrained independently.</p>
+      <p>Note that it is possible (and sometimes useful) to create a foreign key constraint in which the referencing and referenced tables are the same table.  For example, a company might have a table of employees that references itself:</p>
+      <program language="sql">
+        <input>
+CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  name VARCHAR(100),
+  supervisor_id INTEGER REFERENCES employees (id)
+);
+</input>
+      </program>
+      <p>As with primary keys, some database systems allow the addition or removal of foreign key constraints using the <term>ALTER TABLE</term> command.  (This usage is not supported by SQLite.)</p>
+    </subsubsection>
+    <subsubsection xml:id="_07-constraints_enforcement-mechanisms-index-5">
+      <title>Enforcement mechanisms</title>
+      <p>The default behavior for a foreign key constraint is to reject any attempt to modify data in a way that would violate the constraint.  However, SQL provides additional options that can be applied for <term>DELETE</term> or <term>UPDATE</term> queries.  Adding the phrase <term>ON DELETE SET NULL</term> to the foreign key constraint indicates that a deletion of a referenced table row should result in setting corresponding referencing key values to <c>NULL</c> (if permitted).  The phrase <term>ON DELETE CASCADE</term> indicates that referencing rows should be deleted along with the referenced row.  Similarly, <term>ON UPDATE SET NULL</term> results in setting referencing key values to <c>NULL</c> if the referenced key value is changed; <term>ON UPDATE CASCADE</term> changes the referencing key values to match the changed referenced key value.  Finally, if you want to use the default behavior explicitly, you can use <term>ON DELETE RESTRICT</term> and <term>ON UPDATE RESTRICT</term>.</p>
+      <p>Here is an example to try, using <term>CASCADE</term> for both deletions and updates (modify to try different settings):</p>
+      <program language="sql">
+        <input>
+PRAGMA foreign_keys = ON;
+
+DROP TABLE IF EXISTS works;
+DROP TABLE IF EXISTS composers;
+
+CREATE TABLE composers (
+  id INTEGER PRIMARY KEY,
+  name VARCHAR(30)
+);
+
+INSERT INTO composers VALUES
+  (1, 'Beethoven'),
+  (2, 'Mozart')
+;
+
+CREATE TABLE works (
+  title VARCHAR(50),
+  composer_id INTEGER REFERENCES composers (id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+INSERT INTO works VALUES
+  ('Symphony No. 1', 1),
+  ('Symphony No. 2', 1),
+  ('String Quartet No. 1', 2)
+;
+
+DELETE FROM composers WHERE name = 'Beethoven';
+
+UPDATE composers SET id = 4 WHERE name = 'Mozart';
+
+SELECT * FROM composers;
+SELECT * FROM works;
+</input>
+      </program>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_07-constraints_other-constraints">
+    <title>Other constraints</title>
+    <p>SQL provides some additional constraints you may find useful, which are described in this section.</p>
+    <subsubsection xml:id="_07-constraints_unique-index-6">
+      <title>UNIQUE</title>
+      <p>Occasionally you may need to ensure that a column or set of columns contains unique values, but you do not want to set the column or columns as a primary key (for example, when some other set of columns is already the primary key).  The <term>UNIQUE</term> constraint can be used for this purpose; simply add the <term>UNIQUE</term> keyword as part of the column definition.  One difference between a <term>UNIQUE</term> constraint and a primary key constraint is that the <term>UNIQUE</term> constraint does not prevent <c>NULL</c> values. However, databases deal with <c>NULL</c> values in a unique column in different ways; some allow multiple rows to contain <c>NULL</c>, and others allow only a single <c>NULL</c> row (effectively treating <c>NULL</c> as a comparable value).  Note that the final statement below will fail due to a violation of the <term>UNIQUE</term> constraint on column <term>x</term>.</p>
+      <program xml:id="constraints_example_other" interactive="activecode" language="sql">
+        <input>
+DROP TABLE IF EXISTS test4;
+CREATE TABLE test4 (
+  x INTEGER UNIQUE
+);
+
+INSERT INTO test4 VALUES (1);
+INSERT INTO test4 VALUES (2);
+INSERT INTO test4 VALUES (1);
+        </input>
+        <tests>
+
+
+</tests>
+      </program>
+      <p>You can also create a <term>UNIQUE</term> constraint as a separate entry in the table definition (this is required for a multi-column constraint):</p>
+      <program language="sql">
+        <input>
+DROP TABLE IF EXISTS test5;
+CREATE TABLE test5 (
+  x INTEGER,
+  y INTEGER,
+  UNIQUE (x, y)
+);
+</input>
+      </program>
+      <p>Note that a primary key constraint on a set of columns already implies something stronger than <term>UNIQUE</term>, thus there is no need to specify <term>UNIQUE</term> if <term>PRIMARY KEY</term> is already in place.</p>
+    </subsubsection>
+    <subsubsection xml:id="_07-constraints_not-null-index-7">
+      <title>NOT NULL</title>
+      <p><c>NULL</c> values can be a source of many data errors.  If some bug in your software incorrectly inserts <c>NULL</c> values into your database, the data becomes corrupt, and queries against the data may produce wrong answers. Also, since <c>NULL</c> values are not comparable, they tend to be <q>invisible</q> when querying, unless looked for specifically using <term>IS NULL</term>.   This combination of factors can result in many lost hours of work trying to resolve differences between what you believe is true and what your queries are telling you.</p>
+      <p>It can be valuable, then, to constrain columns to not allow <c>NULL</c> values at all, using the <term>NOT NULL</term> constraint.  In our database, one example is the <term>authors</term> table, which has a <term>NOT NULL</term> constraint on the <term>name</term> column - we always want a value in the <term>name</term> column <footnote_reference auto="1" docname="PART1_SQL/07-constraints/constraints" xml:id="_07-constraints_id1" refid="id2">1</footnote_reference>.  You can find other examples in the books-related tables.</p>
+      <p>Note that <term>NOT NULL</term> is implied on all columns in a primary key, so there is no need to specify <term>NOT NULL</term> for those columns.</p>
+    </subsubsection>
+    <subsubsection xml:id="_07-constraints_check-index-8">
+      <title>CHECK</title>
+      <p>SQL provides a general constraint form that you can use to apply simple Boolean conditions on your data.  The <term>CHECK</term> constraint can be an expression involving a single column or multiple columns of the table.  This expression is typically limited in what else it can incorporate; for example subqueries are typically not allowed, and some databases do not allow function calls (implementations vary).</p>
+      <p>Here is an example, showing both single column and table constraint forms:</p>
+      <program language="sql">
+        <input>
+DROP TABLE IF EXISTS test6;
+CREATE TABLE test6 (
+  a INTEGER CHECK (a BETWEEN 0 AND 100),
+  b INTEGER,
+  CHECK (b &gt; a)
+);
+
+INSERT INTO test6 VALUES (42, 200);
+INSERT INTO test6 VALUES (-1, 6);   -- error
+INSERT INTO test6 VALUES (10, 5);   -- error
+</input>
+      </program>
+      <p>&#x274F;</p>
+      <transition/>
+      <p>
+        <term>Notes</term>
+      </p>
+      <footnote auto="1" backrefs="id1" docname="PART1_SQL/07-constraints/constraints" xml:id="_07-constraints_id2" names="1">
+        <label>1</label>
+        <p>It is possible that we might wish to record some book for whom the author is unknown (or anonymous), which might seem like an instance in which we would want <c>NULL</c>; after all, one possible meaning of <c>NULL</c> is <q>unknown</q>.  However, what does it mean for an unknown author to have an entry in the <term>authors</term> table in the first place?   What meaning would we give, if any, to the birth and death date fields for the <c>NULL</c> author?  And what does it mean if multiple books relate to that author record?  Are they all by the same, unknown author, or by different authors, all of whom are unknown?  A slightly better choice for a book with no known author may be to allow <c>NULL</c> values in the <term>author_id</term> column in <term>books</term> - this is closer to the desired meaning.  However, this introduces problems of its own, such as the fact that an inner join of <term>books</term> and <term>authors</term> will now leave out any books with unknown authors, so we would need to be very careful in writing our queries.  None of this is to say that <c>NULL</c> is never the right choice, only that it introduces complexity and therefore more opportunity for software bugs and data corruption.  Consider your options carefully.</p>
+      </footnote>
+      <p> </p>
+    </subsubsection>
+  </subsection>
+</section>

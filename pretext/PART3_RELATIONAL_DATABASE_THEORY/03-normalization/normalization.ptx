@@ -1,0 +1,1695 @@
+<?xml version="1.0"?>
+<section xml:id="_03-normalization_normalization-normalization-chapter">
+  <title>Normalization</title>
+  <p xml:id="_03-normalization_index-0">In this chapter we discuss some aspects of how a database is structured - what relation schemas should we use to store our data?  While the material in this chapter is deeply rooted in relational database theory, the basic concepts can be understood without the theoretical foundation, and are important for all database practitioners.  If you are reading this chapter without having read earlier chapters on the relational model of the database, note we use the terms relation, attribute, and tuple in discussing the objects in our database; these terms closely correspond to the terms table, column, and row in relational database systems.</p>
+  <subsection xml:id="_03-normalization_introduction">
+    <title>Introduction</title>
+    <p xml:id="_03-normalization_index-1">Normalization is the process of modifying a database structure to meet certain requirements. These requirements are defined by a series of <em>normal forms</em>, which we will define shortly.</p>
+    <p>A primary goal of normalization is to make it easier to maintain a correct collection of data.  Correct data is complete and self-consistent.  The database should not contain data contradicting what we understand to be true.</p>
+    <p>There are a few clues that can indicate a database is susceptible to common kinds of data corruption.  A very big clue is when a database exhibits redundancy, that is, when the same facts are recorded multiple times.  Another clue is when the database contains NULL in many places.  When these issues are present in a relation, it is usually also the case that the relation is doing too many things.  Relations work best when they contain data regarding a single thing or concept.  It can sometimes be difficult to detect that a relation is doing too much, though, which is why redundancy and excessive NULLs are such useful clues.</p>
+    <subsubsection xml:id="_03-normalization_modification-anomalies-index-2">
+      <title>Modification anomalies</title>
+      <p>There are three common types of errors that we can consider to better understand the need for normalization.  Each of these <em>modification anomalies</em> arise from one of the data modification operations available to us: insert, update, and delete.  We can illustrate each of these with the relation pictured below, which lists information about some classes and teachers at a fictional school.  The relation gives the class name, starting time, room number, instructor name, instructor office number, and instructor department.  Right away, we should be concerned that there is information in the relation about both <em>classes</em> and <em>instructors</em>.</p>
+      <table xml:id="_03-normalization_id13">
+        <tabular>
+          <title>
+            <term>classes</term>
+          </title>
+          <row header="yes">
+            <cell>
+                                    class_name
+                                </cell>
+            <cell>
+                                    time
+                                </cell>
+            <cell>
+                                    classroom
+                                </cell>
+            <cell>
+                                    instructor
+                                </cell>
+            <cell>
+                                    office
+                                </cell>
+            <cell>
+                                    department
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Algebra I
+                                </cell>
+            <cell>
+                                    8:00
+                                </cell>
+            <cell>
+                                    C01
+                                </cell>
+            <cell>
+                                    Mr. Reyes
+                                </cell>
+            <cell>
+                                    B24
+                                </cell>
+            <cell>
+                                    Math
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Geometry
+                                </cell>
+            <cell>
+                                    10:00
+                                </cell>
+            <cell>
+                                    C01
+                                </cell>
+            <cell>
+                                    Mr. Reyes
+                                </cell>
+            <cell>
+                                    B24
+                                </cell>
+            <cell>
+                                    Math
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    World History
+                                </cell>
+            <cell>
+                                    9:00
+                                </cell>
+            <cell>
+                                    C15
+                                </cell>
+            <cell>
+                                    Ms. Tan
+                                </cell>
+            <cell>
+                                    A11
+                                </cell>
+            <cell>
+                                    Humanities
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    English Literature
+                                </cell>
+            <cell>
+                                    10:00
+                                </cell>
+            <cell>
+                                    C09
+                                </cell>
+            <cell>
+                                    Ms. Larsen
+                                </cell>
+            <cell>
+                                    A05
+                                </cell>
+            <cell>
+                                    Humanities
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Physics
+                                </cell>
+            <cell>
+                                    11:00
+                                </cell>
+            <cell>
+                                    C06
+                                </cell>
+            <cell>
+                                    Ms. Musa
+                                </cell>
+            <cell>
+                                    B22
+                                </cell>
+            <cell>
+                                    Science
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Chemistry
+                                </cell>
+            <cell>
+                                    13:00
+                                </cell>
+            <cell>
+                                    C17
+                                </cell>
+            <cell>
+                                    Ms. Musa
+                                </cell>
+            <cell>
+                                    B22
+                                </cell>
+            <cell>
+                                    Science
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Music
+                                </cell>
+            <cell>
+                                    9:00
+                                </cell>
+            <cell>
+                                    C25
+                                </cell>
+            <cell>
+                                    Mr. Pal
+                                </cell>
+            <cell>
+                                    A03
+                                </cell>
+            <cell>
+                                    Humanities
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>This relation also exhibits redundancy.  We are given the facts that Mr. Reyes is in the Math department and his office is in room 124 multiple times, for example.  Note that Mr. Reyes appearing multiple times is not itself redundancy, as each appearance is a new fact: Mr. Reyes teaches Algebra I, and Mr. Reyes teaches Geometry.  We do not have any NULLs in this example, but we will see shortly how they might appear when we add or remove data.</p>
+      <remark xml:id="_03-normalization_insert-anomaly-index-3">
+        <title>Insert anomaly</title>
+        <p>Consider what happens when a new instructor joins the faculty at the school.  Mr. Hassan is a new faculty member in the department of Math, but he has not yet been assigned any classes to teach.  How should we add Mr. Hassan to the database?  There are a few options, but none of them are good - whatever we do, we must provide values for <term>class_name</term>, <term>classroom</term>, and <term>time</term> in our new tuple.  We might think that NULL is the best choice for each of these attributes, as otherwise we must create fake class information.  Either way, we are making trouble for ourselves later on - our database now contains a tuple that must be handled in a special fashion, different from the other tuples in the relation.</p>
+      </remark>
+      <remark xml:id="_03-normalization_delete-anomaly-index-4">
+        <title>Delete anomaly</title>
+        <p>Now, consider what happens when Ms. Tan takes a job at another school.  If we are incautious, we will delete the tuple for Ms. Tan - removing World History from our list of classes altogether.  Similarly, we cannot remove English Literature from the list of classes without removing all information about Ms. Larsen.  The only way to avoid these issues with our current database design is to replace the existing values with NULLs.  As with the insert anomaly example, this leaves us with tuples that require special handling.</p>
+      </remark>
+      <remark xml:id="_03-normalization_update-anomaly-index-5">
+        <title>Update anomaly</title>
+        <p>Update anomalies are a direct consequence of the redundancy in our database.  Consider what happens when Mr. Reyes changes offices.  If we are incautious, we will update the tuple listing Mr. Reyes as the teacher of Algebra I, but forget to update the tuple for Geometry, leaving our data internally consistent.  Mr. Reyes will be listed as having two different offices, without any indication which is correct.  To avoid trouble, we must remember to always update <em>all</em> classes for which Mr. Reyes is the instructor.</p>
+      </remark>
+    </subsubsection>
+    <subsubsection xml:id="_03-normalization_example-solution">
+      <title>Example solution</title>
+      <p>Normalizing the <term>classes</term> relation will prevent each of the situations above.  In effect, normalization requires us to structure relations such that the data is expressed in a very simple and consistent form.  We typically achieve normalization by <em>decomposing</em> a relation into multiple smaller relations.</p>
+      <p>Informally, in a normalized relation, some thing or concept is uniquely identified by a primary key composed of one or more attributes and every other attribute represents a <em>single-valued</em> fact about the thing or concept only. For our example, the <term>classes</term> relation describes classes; it has <term>class_name</term> as a primary key, and <term>classroom</term>, <term>time</term>, and <term>instructor</term> as single-valued attributes.  (An example of an attribute that is not single-valued would be a list of students in the class.  We call such an attribute <em>multi-valued</em>.)  However, <term>office</term> and <term>department</term> are not really facts about a class; instead, they are facts about instructors.  These extended facts need to be removed to another relation through <em>decomposition</em> of the <term>classes</term> relation:</p>
+      <table xml:id="_03-normalization_id14">
+        <tabular>
+          <title>
+            <term>classes</term>
+          </title>
+          <row header="yes">
+            <cell>
+                                    class_name
+                                </cell>
+            <cell>
+                                    time
+                                </cell>
+            <cell>
+                                    classroom
+                                </cell>
+            <cell>
+                                    instructor
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Algebra I
+                                </cell>
+            <cell>
+                                    8:00
+                                </cell>
+            <cell>
+                                    C01
+                                </cell>
+            <cell>
+                                    Mr. Reyes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Geometry
+                                </cell>
+            <cell>
+                                    10:00
+                                </cell>
+            <cell>
+                                    C01
+                                </cell>
+            <cell>
+                                    Mr. Reyes
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    World History
+                                </cell>
+            <cell>
+                                    9:00
+                                </cell>
+            <cell>
+                                    C15
+                                </cell>
+            <cell>
+                                    Ms. Tan
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    English Literature
+                                </cell>
+            <cell>
+                                    10:00
+                                </cell>
+            <cell>
+                                    C09
+                                </cell>
+            <cell>
+                                    Ms. Larsen
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Physics
+                                </cell>
+            <cell>
+                                    11:00
+                                </cell>
+            <cell>
+                                    C06
+                                </cell>
+            <cell>
+                                    Ms. Musa
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Chemistry
+                                </cell>
+            <cell>
+                                    13:00
+                                </cell>
+            <cell>
+                                    C17
+                                </cell>
+            <cell>
+                                    Ms. Musa
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Music
+                                </cell>
+            <cell>
+                                    9:00
+                                </cell>
+            <cell>
+                                    C25
+                                </cell>
+            <cell>
+                                    Mr. Pal
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <table xml:id="_03-normalization_id15">
+        <tabular>
+          <title>
+            <term>instructors</term>
+          </title>
+          <row header="yes">
+            <cell>
+                                    name
+                                </cell>
+            <cell>
+                                    office
+                                </cell>
+            <cell>
+                                    department
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Mr. Reyes
+                                </cell>
+            <cell>
+                                    B24
+                                </cell>
+            <cell>
+                                    Math
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Ms. Tan
+                                </cell>
+            <cell>
+                                    A11
+                                </cell>
+            <cell>
+                                    Humanities
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Ms. Larsen
+                                </cell>
+            <cell>
+                                    A05
+                                </cell>
+            <cell>
+                                    Humanities
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Ms. Musa
+                                </cell>
+            <cell>
+                                    B22
+                                </cell>
+            <cell>
+                                    Science
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Mr. Pal
+                                </cell>
+            <cell>
+                                    A03
+                                </cell>
+            <cell>
+                                    Humanities
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>Note how we have eliminated redundancy through this decomposition.  If we need to update office information for an instructor, there is exactly one tuple to update.  We also no longer need to worry about modification anomalies.  Adding or removing an instructor is completely independent of adding or removing classes; this also removes any need for excessive NULLs in the <term>classes</term> relation <footnote_reference auto="1" docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" xml:id="_03-normalization_id1" refid="id7">1</footnote_reference>.</p>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_03-normalization_normal-forms-index-6">
+    <title>Normal forms</title>
+    <p>The concept of normalization originates with the relational model itself.  Additional refinements have been added over time, leading to a series of normal forms, which mostly build on earlier normal forms.  We will not study every normal form that has been proposed, but focus on the forms which are most useful and most likely to be of value in most applications.  The first form we consider is appropriately named the <em>first normal form</em>, abbreviated 1NF.  We proceed with the second, third, and fourth normal forms (2NF, 3NF, 4NF) as well as Boyce-Codd normal form (BCNF), which fits in between 3NF and 4NF.</p>
+    <p>When a database meets the requirement for a normal form, we say that the database is <em>in</em> the form.  As commonly defined, most normal forms include a requirement that earlier normal forms are also met.  Therefore, any database that is in 4NF is necessarily also in 1NF, 2NF, 3NF, and BCNF; a database in BCNF is also in 3NF and below; and so forth.  However, it is also true that higher forms address less frequently occurring situations, so, for example, a database that has been restructured to be in 3NF is very likely to also be in BCNF or even 4NF.  3NF is generally considered the minimum requirement a database must meet to be considered <q>normalized</q>.</p>
+    <p>To explain most of the normal forms, we first need to provide some additional foundation, covered in the next few sections.  However, we can explain 1NF immediately.  1NF requires that the domain of an attribute of a relation contains <em>atomic</em> values only.  Atomic here simply means that we cannot usefully break the value down into smaller parts.  Non-atomic elements include compound values, arrays of values, and relations.  For example, a character string containing an author's name may be atomic <footnote_reference auto="1" docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" xml:id="_03-normalization_id2" refid="id8">2</footnote_reference>, but a string identifying a book by author and title is probably compound; a list of authors would be an array; and a table of values giving a book's publication history (including publisher, year, ISBN, etc. for each publication) would be a relation.  To meet the 1NF requirements, compound values should be broken into separate attributes, while arrays and relations should be broken out into their own relations (with a foreign key referencing the original relation).</p>
+    <p>1NF is often described as simply part of the definition of a relational database, and early relational database systems indeed provided no capabilities that would permit violations of 1NF.  Some modern database systems now provide support for compound values, in the form of user-defined types, and array values.  While 1NF technically remains a requirement for all higher normal forms, for certain applications these violations of 1NF may be highly useful.  Some authors have argued for permitting relation-valued attributes as well.</p>
+  </subsection>
+  <subsection xml:id="_03-normalization_keys-and-superkeys-index-7">
+    <title>Keys and superkeys</title>
+    <p>This section reiterates some material from <number_reference internal="True" refuri="../01-relational-model/relational-model#relational-model-chapter" title="Chapter {number}"><inline classes="std std-numref">Chapter 3.1</inline></number_reference> in which we defined the term <em>key</em>, but in a bit more detail.  We start by defining a more general term, <em>superkey</em>.</p>
+    <p>A superkey of a relation is some subset of attributes of the relation which uniquely identifies any tuple in the relation.  Consider the <term>library</term> relation below (we will be using this example extensively):</p>
+    <table xml:id="_03-normalization_id16">
+      <tabular>
+        <title>
+          <term>library</term>
+        </title>
+        <row header="yes">
+          <cell>
+                                author
+                            </cell>
+          <cell>
+                                title
+                            </cell>
+          <cell>
+                                year
+                            </cell>
+          <cell>
+                                genre
+                            </cell>
+          <cell>
+                                author_birth
+                            </cell>
+          <cell>
+                                author_death
+                            </cell>
+          <cell>
+                                section
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Ralph Ellison
+                            </cell>
+          <cell>
+                                Invisible Man
+                            </cell>
+          <cell>
+                                1952
+                            </cell>
+          <cell>
+                                fiction
+                            </cell>
+          <cell>
+                                1914-03-01
+                            </cell>
+          <cell>
+                                1994-04-16
+                            </cell>
+          <cell>
+                                literature
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Jhumpa Lahiri
+                            </cell>
+          <cell>
+                                Unaccustomed Earth
+                            </cell>
+          <cell>
+                                2008
+                            </cell>
+          <cell>
+                                fiction
+                            </cell>
+          <cell>
+                                1967-07-11
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                                literature
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                J.R.R. Tolkien
+                            </cell>
+          <cell>
+                                The Hobbit
+                            </cell>
+          <cell>
+                                1937
+                            </cell>
+          <cell>
+                                fantasy
+                            </cell>
+          <cell>
+                                1892-01-03
+                            </cell>
+          <cell>
+                                1973-09-02
+                            </cell>
+          <cell>
+                                speculative fiction
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Isabel Allende
+                            </cell>
+          <cell>
+                                The House of the Spirits
+                            </cell>
+          <cell>
+                                1982
+                            </cell>
+          <cell>
+                                magical realism
+                            </cell>
+          <cell>
+                                1942-08-02
+                            </cell>
+          <cell>
+                            </cell>
+          <cell>
+                                literature
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                J.R.R. Tolkien
+                            </cell>
+          <cell>
+                                The Fellowship of the Ring
+                            </cell>
+          <cell>
+                                1954
+                            </cell>
+          <cell>
+                                fantasy
+                            </cell>
+          <cell>
+                                1892-01-03
+                            </cell>
+          <cell>
+                                1973-09-02
+                            </cell>
+          <cell>
+                                speculative fiction
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Ursula K. Le Guin
+                            </cell>
+          <cell>
+                                The Dispossessed
+                            </cell>
+          <cell>
+                                1974
+                            </cell>
+          <cell>
+                                science fiction
+                            </cell>
+          <cell>
+                                1929-10-21
+                            </cell>
+          <cell>
+                                2018-01-22
+                            </cell>
+          <cell>
+                                speculative fiction
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>(The blank entries for <term>author_death</term> in this table represent NULLs.  The authors are still living at the time of this writing.)</p>
+    <p>We assert that the set of attributes {<term>author</term>, <term>title</term>, and <term>year</term>} is a superkey for the <term>library</term> relation.</p>
+    <p>The definition of superkey applies not just to the current data in the relation, but to <em>any data we might possibly store in the relation</em>.  That is, a superkey is not a transitory property of the data, but a constraint we impose on the data.  For example, although each publication year listed in the <term>year</term> column above is unique to its book, that cannot be guaranteed for future books we might add to the relation.  Therefore the set {<term>year</term>} is not a superkey for <term>library</term>.</p>
+    <p>A second, and equivalent definition of superkey is as a subset of attributes of the relation that are guaranteed to contain a unique setting of values for any tuple in the relation.  For our example, this means there can never be two books in the <term>library</term> relation which share the same author, title, and year.  From this second definition and the definition of a relation, we note that <em>every</em> relation has at least one superkey: the set of all attributes of the relation.  The set {<term>author</term>, <term>title</term>, <term>year</term>, <term>genre</term>, <term>author_birth</term>, <term>author_death</term>, <term>section</term>} is a superkey for the <term>library</term> relation simply because every tuple in the relation must be unique.</p>
+    <p>We can further state that any subset of attributes of the relation which is a superset of some superkey of the relation is also a superkey of the relation.  For our example, {<term>author</term>, <term>title</term>, <term>year</term>, <term>author_birth</term>} must be a superkey because it is a superset of a known superkey.</p>
+    <p>A <em>key</em> of a relation is a superkey of the relation from which we cannot subtract any attributes and get a superkey.  For the <term>library</term> relation, we assert that {<term>author</term>, <term>title</term>} is a superkey of the relation; furthermore, both <term>author</term> and <term>title</term> are needed.  That is, neither {<term>author</term>} nor {<term>title</term>} is a superkey of <term>library</term>.  Therefore, {<term>author</term>, <term>title</term>} is a key of <term>library</term>; the set {<term>author</term>, <term>title</term>, <term>year</term>} is a superkey but not a key because we can remove <term>year</term> and still have a superkey <footnote_reference auto="1" docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" xml:id="_03-normalization_id3" refid="id9">3</footnote_reference>.</p>
+    <p>Identifying the keys of a relation is a key step in analyzing whether or not a relation is already normalized with respect to 2NF or higher.</p>
+  </subsection>
+  <subsection xml:id="_03-normalization_functional-dependencies-index-8">
+    <title>Functional dependencies</title>
+    <p>Now we turn to the topic of functional dependencies, which are closely related to superkeys.</p>
+    <p>A <em>functional dependency</em> (FD) is a statement about two sets of attributes of a relation.  Consider two sets of attributes, which we will label <em>X</em> and <em>Y</em>.  We say that <em>X</em> <em>functionally determines</em> <em>Y</em>, or <em>Y</em> is <em>functionally dependent on</em> <em>X</em>, if, whenever two tuples in the relation agree on the values in <em>X</em>, they must also agree on the values in <em>Y</em>.  The notation for this is:</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">X \rightarrow Y
+
+</math_block>
+    <p>As with keys, FDs are constraints that we impose on the data.  Another way of thinking about a functional dependency is, if you had a relation such that the relation contains only the attributes that are in <em>X</em> or <em>Y</em>, then <em>X</em> would be a superkey for that relation.  That is, <em>X</em> uniquely determines everything in the union of <em>X</em> and <em>Y</em>.  (We can now provide another defintiion of superkey as a subset of attributes of a relation that functionally determines the set of all attributes of the relation.)</p>
+    <p>Another way of thinking about FDs is, if <em>X</em> functionally determines <em>Y</em>, then if we know the values in <em>X</em>, we know or can determine the values in <em>Y</em>, because <em>Y</em> just contains single-valued facts about <em>X</em>.  In our <term>library</term> relation, the set {<term>author</term>, <term>title</term>} functionally determines the set {<term>year</term>}, because if we know the author and title of the book, then we should be able to find out what the publication year is; and whatever sources we consult to find the year should all give us the same answer.  The dependency is <q>functional</q> in this sense; there exists some <em>function</em> between the domain of (author, title) pairs and the domain of publication years that yields the correct answer for every valid input.  The function in this case is simply a mapping between domains, not something we can analytically derive.</p>
+    <p>Here are some more FDs for the <term>library</term> relation:</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\begin{eqnarray*}
+\text{\{author, title\}} &amp; \rightarrow &amp; \text{\{genre\}} \\
+\text{\{author\}} &amp; \rightarrow &amp; \text{\{author_birth, author_death\}} \\
+\text{\{genre\}} &amp; \rightarrow &amp; \text{\{section\}} \\
+\text{\{author, title\}} &amp; \rightarrow &amp; \text{\{title, year\}} \\
+\text{\{title, genre\}} &amp; \rightarrow &amp; \text{\{title\}} \\
+\end{eqnarray*}</math_block>
+    <p>The first FD tells us that each book is categorized into exactly one genre in our database.  The second tells us that an author's dates of birth and death should be the same every time the author appears in the database.  The third tells us that the location in the library in which a book is shelved depends on the genre of the book.  The last two FDs are different from the previous ones; in these, there is an overlap between the set on the left-hand side and the set on the right-hand side.  We will give special names to these in a moment.  For now, the fourth FD tells us that, if we know the author and title of a book, then we know the title and the publication year.  The final FD simply tells us that any two tuples having the same title and genre, have the same title!</p>
+    <subsubsection xml:id="_03-normalization_types-of-functional-dependency">
+      <title>Types of functional dependency</title>
+      <p>FDs are categorized into three types: <em>trivial</em>, <em>non-trivial</em>, and <em>completely non-trivial</em>.</p>
+      <p>A trivial FD is one in which the right-hand side of the FD is a subset of the left-hand side.  The last FD in our example above is a trivial FD.  A trivial FD conveys no useful information - it tells us <q>we know what we know</q> - but they still have some use to us in our normalization procedures.  Every trivial FD we can write down for a relation is true, as long as the left-hand side of the FD is a subset of the attributes of the relation.</p>
+      <p>A non-trivial FD is one in which some part of the right-hand side of the FD is not in the left-hand side.  The intersection of the left-hand side and the right-hand side is not empty, but the right-hand side is not a subset of the left-hand side.  The fourth FD above is a non-trival FD.  These FDs convey some new information.  Identifying non-trivial FDs in our relations is a crucial step in normalization.</p>
+      <p>As you might guess by now, a completely non-trivial FD is one for which there is no overlap between the left-hand side and the right-hand side - the intersection of the two sets is the empty set.  The first three FDs above are completely non-trivial.</p>
+    </subsubsection>
+    <subsubsection xml:id="_03-normalization_inference-rules-index-9">
+      <title>Inference rules</title>
+      <p>Many FDs can be inferred or derived from other FDs.  We are particularly interested in non-trivial FDs which have a maximal set on the right-hand side, that is, a set which cannot be added to without making the FD false.  There is a straightforward algorithm to infer such FDs from a set of FDs, which we discuss in the next section.  We need the five inference rules below for the algorithm.  The first three inference rules are known as <em>Armstrong's axioms</em>, and can be used to prove the remaining rules.</p>
+      <p>We present these without proof, but the intuition behind these should be clear.  Let <em>X</em>, <em>Y</em>, and <em>Z</em> be subsets of the attributes of the same relation.  Let the union of <em>Y</em> and <em>Z</em> be denoted <em>YZ</em>.  Then we have:</p>
+      <dl>
+        <li>
+          <title>
+            <em>Reflexive rule</em>
+          </title>
+          <p>If Y is a subset of X, then</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">X \rightarrow Y</math_block>
+          <p>This is simply a statement that all trivial FDs are true.</p>
+        </li>
+        <li>
+          <title>
+            <em>Augmentation rule</em>
+          </title>
+          <p>If</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">X \rightarrow Y</math_block>
+          <p>then</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">XZ \rightarrow YZ</math_block>
+          <p>also holds.</p>
+          <p>This rule says we can add the same attributes to both the left-hand and right-hand sides of an FD.  Trivially, if we add <em>Z</em> to what we know (left-hand side), then we should be able to determine <em>Z</em> in addition to what we could determine previously (right-hand side).</p>
+          <p>In our <term>library</term> example, we are given</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{author\}} \rightarrow \text{\{author_birth, author_death\}}</math_block>
+          <p>therefore, it is also true that</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{author, genre\}} \rightarrow \text{\{author_birth, author_death, genre\}}</math_block>
+          <p>A special case of this is that we can add the left-hand side to both sides; this leaves the left-hand side unchanged, since the union of any set with itself is just the set:</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">X \rightarrow Y</math_block>
+          <p>implies</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">X \rightarrow XY</math_block>
+        </li>
+        <li>
+          <title>
+            <em>Transitive rule</em>
+          </title>
+          <p>If we have both of</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">X \rightarrow Y \\
+Y \rightarrow Z</math_block>
+          <p>then</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">X \rightarrow Z</math_block>
+          <p>also holds.  That is, if knowing <em>X</em> tells us <em>Y</em>, and from <em>Y</em> we can know <em>Z</em>, then knowing <em>X</em> also tells us <em>Z</em>.</p>
+          <p>In our <term>library</term> relation we have</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{author, title\}} \rightarrow \text{\{genre\}}
+\text{\{genre\}} \rightarrow \text{\{section\}} \\</math_block>
+          <p>thus</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{author, title\}} \rightarrow \text{\{section\}}</math_block>
+        </li>
+        <li>
+          <title>
+            <em>Splitting rule (or decomposition, or projective, rule)</em>
+          </title>
+          <p>If</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">X \rightarrow YZ</math_block>
+          <p>holds, then so do</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">X \rightarrow Y \\
+X \rightarrow Z</math_block>
+          <p>Plainly stated, if knowing the values for <em>X</em> tells us the values for <em>Y</em> <term>and</term> <em>Z</em>, then knowing the values for <em>X</em> tells us the values for <em>Y</em>, and likewise for <em>Z</em>.  In our <term>library</term> example, we have</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{author\}} \rightarrow \text{\{author_birth, author_death\}}</math_block>
+          <p>therefore, it is also true that</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{author\}} \rightarrow \text{\{author_birth\}} \\
+\text{\{author\}} \rightarrow \text{\{author_death\}}</math_block>
+          <p>Note that we can <q>split</q> the right-hand side only.  For example, given <math>\text{\{author, title\}} \rightarrow \text{\{year\}}</math>, it is <term>not</term> true that <math>\text{\{author\}} \rightarrow \text{\{year\}}</math>.</p>
+        </li>
+        <li>
+          <title>
+            <em>Combining rule (or union, or additive, rule)</em>
+          </title>
+          <p>This is the splitting rule in reverse.  If we have both of</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">X \rightarrow Y \\
+X \rightarrow Z</math_block>
+          <p>then</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">X \rightarrow YZ</math_block>
+          <p>also holds. In our <term>library</term> example, we have</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{author, title\}} \rightarrow \text{\{year\}} \\
+\text{\{author, title\}} \rightarrow \text{\{genre\}}</math_block>
+          <p>thus</p>
+          <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{author, title\}} \rightarrow \text{\{year, genre\}}</math_block>
+        </li>
+      </dl>
+      <p>While any FDs that can be inferred from a given collection of FDs on a relation can be inferred using the above rules, there is unfortunately no way of deciding that some collection of FDs is, in fact, <em>complete</em> - that is, that the collection of FDs lets us infer every possible true FD on the relation.  FDs come from the minds of the database designer and others involved in analysis and design, a process which requires some <q>trial and error</q>, i.e., iterative improvement.</p>
+    </subsubsection>
+    <subsubsection xml:id="_03-normalization_closure-index-10">
+      <title>Closure</title>
+      <p>As mentioned, we are going to be particularly interested in non-trivial FDs which have a maximal set on the right-hand side.  The <em>closure</em> of a subset <em>X</em> of relation <em>R</em> given some collection of FDs is the union of all sets {<em>a</em>} such that <em>a</em> is an attribute of <em>R</em> and we can infer <math>X \rightarrow {a}</math>.  Informally, the closure of <em>X</em> is the set of attributes which are functionally determined by <em>X</em>.  The closure of <em>X</em> is denoted <em>X</em><superscript>+</superscript>.</p>
+      <p>We are interested in closure for a couple of reasons.  First, note from this definition that the closure of a superkey of a relation is the set of all attributes of the relation.  We can use this fact to test whether or not some set of attributes is a superkey; further, we could in theory find all superkeys of a relation by examining the closure of every subset of attributes (in practice this can become too much work fairly quickly as the number of attributes increases).  Second, closure will be useful in the decomposition step of our normalization algorithms.</p>
+      <p>The closure of a set of attributes can be determined using the following algorithm.</p>
+      <dl>
+        <li>
+          <title>
+            <em>Closure algorithm</em>
+          </title>
+          <p>Given a collection <em>F</em> of FDs and a set of attributes <em>X</em>:</p>
+          <p>
+            <ol label="1">
+              <li>
+                <p>Let <em>C</em> = <em>X</em>.  Trivially, <math>X \rightarrow C</math>.</p>
+              </li>
+              <li>
+                <p>While there exists some functional dependency <math>Y \rightarrow Z</math> in <em>F</em> such that <em>Y</em> is a subset of <em>C</em> and <em>Z</em> contains some attributes not in <em>C</em>, add the attributes in <em>Z</em> to <em>C</em> to create <em>C'</em>.  Then,</p>
+                <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\begin{eqnarray*}
+&amp; &amp; C \rightarrow Y    ~~\text{(reflexive rule)} \\
+&amp; &amp; C \rightarrow Z    ~~\text{(transitive rule)} \\
+&amp; &amp; X \rightarrow Z    ~~\text{(transitive rule)} \\
+&amp; &amp; X \rightarrow C'   ~~\text{(combining rule)} \\
+\end{eqnarray*}</math_block>
+                <p>Let <em>C</em> = <em>C'</em>.</p>
+              </li>
+              <li>
+                <p>When no more FDs meet the criteria above, <em>C</em> = <em>X</em><superscript>+</superscript>.</p>
+              </li>
+            </ol>
+          </p>
+        </li>
+      </dl>
+      <p>We previously asserted that the set {author, title} is a superkey for our example <term>library</term> relation, so the closure {author, title}<superscript>+</superscript> should be the set of all attributes of <term>library</term>.  We now show that this follows from our inference rules, and from the FDs given previously:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\begin{eqnarray*}
+\text{\{author, title\}} &amp; \rightarrow &amp; \text{\{year\}} \\
+\text{\{author, title\}} &amp; \rightarrow &amp; \text{\{genre\}} \\
+\text{\{author\}} &amp; \rightarrow &amp; \text{\{author_birth, author_death\}} \\
+\text{\{genre\}} &amp; \rightarrow &amp; \text{\{section\}} \\
+\text{\{author, title\}} &amp; \rightarrow &amp; \text{\{title, year\}} \\
+\text{\{title, genre\}} &amp; \rightarrow &amp; \text{\{title\}} \\
+\end{eqnarray*}</math_block>
+      <p>
+        <ol label="1">
+          <li>
+            <p>Let <em>C</em> = {author, title}.</p>
+          </li>
+          <li>
+            <p>We have <math>\text{\{author, title\}} \rightarrow \text{\{year\}}</math>, and {author, title} is a subset of <em>C</em>, so add <term>year</term> to <em>C</em>: <em>C</em> = {author, title, year}.</p>
+          </li>
+          <li>
+            <p>Similarly, <math>\text{\{author, title\}} \rightarrow \text{\{genre\}}</math>, so let <em>C</em> = {author, title, year, genre}.</p>
+          </li>
+          <li>
+            <p>We have <math>\text{\{author\}} \rightarrow \text{\{author_birth, author_death\}}</math>, and {author} is a subset of <em>C</em>.  Let <em>C</em> = {author, title, year, genre, author_birth, author_death}.</p>
+          </li>
+          <li>
+            <p>We have <math>\text{\{genre\}} \rightarrow \text{\{section\}}</math>, and {genre} is a subset if <em>C</em>.  Let <em>C</em> = {author, title, year, genre, author_birth, author_death, section}.</p>
+          </li>
+          <li>
+            <p>The algorithm completes at this point because the right-hand sides of all of the unused FDs are already subsets of <em>C</em>; and in any case, <em>C</em> already has all attributes of <term>library</term>.</p>
+          </li>
+        </ol>
+      </p>
+      <p>Thus, {author, title}<superscript>+</superscript> = {author, title, year, genre, author_birth, author_death, section}.</p>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_03-normalization_second-third-and-boyce-codd-normal-forms-index-11">
+    <title>Second, third, and Boyce-Codd normal forms</title>
+    <p>We are now ready to discuss the normal forms up to Boyce-Codd normal form (BCNF).  In this section we will provide definitions of the normal forms, with examples.</p>
+    <subsubsection xml:id="_03-normalization_second-normal-form">
+      <title>Second normal form</title>
+      <p>A relation is in second normal form (2NF) if it is in 1NF and there are no <em>non-key attributes</em> which are functionally dependent on a proper subset of the key.  A non-key attribute is an attribute which is not part of any key.</p>
+      <p>From this definition, we can see that <term>library</term> is not in 2NF.  The key of <term>library</term> is {author, title}.  However, we have the FD</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{author\}} \rightarrow \text{\{author_birth, author_death\}}</math_block>
+      <p>in which the left-hand side only contains <term>author</term>.  We say that the above FD <em>violates</em> second normal form.</p>
+      <p>Note that any relations (in 1NF) for which the key has a single attribute is automatically in 2NF.</p>
+    </subsubsection>
+    <subsubsection xml:id="_03-normalization_third-normal-form">
+      <title>Third normal form</title>
+      <p>A relation is in third normal form (3NF) if it is in 2NF and there are no non-key attributes which are functionally dependent on other non-key attributes.</p>
+      <p>Considering the <term>library</term> relation again, the dependency</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{genre\}} \rightarrow \text{\{section\}}</math_block>
+      <p>violates 3NF because neither <term>genre</term> nor <term>section</term> are part of any key.</p>
+    </subsubsection>
+    <subsubsection xml:id="_03-normalization_boyce-codd-normal-form">
+      <title>Boyce-Codd normal form</title>
+      <p>Boyce-Codd <footnote_reference auto="1" docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" xml:id="_03-normalization_id4" refid="id10">4</footnote_reference> normal form is a slightly stronger version of third normal form; any relation in BCNF is also in 3NF.  However, most relations in 3NF are also in BCNF.  BCNF has a simple and general definition which encompasses the definitions of 2NF and 3NF:</p>
+      <dl>
+        <li>
+          <title>
+            <em>Definition of BCNF</em>
+          </title>
+          <p>A relation is in BCNF if it is in 1NF and if, for every non-trivial functional dependency of the form <math>X \rightarrow Y</math> on the relation, <em>X</em> is a superkey of the relation.</p>
+        </li>
+      </dl>
+      <p>It may not be obvious from this definition that relations in BCNF are also in 2NF and 3NF.  We will demonstrate that this is true for 2NF; a similar argument holds for 3NF.  Recall that 2NF requires we have no non-key attributes functionally dependent on a proper subset of the key.  By the definition of key, a proper subset of the key cannot be a key or superkey; therefore, an FD forbidden by 2NF must have a left-hand side that is not a superkey.  On the other hand, non-key attributes cannot be part of the key at all.  The right-hand side of an FD forbidden by 2NF can have no intersection with the left-hand side, so the FD is completely non-trivial.  Thus any FDs that would violate 2NF also meet the criteria for violating BCNF.</p>
+      <p>The difference between 3NF and BCNF is simply that 3NF permits FDs for which the right-hand side is a subset of a key.  This situation is fairly uncommon, which is why most relations in 3NF are also in BCNF.  We will explore this difference further in a later section.</p>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_03-normalization_decomposition-index-12">
+    <title>Decomposition</title>
+    <p>We say that a database is normalized with respect to some normal form if all relations in the database are in the normal form.  To normalize a database, we must <em>decompose</em> relations which have some violating FD.  Decomposition of a relation involves creating two new relations, each of which has a subset of the attributes of the original relation.  The original relation can then be discarded.</p>
+    <p>In this section we discuss the BCNF decomposition algorithm and provide an example walkthrough of normalization.  We close the section by exploring why some problematic relations may be better left in 3NF.</p>
+    <subsubsection xml:id="_03-normalization_decomposition-algorithm">
+      <title>Decomposition algorithm</title>
+      <p>There is a simple approach to decomposition that both eliminates a violation of a normal form, and that allows for exact recovery of the original relation in all cases.  The algorithm below is expressed in terms of BCNF, but works equally well for 2NF and 3NF:</p>
+      <dl>
+        <li>
+          <title>
+            <em>Decomposition algorithm</em>
+          </title>
+          <p>Given some relation <em>R</em>, and a functional dependency <math>X \rightarrow Y</math> on <em>R</em> that violates BCNF:</p>
+          <p>
+            <ol label="1">
+              <li>
+                <p>(Optional, but strongly recommended) Add to <em>Y</em> any attributes that are functionally determined by <em>X</em> and that are not already in <em>Y</em>; i.e., let <em>Y</em> = <em>X</em><superscript>+</superscript>.  (It is easy to show that <math>X \rightarrow X^{+}</math> violates BCNF given the original violation, so we are merely substituting one violating FD for another.)</p>
+              </li>
+              <li>
+                <p>Let <em>Z</em> be the set of attributes of <em>R</em> that are not in <em>X</em> or <em>Y</em>.  (This set must be non-empty because, by definition, <em>X</em> is not a superkey.)</p>
+              </li>
+              <li>
+                <p>Create relations <em>R1</em> and <em>R2</em> such that <em>R1</em> has the attributes in the union of <em>X</em> and <em>Y</em>, and <em>R2</em> has the attributes in the union of <em>X</em> and <em>Z</em>.  In relational algebra terms, we use projection to create the new relations:</p>
+                <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">R1 = \pi_{XY}(R) \\
+R2 = \pi_{XZ}(R)</math_block>
+              </li>
+              <li>
+                <p>Discard <em>R</em>.</p>
+              </li>
+            </ol>
+          </p>
+        </li>
+      </dl>
+    </subsubsection>
+    <subsubsection xml:id="_03-normalization_worked-example">
+      <title>Worked example</title>
+      <p>We now apply this algorithm to a database initially composed of just the <term>library</term> relation.  To start, we previously noted that the FD</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{author\}} \rightarrow \text{\{author_birth, author_death\}}</math_block>
+      <p>violates 2NF and thus BCNF.  To apply the decomposition algorithm to this violation:</p>
+      <p>
+        <ol label="1">
+          <li>
+            <p>Let <em>Y</em> be the closure of {author}, which is {author, author_birth, author_death}.</p>
+          </li>
+          <li>
+            <p>Let <em>Z</em> then be {title, year, genre, section}.</p>
+          </li>
+          <li>
+            <p>The union of <em>X</em> and <em>Y</em> is just <em>Y</em> because we did the optional closure in step 1.  The union of <em>X</em> and <em>Z</em> is {author, title, year, genre, section}.  Projecting on to these attribute sets yields the following relations, which we rename to <term>authors</term> and <term>library2</term>:</p>
+          </li>
+        </ol>
+      </p>
+      <table xml:id="_03-normalization_id17">
+        <tabular>
+          <title>
+            <term>authors</term>
+          </title>
+          <row header="yes">
+            <cell>
+                                    author
+                                </cell>
+            <cell>
+                                    author_birth
+                                </cell>
+            <cell>
+                                    author_death
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Ralph Ellison
+                                </cell>
+            <cell>
+                                    1914-03-01
+                                </cell>
+            <cell>
+                                    1994-04-16
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Jhumpa Lahiri
+                                </cell>
+            <cell>
+                                    1967-07-11
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    J.R.R. Tolkien
+                                </cell>
+            <cell>
+                                    1892-01-03
+                                </cell>
+            <cell>
+                                    1973-09-02
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Isabel Allende
+                                </cell>
+            <cell>
+                                    1942-08-02
+                                </cell>
+            <cell>
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Ursula K. Le Guin
+                                </cell>
+            <cell>
+                                    1929-10-21
+                                </cell>
+            <cell>
+                                    2018-01-22
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <table xml:id="_03-normalization_id18">
+        <tabular>
+          <title>
+            <term>library2</term>
+          </title>
+          <row header="yes">
+            <cell>
+                                    author
+                                </cell>
+            <cell>
+                                    title
+                                </cell>
+            <cell>
+                                    year
+                                </cell>
+            <cell>
+                                    genre
+                                </cell>
+            <cell>
+                                    section
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Ralph Ellison
+                                </cell>
+            <cell>
+                                    Invisible Man
+                                </cell>
+            <cell>
+                                    1952
+                                </cell>
+            <cell>
+                                    fiction
+                                </cell>
+            <cell>
+                                    literature
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Jhumpa Lahiri
+                                </cell>
+            <cell>
+                                    Unaccustomed Earth
+                                </cell>
+            <cell>
+                                    2008
+                                </cell>
+            <cell>
+                                    fiction
+                                </cell>
+            <cell>
+                                    literature
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    J.R.R. Tolkien
+                                </cell>
+            <cell>
+                                    The Hobbit
+                                </cell>
+            <cell>
+                                    1937
+                                </cell>
+            <cell>
+                                    fantasy
+                                </cell>
+            <cell>
+                                    speculative fiction
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Isabel Allende
+                                </cell>
+            <cell>
+                                    The House of the Spirits
+                                </cell>
+            <cell>
+                                    1982
+                                </cell>
+            <cell>
+                                    magical realism
+                                </cell>
+            <cell>
+                                    literature
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    J.R.R. Tolkien
+                                </cell>
+            <cell>
+                                    The Fellowship of the Ring
+                                </cell>
+            <cell>
+                                    1954
+                                </cell>
+            <cell>
+                                    fantasy
+                                </cell>
+            <cell>
+                                    speculative fiction
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Ursula K. Le Guin
+                                </cell>
+            <cell>
+                                    The Dispossessed
+                                </cell>
+            <cell>
+                                    1974
+                                </cell>
+            <cell>
+                                    science fiction
+                                </cell>
+            <cell>
+                                    speculative fiction
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>
+        <ol label="1">
+          <li>
+            <p>Discard <term>library</term>.</p>
+          </li>
+        </ol>
+      </p>
+      <p>Note that we can recover the original relation by applying a natural join operation to <term>authors</term> and <term>library2</term>.</p>
+      <p>We must now look at our new relations, and determine if they are now normalized.  A first step is determining keys and FDs for the new relations.  There is a formal process to compute the superkeys and FDs of the new relation from the FDs on the old relation <footnote_reference auto="1" docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" xml:id="_03-normalization_id5" refid="id11">5</footnote_reference>.  However, in practice it is usually possible for a database designer to identify the FDs and keys of the new relations given their knowledge of the data, without all of the computations implied above.</p>
+      <p>For our example, in <term>authors</term> we can quickly determine that the only useful non-trivial FD is</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{author\}} \rightarrow \text{\{author_birth, author_death\}}</math_block>
+      <p>From this we can also see that the closure of {author} includes all attributes in authors, and thus {author} is a key.  There are no violating FDs remaining in this relation, so it is normalized with respect to BCNF.</p>
+      <p>Now consider the relation <term>library2</term>.  Note that the FD above does not apply, because <term>author_birth</term> and <term>author_death</term> are not attributes in <term>library2</term>.  From our knowledge of the FDs in the <term>library</term> relation, we can determine that these FDs hold in <term>library2</term>:</p>
+      <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\begin{eqnarray*}
+\text{\{author, title\}} &amp; \rightarrow &amp; \text{\{year, genre, section\}} \\
+\text{\{genre\}} &amp; \rightarrow &amp; \text{\{section\}} \\
+\end{eqnarray*}</math_block>
+      <p>and that the key is {author, title}.</p>
+      <p>The second FD above violates BCNF (and 3NF).  Decomposing on this FD, we have <em>X</em> = {genre}, <em>Y</em> = {section}, and <em>Z</em> = {title, author, year, genre}.  Decomposition results in the following relations, which we rename to <term>books</term> and <term>genres</term>:</p>
+      <table xml:id="_03-normalization_id19">
+        <tabular>
+          <title>
+            <term>books</term>
+          </title>
+          <row header="yes">
+            <cell>
+                                    author
+                                </cell>
+            <cell>
+                                    title
+                                </cell>
+            <cell>
+                                    year
+                                </cell>
+            <cell>
+                                    genre
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Ralph Ellison
+                                </cell>
+            <cell>
+                                    Invisible Man
+                                </cell>
+            <cell>
+                                    1952
+                                </cell>
+            <cell>
+                                    fiction
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Jhumpa Lahiri
+                                </cell>
+            <cell>
+                                    Unaccustomed Earth
+                                </cell>
+            <cell>
+                                    2008
+                                </cell>
+            <cell>
+                                    fiction
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    J.R.R. Tolkien
+                                </cell>
+            <cell>
+                                    The Hobbit
+                                </cell>
+            <cell>
+                                    1937
+                                </cell>
+            <cell>
+                                    fantasy
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Isabel Allende
+                                </cell>
+            <cell>
+                                    The House of the Spirits
+                                </cell>
+            <cell>
+                                    1982
+                                </cell>
+            <cell>
+                                    magical realism
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    J.R.R. Tolkien
+                                </cell>
+            <cell>
+                                    The Fellowship of the Ring
+                                </cell>
+            <cell>
+                                    1954
+                                </cell>
+            <cell>
+                                    fantasy
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    Ursula K. Le Guin
+                                </cell>
+            <cell>
+                                    The Dispossessed
+                                </cell>
+            <cell>
+                                    1974
+                                </cell>
+            <cell>
+                                    science fiction
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <table xml:id="_03-normalization_id20">
+        <tabular>
+          <title>
+            <term>genres</term>
+          </title>
+          <row header="yes">
+            <cell>
+                                    genre
+                                </cell>
+            <cell>
+                                    section
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    fiction
+                                </cell>
+            <cell>
+                                    literature
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    fantasy
+                                </cell>
+            <cell>
+                                    speculative fiction
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    magical realism
+                                </cell>
+            <cell>
+                                    literature
+                                </cell>
+          </row>
+          <row>
+            <cell>
+                                    science fiction
+                                </cell>
+            <cell>
+                                    speculative fiction
+                                </cell>
+          </row>
+        </tabular>
+      </table>
+      <p>We discard <term>library2</term>, leaving us with just three relations: <term>authors</term>, <term>books</term>, and <term>genres</term>. All three relations are now in BCNF, so no further normalization (with respect to BCNF or lower) is possible.  We can recover the <term>library2</term> relation by a natural join of <term>books</term> and <term>genres</term>; or we can recover the original <term>library</term> relation by a natural join of all three relations.</p>
+      <p>Note that the normalized database has a clear separation of concerns in the different relations; one relation is just about authors, another about books, and a third with specialized information about the layout of a library.  Redundancy has been reduced, and modification anomalies are much less likely.</p>
+    </subsubsection>
+    <subsubsection xml:id="_03-normalization_decomposition-properties">
+      <title>Decomposition properties</title>
+      <p>There are two desirable properties for a normalization decomposition, which we discuss in this section.</p>
+      <remark xml:id="_03-normalization_exact-recovery">
+        <title>Exact recovery</title>
+        <p>This first property we have mentioned, which is that the original relation must be recoverable by joining the decomposition products.  This means that the joined relation must have all of the tuples of the original, and no extra tuples.  This property is non-negotiable; a join of the relations must give true answers.  In fact, the BCNF decomposition algorithm as presented fulfills this condition; an arbitrary decomposition would not necessarily do so.</p>
+        <p>We omit a full proof of the correctness of the decomposition algorithm.  An intuitive understanding begins with a consideration of the meaning of functional dependency.  The existence of some functional dependency <math>X \rightarrow Y</math> tells us that the <em>Y</em> attributes must remain in lockstep with the <em>X</em> attributes.  Any distinct value of <em>X</em> can be associated with exactly one setting of <em>Y</em> values; so <em>X</em> uniquely identifies <em>Y</em>.  Therefore, if we have a relation that lets us look up the values for <em>Y</em> for each distinct value of <em>X</em>, we can use <em>just the</em> X <em>attributes</em> in the original relation as representative of both <em>X</em> and <em>Y</em>.  The decomposition algorithm creates exactly this situation; projection onto the attributes involved in the functional dependency creates the <q>lookup</q> relation (<term>authors</term> in our first decomposition example); the <em>X</em> attributes (<term>author</term>) remain as a foreign key and the <em>Y</em> attributes (<term>author_birth</term>, <term>author_death</term>) can be removed.  A join of the relations on the shared foreign key restores the <em>Y</em> values to the correct tuples.</p>
+      </remark>
+      <remark xml:id="_03-normalization_dependency-preservation">
+        <title>Dependency preservation</title>
+        <p>A second desirable property for a decomposition is <em>not</em> always met with BCNF decomposition.  This second property requires that all constraints implied by the original functional dependencies are preserved in the database after decomposition.  It turns out that we can guarantee this property by normalizing to 3NF, but not BCNF.  This is best illustrated with an example.</p>
+        <p>Consider the relation below, regarding the Hugo and Nebula awards for literary and other works in the science fiction genre.  These two awards are given each year in multiple categories, such as <q>Best Novel</q>, <q>Best Short Story</q> and so forth.  Typically only one work in a given format in a given year wins a given award (we will assume that rule is always enforced for example purposes).  Therefore, if we are given the award, year, and format, we can unambiguously determine the award winning work.  The relation below gives some representative data:</p>
+        <table xml:id="_03-normalization_id21">
+          <tabular>
+            <title>
+              <term>scifi_awards</term>
+            </title>
+            <row header="yes">
+              <cell>
+                                        award
+                                    </cell>
+              <cell>
+                                        year
+                                    </cell>
+              <cell>
+                                        format
+                                    </cell>
+              <cell>
+                                        author
+                                    </cell>
+              <cell>
+                                        title
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        Hugo
+                                    </cell>
+              <cell>
+                                        1975
+                                    </cell>
+              <cell>
+                                        novel
+                                    </cell>
+              <cell>
+                                        Ursula K. Le Guin
+                                    </cell>
+              <cell>
+                                        The Dispossessed
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        Hugo
+                                    </cell>
+              <cell>
+                                        1975
+                                    </cell>
+              <cell>
+                                        short story
+                                    </cell>
+              <cell>
+                                        Larry Niven
+                                    </cell>
+              <cell>
+                                        The Hole Man
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        Hugo
+                                    </cell>
+              <cell>
+                                        1974
+                                    </cell>
+              <cell>
+                                        novel
+                                    </cell>
+              <cell>
+                                        Arthur C. Clarke
+                                    </cell>
+              <cell>
+                                        Rendezvous With Rama
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        Nebula
+                                    </cell>
+              <cell>
+                                        1975
+                                    </cell>
+              <cell>
+                                        novel
+                                    </cell>
+              <cell>
+                                        Joe Haldeman
+                                    </cell>
+              <cell>
+                                        The Forever War
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        Nebula
+                                    </cell>
+              <cell>
+                                        1974
+                                    </cell>
+              <cell>
+                                        novel
+                                    </cell>
+              <cell>
+                                        Ursula K. Le Guin
+                                    </cell>
+              <cell>
+                                        The Dispossessed
+                                    </cell>
+            </row>
+          </tabular>
+        </table>
+        <p>There are two important functional dependencies.  The first, reflecting the rule that only one work in each format can win a particular award in a given year, is</p>
+        <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{award, year, format\}} \rightarrow \text{\{author, title\}}</math_block>
+        <p>The first constraint does not violate 3NF or BCNF, because the left-hand side is a key for the relation.</p>
+        <p>The second FD acknowledges that each work is in a particular format; a work may be a novel or a short story, but not both:</p>
+        <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{author, title\}} \rightarrow \text{\{format\}}</math_block>
+        <p>This relation falls into the narrow category of relations that are in 3NF but not in BCNF.  As in this example, this occurs when the relation contains sets of attributes <em>A</em>, <em>B</em>, and <em>C</em>, with <math>AB \rightarrow C</math> and <math>C \rightarrow B</math>.  The second FD violates BCNF, because {author, title} is not a key for this relation (as demonstrated in the example data above).  However, the FD does not violate 3NF, because the right-hand side ({format}) is part of a key for the relation.</p>
+        <p>If we decompose as usual on the BCNF violation, the immediate decomposition products must join together to return the original relation, which has correct data, so that is not a problem.  However, after decomposition, we have relations with attributes {author, title, format} and {award, year, author, title}.  The first FD above, which enforced the constraint of an award going to only one work in each format each year, no longer applies to either relation.  The new relations cannot prevent us storing data such as the following:</p>
+        <table xml:id="_03-normalization_id22">
+          <tabular>
+            <title>
+              <term>scifi_awards_1</term>
+            </title>
+            <row header="yes">
+              <cell>
+                                        author
+                                    </cell>
+              <cell>
+                                        title
+                                    </cell>
+              <cell>
+                                        format
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        Ursula K. Le Guin
+                                    </cell>
+              <cell>
+                                        The Dispossessed
+                                    </cell>
+              <cell>
+                                        novel
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        Roger Zelazny
+                                    </cell>
+              <cell>
+                                        Doorways in the Sand
+                                    </cell>
+              <cell>
+                                        novel
+                                    </cell>
+            </row>
+          </tabular>
+        </table>
+        <table xml:id="_03-normalization_id23">
+          <tabular>
+            <title>
+              <term>scifi_awards_2</term>
+            </title>
+            <row header="yes">
+              <cell>
+                                        award
+                                    </cell>
+              <cell>
+                                        year
+                                    </cell>
+              <cell>
+                                        author
+                                    </cell>
+              <cell>
+                                        title
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        Hugo
+                                    </cell>
+              <cell>
+                                        1975
+                                    </cell>
+              <cell>
+                                        Ursula K. Le Guin
+                                    </cell>
+              <cell>
+                                        The Dispossessed
+                                    </cell>
+            </row>
+            <row>
+              <cell>
+                                        Hugo
+                                    </cell>
+              <cell>
+                                        1975
+                                    </cell>
+              <cell>
+                                        Roger Zelazny
+                                    </cell>
+              <cell>
+                                        Doorways in the Sand
+                                    </cell>
+            </row>
+          </tabular>
+        </table>
+        <p>Since the Hugo award is given to multiple works in a given year (just for different categories of work), the data in the second relation <em>could be</em> valid - but only if the two works listed happen to be in different categories.  However, as the first relation shows, they are in the same category (the second relation, as it happens, contains false data).  Only if we join these two relations can we see that we have violated our constraint.</p>
+        <p>In this particular case, it would be preferable to leave the original relation in 3NF and preserve the constraint with a primary key composed of {award, year, format}.  The redundancy involved is small, given that works can appear at most twice in the relation (since we only have the two awards).  If you encounter such a situation, however, you must determine the best way forward for your particular case.  If you leave the relation in 3NF, then you must manage the modification anomalies implied implied by the BCNF violation (in the application software, or some other mechanism).  If you move the relation to BCNF, then you must enforce the lost constraint in some other fashion.</p>
+      </remark>
+    </subsubsection>
+  </subsection>
+  <subsection xml:id="_03-normalization_multivalued-dependencies-and-fourth-normal-form-index-13">
+    <title>Multivalued dependencies and fourth normal form</title>
+    <p>Relations that violate BCNF frequently occur in normal data collection activities.  For example, a web server keeping activity logs might record user information along with information about the pages the user visits on the website.  Redundancy is apparent in the user information appearing identically in multiple log entries.</p>
+    <p>In contrast, fourth normal form (4NF) violations are unlikely to occur in data gathering.  Instead, 4NF addresses problems that occur when an attempt is made to store data that includes multiple independent one-to-many relationships in a single relation.  Redundancy in this setting is more subtle and harder to identify.</p>
+    <p>For an example, we will consider some of the many awards given for literary merit.  Some awards are given to authors (Nobel Prize in Literature, Neustadt International Prize for Literature) without reference to a specific work.  Others (Pulitzer Prize, Nebula Award) are given in recognition of specific works.  An author can win multiple awards of either type.  If we are incautious in our design, we might come up with a relation like the following:</p>
+    <table xml:id="_03-normalization_id24">
+      <tabular>
+        <title>
+          <term>authors_and_awards</term>
+        </title>
+        <row header="yes">
+          <cell>
+                                author
+                            </cell>
+          <cell>
+                                author_award
+                            </cell>
+          <cell>
+                                book_award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Louise Gl&#xFC;ck
+                            </cell>
+          <cell>
+                                Nobel Prize
+                            </cell>
+          <cell>
+                                Pulitzer Prize
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Louise Gl&#xFC;ck
+                            </cell>
+          <cell>
+                                Nobel Prize
+                            </cell>
+          <cell>
+                                National Book Award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                John Steinbeck
+                            </cell>
+          <cell>
+                                Nobel Prize
+                            </cell>
+          <cell>
+                                Pulitzer Prize
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Alice Munro
+                            </cell>
+          <cell>
+                                Nobel Prize
+                            </cell>
+          <cell>
+                                Giller Prize
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Alice Munro
+                            </cell>
+          <cell>
+                                International Booker Prize
+                            </cell>
+          <cell>
+                                Giller Prize
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Alice Munro
+                            </cell>
+          <cell>
+                                Nobel Prize
+                            </cell>
+          <cell>
+                                National Book Critics Circle Award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Alice Munro
+                            </cell>
+          <cell>
+                                International Booker Prize
+                            </cell>
+          <cell>
+                                National Book Critics Circle Award
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>This is just an illustration; we would probably want to include other attributes to our relation such as the year each award was won, or the book for which a book award was won, but these extra attributes distract from the central concern we are trying to address.</p>
+    <p>At a casual glance it appears that there are many redundancies in this relation.  For example, we have two tuples showing that Louise Gl&#xFC;ck won a Nobel Prize, and the same for Alice Munro.  We show Alice Munro winning the Giller Prize in two different tuples <footnote_reference auto="1" docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" xml:id="_03-normalization_id6" refid="id12">6</footnote_reference>.  For this relation, however, there are no non-trivial functional dependencies whatsoever.  The only key for the relation is the set {author, author_award, book_award}, so each tuple is unique.  Therefore the relation is in BCNF.</p>
+    <p>The pattern here is indicative of something called a <em>multivalued dependency</em> (MVD).  The formal definition of an MVD is rather opaque, and we will not state it here.  Informally, we have subsets of attributes <em>A</em>, <em>B</em>, and <em>C</em>, such that, for a given <em>A</em>, every distinct value of <em>B</em> must be paired with every distinct value of <em>C</em> associated with the value of <em>A</em>.  When this is true we state that <em>A</em> <em>multidetermines</em> <em>B</em>, and write</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">A \twoheadrightarrow B</math_block>
+    <p>The situation is also symmetric; when <em>A</em> multidetermines <em>B</em> it also multidetermines <em>C</em>.  Thus we may write</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">A \twoheadrightarrow B|C</math_block>
+    <p>In our example, considering Alice Munro and her Nobel Prize, what book awards did she win?  The answer must include both the Giller Prize and the National Book Critics Circle Award.  The same answer applies when we consider her International Booker Prize.  We might instead consider Alice Munro and her Giller prize and ask what author awards she won; this time the answer would include her Nobel Prize and her International Booker Prize.  Thus, for this relation the MVD</p>
+    <math_block docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" label="True" nowrap="False" number="True" xml:space="preserve">\text{\{author\}} \twoheadrightarrow \text{\author_award\}} | \text{\{book_award\}}</math_block>
+    <p>holds.</p>
+    <p>The definition of fourth normal form looks much like the definition of BCNF, substitution MVD for FD:</p>
+    <dl>
+      <li>
+        <title>
+          <em>Definition of 4NF</em>
+        </title>
+        <p>A relation is in 4NF if, for every non-trivial multivalued dependency of the form <math>X \twoheadrightarrow Y</math> on the relation, <em>X</em> is a superkey of the relation.</p>
+      </li>
+    </dl>
+    <p>Clearly in our example relation, the set {author} is not a superkey, so the relation is not in 4NF.  The solution to a 4NF violation happens to be identical to the solution for a BCNF violation.  Given an MVD <math>X \twoheadrightarrow Y</math> that violates 4NF, we decompose into two relations, one with the attributes in <em>XY</em>, and the other with the attributes in <em>XZ</em>, where <em>Z</em> is everything not in <em>X</em> or <em>Y</em> (<em>Z</em> is also multidetermined by <em>X</em> as discussed above).  The decomposition eliminates the pairing of independent concepts.  For our example, the decomposition yields:</p>
+    <table xml:id="_03-normalization_id25">
+      <tabular>
+        <title>
+          <term>author_awards</term>
+        </title>
+        <row header="yes">
+          <cell>
+                                author
+                            </cell>
+          <cell>
+                                author_award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Louise Gl&#xFC;ck
+                            </cell>
+          <cell>
+                                Nobel Prize
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                John Steinbeck
+                            </cell>
+          <cell>
+                                Nobel Prize
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Alice Munro
+                            </cell>
+          <cell>
+                                Nobel Prize
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Alice Munro
+                            </cell>
+          <cell>
+                                International Booker Prize
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <table xml:id="_03-normalization_id26">
+      <tabular>
+        <title>
+          <term>author_book_awards</term>
+        </title>
+        <row header="yes">
+          <cell>
+                                author
+                            </cell>
+          <cell>
+                                book_award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Louise Gl&#xFC;ck
+                            </cell>
+          <cell>
+                                Pulitzer Prize
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Louise Gl&#xFC;ck
+                            </cell>
+          <cell>
+                                National Book Award
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                John Steinbeck
+                            </cell>
+          <cell>
+                                Pulitzer Prize
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Alice Munro
+                            </cell>
+          <cell>
+                                Giller Prize
+                            </cell>
+        </row>
+        <row>
+          <cell>
+                                Alice Munro
+                            </cell>
+          <cell>
+                                National Book Critics Circle Award
+                            </cell>
+        </row>
+      </tabular>
+    </table>
+    <p>The formal definition of MVD is sufficiently general that every FD qualifies as an MVD.  Therefore, a relation in 4NF is also in BCNF.</p>
+  </subsection>
+  <subsection xml:id="_03-normalization_trade-offs">
+    <title>Trade-offs</title>
+    <p>As we have seen, the process of normalization leads to increased numbers of (generally smaller) relations.  Despite this proliferation of relations, normalization actually simplifies application software due to eliminating modification anomalies and related issues.  Smaller relations may also provide modest space savings, and performing queries on the relations in isolation will be faster.  However, when a query requires data collected into many different relations, performance can suffer.  Particularly when large volumes of data are involved, join operations become expensive for relational database systems.</p>
+    <p>As a result, there are occasions when it is desirable to create a <em>de-normalized</em> database, in which data is held in one or more large relations representing the result of joining together numerous relations.  Such a decision should not be made lightly and without consideration for the impact of modification anomalies.  One popular approach creates not one, but two databases containing the same data.  In this approach, one database is fully normalized and is used to process data updates.  The other, de-normalized database is used solely for read-only queries, and may be updated (or re-created) only periodically (perhaps daily or hourly).  Users of the de-normalized database receive slightly out-of-date answers, but faster.</p>
+  </subsection>
+  <subsection xml:id="_03-normalization_normalization-in-database-design">
+    <title>Normalization in database design</title>
+    <p>Databases can be created using a number of approaches.  The approach taken depends greatly on the circumstances which have led to the need for a database.</p>
+    <p>In some cases, data have been previously collected and stored in some fashion, but not organized into something we would consider a database.  Many scientific, industrial, and business processes produce large amounts of data in the form of sensor readings, application logs, reports, and form responses.  This data may exist in electronic form or on paper.  There may be little structure to the data; it may exist in a <em>flat</em> form in which there is only one type of record which stores every piece of information relevant to some event.  Creating a database to more efficiently work with such data may be best accomplished using a top-down approach, in which relations are systematically decomposed.  Data modeling (<number_reference internal="True" refuri="../../PART2_DATA_MODELING/index#data-modeling-part" title="Part {number}"><inline classes="std std-numref">Part 2</inline></number_reference>) may be used as part of this process, to document, communicate, and reason about the evolving database.</p>
+    <p>In contrast, when creating a new software application, a bottom-up approach may be preferred.  The application developers and other interested parties work to identify the data attributes that need to be collected and stored.  Multiple relations emerge naturally, corresponding to different parts of the application.  Data modeling should almost always occur early in this process.</p>
+    <p>Data modeling is very effective at producing relations that accurately represent independent concepts and the relationships between them.  However, some relations may still require normalization.  Normalization provides a different perspective on database design.  As with data modeling, our understanding of the real world and our data informs our choices.  However, while data modeling focuses on mapping concepts in the real world to relations, normalization works to produce a database structure that is more resistant to data errors.  Data modeling ensures our database accurately captures the data we need, while normalization ensures our database can be used effectively.  The two activities are thus complementary.  Whether or not normalization is applied formally, an understanding of normalization and its trade-offs is important for any database designer.</p>
+    <p>&#x274F;</p>
+    <transition/>
+    <p>
+      <term>Notes</term>
+    </p>
+    <footnote auto="1" backrefs="id1" docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" xml:id="_03-normalization_id7" names="1">
+      <label>1</label>
+      <p>We may need to use NULLs when information is truly unknown or absent; for example, we would set the <term>instructor</term> attribute NULL for classes which have no instructor assigned at the current time.  Similarly, we might set the <term>office</term> attribute NULL for new instructors who do not yet have an office.  Neither of these cases requires special handling in our software, so we consider these NULLs acceptable.  While it is possible to design a database that avoids even these NULLs, it would complicate the database (with more relations) for little gain.</p>
+    </footnote>
+    <footnote auto="1" backrefs="id2" docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" xml:id="_03-normalization_id8" names="2">
+      <label>2</label>
+      <p>It is common practice in some countries where English is the primary language to break a name into first (or given), middle, and last name (or surname).  However, this naming scheme is by no means universal, even for English speakers.  Unless there is a compelling need to break a name into components for your application, we recommend a single name attribute.  For more on this topic, see <url href="https://www.w3.org/International/questions/qa-personal-names" visual="https://www.w3.org/International/questions/qa-personal-names">https://www.w3.org/International/questions/qa-personal-names</url>.</p>
+    </footnote>
+    <footnote auto="1" backrefs="id3" docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" xml:id="_03-normalization_id9" names="3">
+      <label>3</label>
+      <p>We reiterate that a superkey is a constraint <em>we impose</em> on the data.  When designing a database, we of course hope to create a structure that accommodates true facts from the world, but a) we sometimes fail due to incomplete information about the world, and b) we sometimes compromise on a simpler design that accommodates <em>most</em> facts from the world.  For our <term>simple_books</term> relation, we are unaware of any books by the same author with the same title in the same year, so we are comfortable asserting that {<term>author</term>, <term>title</term>, <term>year</term>} is a valid superkey (but we could be wrong).  On the other hand, this design intentionally fails to capture any number of the complexities of books in the real world.  For one example, authors occasionally re-publish a book with small changes, under the same title, years after the original publication.  Is this the same <q>book</q> (in which case <term>year</term> really stands for <q>year of first publication</q>), or a different book (in which case {<term>author</term>, <term>title</term>} is <em>not</em> a superkey)?  For another example, we are completely ignoring the fact that some books have multiple authors, and some have no known authors.  Databases about books can be very complex!</p>
+    </footnote>
+    <footnote auto="1" backrefs="id4" docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" xml:id="_03-normalization_id10" names="4">
+      <label>4</label>
+      <p>Named after Raymond F. Boyce and Edgar F. Codd, who published a <xref ref="references_references"/> in 1974 defining this normal form.  However, a 1971 paper by Ian Heath gave a prior description.</p>
+    </footnote>
+    <footnote auto="1" backrefs="id5" docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" xml:id="_03-normalization_id11" names="5">
+      <label>5</label>
+      <p>Given <em>R</em> and <em>R1</em> and a collection of FDs on R1, for every subset <em>X</em> of the attributes of <em>R1</em>, compute the closure, <em>X</em><superscript>+</superscript> in <em>R</em>. For every attribute <em>a</em> of <em>R1</em> that is in the closure of <em>X</em>, by the splitting rule, <math>X \rightarrow \{a\}</math> is an FD for <em>R1</em>. If <em>X</em><superscript>+</superscript> contains every attribute of <em>R1</em>, then <em>X</em> is a superkey of <em>R1</em>.</p>
+    </footnote>
+    <footnote auto="1" backrefs="id6" docname="PART3_RELATIONAL_DATABASE_THEORY/03-normalization/normalization" xml:id="_03-normalization_id12" names="6">
+      <label>6</label>
+      <p>As it happens, Alice Munro won two Giller Prizes, in different years; if we included an attribute for year, we would have to double the number of entries for Alice Munro!</p>
+    </footnote>
+    <p> </p>
+  </subsection>
+</section>
